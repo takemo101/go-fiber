@@ -21,19 +21,19 @@ func boot(
 	commands cmd.Commands,
 	root cmd.RootCommand,
 ) {
-	sql, err := database.DB.DB()
+	sql, err := database.DB()
 	if err != nil {
-		logger.Zap.Info("database connection sql failed : %v", err)
+		logger.Info("database connection sql failed : %v", err)
 	}
 
 	defer sql.Close()
 
-	logger.Zap.Info("-- start cli --")
+	logger.Info("-- start cli --")
 
 	sql.SetMaxOpenConns(10)
 
 	commands.Setup()
 	root.Cmd.Execute()
 
-	logger.Zap.Info("-- stop cli --")
+	logger.Info("-- stop cli --")
 }

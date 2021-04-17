@@ -3,6 +3,7 @@ package boot
 import (
 	"context"
 
+	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/app/route"
 	"github.com/takemo101/go-fiber/pkg"
 	"go.uber.org/fx"
@@ -11,6 +12,7 @@ import (
 // Module exported for initializing application
 var Module = fx.Options(
 	pkg.Module,
+	middleware.Module,
 	route.Module,
 	fx.Invoke(boot),
 )
@@ -22,25 +24,27 @@ func boot(
 	logger pkg.Logger,
 	database pkg.Database,
 	routes route.Routes,
+	middlewares middleware.Middlewares,
 ) {
-	sql, err := database.DB.DB()
+	sql, err := database.DB()
 	if err != nil {
-		logger.Zap.Info("database connection sql failed : %v", err)
+		logger.Info("database connection sql failed : %v", err)
 	}
 
 	lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
-			logger.Zap.Info("-- start application --")
+			logger.Info("-- start application --")
 
 			sql.SetMaxOpenConns(10)
 			go func() {
+				middlewares.Setup()
 				routes.Setup()
 				app.Run()
 			}()
 			return nil
 		},
 		OnStop: func(context.Context) error {
-			logger.Zap.Info("-- stop application --")
+			logger.Info("-- stop application --")
 			sql.Close()
 			return nil
 		},

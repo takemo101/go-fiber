@@ -5,12 +5,20 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// Logger structure
-type Logger struct {
+// Logger interafce
+type Logger interface {
+	Debug(...interface{})
+	Info(...interface{})
+	Warn(...interface{})
+	Error(...interface{})
+}
+
+// ZapLogger structure
+type ZapLogger struct {
 	Zap *zap.SugaredLogger
 }
 
-// NewLogger sets up logger
+// NewLogger set up logger
 func NewLogger(config Config) Logger {
 
 	zapConfig := zap.NewDevelopmentConfig()
@@ -27,7 +35,23 @@ func NewLogger(config Config) Logger {
 
 	sugar := logger.Sugar()
 
-	return Logger{
+	return &ZapLogger{
 		Zap: sugar,
 	}
+}
+
+func (log *ZapLogger) Debug(args ...interface{}) {
+	log.Zap.Debug(args)
+}
+
+func (log *ZapLogger) Info(args ...interface{}) {
+	log.Zap.Info(args)
+}
+
+func (log *ZapLogger) Warn(args ...interface{}) {
+	log.Zap.Warn(args)
+}
+
+func (log *ZapLogger) Error(args ...interface{}) {
+	log.Zap.Error(args)
 }

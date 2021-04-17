@@ -35,6 +35,28 @@ db:
 log:
   server: "./server.log"
 
+static:
+  prefix: "/static"
+  root: "./public"
+  index: "index.html"
+
+template:
+  path: "./resource/view"
+  suffix: ".html"
+  reload: false
+
 cache:
   expiration: 30
   control: false
+
+session:
+  expiration: 24
+  name: "session"
+  domain: ""
+  path: "/"
+  secure: false
+  httponly: false
+
+cors:
+  origins: ["*"]
+  maxage: 24

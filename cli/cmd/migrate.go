@@ -20,7 +20,7 @@ type Models []interface{}
 
 // Setup is setup route
 func (c MigrateCommand) Setup() {
-	c.logger.Zap.Info("setup migurate-command")
+	c.logger.Info("setup migurate-command")
 
 	c.root.Cmd.AddCommand(&cobra.Command{
 		Use:   "migrate",

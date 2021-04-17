@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"strings"
@@ -12,7 +13,7 @@ import (
 
 // Database is model
 type Database struct {
-	DB *gorm.DB
+	GormDB *gorm.DB
 }
 
 // DatabaseCreator is databse create
@@ -50,6 +51,12 @@ func (creator *DatabaseCreator) CreateDatabase(config *gorm.Config) (*gorm.DB, e
 
 }
 
+// DB is create database/sql.DB
+func (db *Database) DB() (*sql.DB, error) {
+	return db.GormDB.DB()
+
+}
+
 // NewDatabase is create database
 func NewDatabase(config Config) Database {
 	creator := DatabaseCreator{
@@ -63,6 +70,6 @@ func NewDatabase(config Config) Database {
 	}
 
 	return Database{
-		DB: db,
+		GormDB: db,
 	}
 }

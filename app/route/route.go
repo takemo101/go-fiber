@@ -7,7 +7,8 @@ import (
 
 // Module export
 var Module = fx.Options(
-	fx.Provide(NewWebRoute),
+	fx.Provide(NewApiRoute),
+	fx.Provide(NewAdminRoute),
 	fx.Provide(NewRoute),
 )
 
@@ -22,10 +23,12 @@ type Route interface {
 // NewRoute is setup routes
 func NewRoute(
 	config pkg.Config,
-	web WebRoute,
+	api ApiRoute,
+	admin AdminRoute,
 ) Routes {
 	return Routes{
-		web,
+		api,
+		admin,
 	}
 }
 

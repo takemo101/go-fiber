@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}Django Boards{% endblock %}</title>
+  </head>
+  <body>
+    <div class="container">
+      <ol class="breadcrumb my-4">
+        {% block breadcrumb %}
+        {% endblock %}
+      </ol>
+      {% block content %}
+      {% endblock %}
+    </div>
+  </body>
+</html>
