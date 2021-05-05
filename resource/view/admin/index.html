@@ -1,0 +1,81 @@
+{% extends 'layout/default.html' %}
+{% block content_side %}
+    {% include 'include/sidebar.html' with active_key=':admin.index' %}
+{% endblock %}
+{% block content_header %}
+    {% include 'include/header.html' with title='管理者' function='USER' %}
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">リスト</h3>
+                <div class="card-tools">
+                    <form action="" method="get">
+
+	                    <div class="input-group input-group-sm" style="width: 200px;">
+                            <input type="text" class="form-control" data-aire-component="input" name="keyword" placeholder="Search" data-aire-for="keyword" id="__aire-0-keyword1">
+
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>
+                                追加日時<br/>
+                                更新日時
+                            </th>
+                            <th>
+                                名前<br/>
+                                メールアドレス
+                            </th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for admin in admins %}
+                        <tr>
+                            <td>{{ admin.ID }}</td>
+                            <td>
+                                {{ admin.CreatedAt|date:'2006.01.02 15:04' }}<br/>
+                                {{ admin.UpdatedAt|date:'2006.01.02 15:04' }}
+                            </td>
+                            <td>
+                                {{ admin.Name }}<br/>
+                                {{ admin.Email }}
+                            </td>
+                            <td>
+                                <a class="btn btn-info btn-sm" href="{{ url(admin.ID|stringformat:'admin/admin/%d/edit') }}">
+                                    <i class="fas fa-pencil-alt">
+                                    </i>
+                                </a>
+                                <button data-class="js-dialog" data-type="delete" data-form="#{{ admin.ID|stringformat:'delete-%d' }}" class="btn btn-danger btn-sm" name="submit">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                </button>
+                                <form action="{{ url(admin.ID|stringformat:'admin/admin/%d/delete') }}" method="post" id="{{ admin.ID|stringformat:'delete-%d' }}">
+                                    {% include 'form/csrf.html' %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+
+    </div>
+</div>
+{% endblock %}

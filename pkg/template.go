@@ -12,7 +12,10 @@ type TemplateEngine struct {
 }
 
 // NewTemplateEngine set up template
-func NewTemplateEngine(config Config) TemplateEngine {
+func NewTemplateEngine(
+	config Config,
+	p Path,
+) TemplateEngine {
 	engine := django.New(config.Template.Path, config.Template.Suffix)
 	engine.Reload(config.Template.Reload)
 	engine.Debug(config.App.Debug)
@@ -20,6 +23,20 @@ func NewTemplateEngine(config Config) TemplateEngine {
 	engine.AddFunc("nl2br", func(value interface{}) string {
 		if str, ok := value.(string); ok {
 			return strings.Replace(str, "\n", "<br />", -1)
+		}
+		return ""
+	})
+
+	engine.AddFunc("static", func(value interface{}) string {
+		if str, ok := value.(string); ok {
+			return p.Static(str)
+		}
+		return ""
+	})
+
+	engine.AddFunc("url", func(value interface{}) string {
+		if str, ok := value.(string); ok {
+			return p.URL(str)
 		}
 		return ""
 	})

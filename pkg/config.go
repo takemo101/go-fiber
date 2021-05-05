@@ -1,8 +1,11 @@
 package pkg
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"path"
 	"time"
 
 	"github.com/jinzhu/configor"
@@ -13,10 +16,12 @@ type App struct {
 	Name    string
 	Host    string
 	Port    int
+	URL     string
 	Version string
 	Env     string
 	Secret  string
 	Debug   bool
+	Config  string
 }
 
 // DB config
@@ -102,6 +107,7 @@ type Config struct {
 	Cache
 	Session
 	Cors
+	MapData map[string]interface{}
 }
 
 func (app App) SecretKey() []byte {
@@ -122,5 +128,26 @@ func NewConfig() Config {
 	if Conf.App.Debug {
 		fmt.Println(Conf)
 	}
+	Conf.MapData = make(map[string]interface{})
 	return Conf
+}
+
+func (c *Config) Load(key string) (map[string]interface{}, error) {
+	if mapValue, ok := c.MapData[key]; ok {
+		return mapValue.(map[string]interface{}), nil
+	}
+
+	path := path.Join(c.App.Config, key+".json")
+	jsonString, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var v interface{}
+	err = json.Unmarshal(jsonString, &v)
+	if err != nil {
+		return nil, err
+	}
+	c.MapData[key] = v
+
+	return v.(map[string]interface{}), nil
 }

@@ -1,0 +1,14 @@
+<div class="form-group">
+    <label for="{{ id }}" class="{{ required|yesno:'required,'}}">{{ label }}</label>
+    <input type="{{ type }}" name="{{ name }}" value="{% if input %}{{ input }}{% else %}{{ value }}{% endif %}" required class="form-control {{ error|yesno:'is-invalid,' }}" id="{{ id }}" {{ required|yesno:'required,' }} {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>
+    {% if hint %}
+    <small class="form-text text-muted">
+        {{ hint }}
+    </small>
+    {% endif %}
+    {% if error %}
+        <div class="invalid-feedback d-block">
+            {{ error }}
+        </div>
+    {% endif %}
+</div>

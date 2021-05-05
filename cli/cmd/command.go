@@ -5,6 +5,7 @@ import "go.uber.org/fx"
 // Module export
 var Module = fx.Options(
 	fx.Provide(NewMigrateCommand),
+	fx.Provide(NewAdminCreateCommand),
 	fx.Provide(NewCommandRoot),
 	fx.Provide(NewCommand),
 )
@@ -20,9 +21,11 @@ type Command interface {
 // NewCommand is setup routes
 func NewCommand(
 	migrateCommand MigrateCommand,
+	adminCreateCommand AdminCreateCommand,
 ) Commands {
 	return Commands{
 		migrateCommand,
+		adminCreateCommand,
 	}
 }
 

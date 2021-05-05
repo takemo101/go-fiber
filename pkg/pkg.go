@@ -8,5 +8,6 @@ var Module = fx.Options(
 	fx.Provide(NewLogger),
 	fx.Provide(NewDatabase),
 	fx.Provide(NewTemplateEngine),
+	fx.Provide(NewPath),
 	fx.Provide(NewApplication),
 )

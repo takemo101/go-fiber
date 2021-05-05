@@ -19,3 +19,4 @@ config.yml
 server.log
 /node_modules/*
 package-lock.json
+/static/plugins/*

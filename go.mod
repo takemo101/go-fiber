@@ -3,8 +3,12 @@ module github.com/takemo101/go-fiber
 go 1.15
 
 require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/fatih/structs v1.1.0 // indirect
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/gofiber/fiber/v2 v2.7.1
 	github.com/gofiber/template v1.6.8
+	github.com/imdario/mergo v0.3.12
 	github.com/jinzhu/configor v1.2.1
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
 	github.com/spf13/cobra v1.1.3

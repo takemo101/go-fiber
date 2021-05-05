@@ -27,7 +27,7 @@ func (c MigrateCommand) Setup() {
 		Short: "auto migrate",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			c.db.DB.AutoMigrate(GetModels()...)
+			c.db.GormDB.AutoMigrate(GetModels()...)
 
 			fmt.Println("finish migrate")
 		},

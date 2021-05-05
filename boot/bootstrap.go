@@ -3,8 +3,13 @@ package boot
 import (
 	"context"
 
+	"github.com/takemo101/go-fiber/app/controller"
+	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
+	"github.com/takemo101/go-fiber/app/repository"
 	"github.com/takemo101/go-fiber/app/route"
+	"github.com/takemo101/go-fiber/app/service"
+	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
 	"go.uber.org/fx"
 )
@@ -13,7 +18,12 @@ import (
 var Module = fx.Options(
 	pkg.Module,
 	middleware.Module,
+	helper.Module,
+	repository.Module,
+	service.Module,
+	support.Module,
 	route.Module,
+	controller.Module,
 	fx.Invoke(boot),
 )
 

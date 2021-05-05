@@ -1,0 +1,81 @@
+{
+    "menus": [{
+            "is_header": true,
+            "name": "USER"
+        },
+        {
+            "key": ":admin",
+            "name": "管理者",
+            "icon": "fas fa-copy",
+            "path": "#",
+            "menus": [{
+                    "key": ":admin.index",
+                    "name": "検索",
+                    "path": "admin/admin"
+                },
+                {
+                    "key": ":admin.create",
+                    "name": "追加",
+                    "path": "admin/admin/create"
+                }
+            ]
+        },
+        {
+            "is_header": true,
+            "name": "FUNCTION"
+        },
+        {
+            "key": ":contact.index",
+            "name": "問い合わせ",
+            "icon": "fas fa-copy",
+            "path": "#",
+            "menus": [{
+                    "key": ":contact.index.edit",
+                    "name": "Edit",
+                    "path": "admin/system/edit"
+                },
+                {
+                    "key": ":contact.index.delete",
+                    "name": "Delete",
+                    "path": "admin/system/edit"
+                }
+            ]
+        },
+        {
+            "key": ":system.edit",
+            "name": "System",
+            "icon": "fas fa-copy",
+            "path": "admin/system/edit"
+        }
+    ],
+    "plugins": {
+        "header_css": [
+            "css/app.css",
+            "plugins/fontawesome-free/css/all.min.css",
+            "plugins/overlayScrollbars/css/OverlayScrollbars.min.css",
+            "plugins/icheck-bootstrap/icheck-bootstrap.min.css",
+            "plugins/toastr/toastr.min.css",
+            "plugins/daterangepicker/daterangepicker.css",
+            "plugins/select2/css/select2.min.css",
+            "plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css",
+            "plugins/summernote/summernote-bs4.css",
+            "plugins/chart.js/Chart.min.css"
+        ],
+        "header_js": [
+            "plugins/jquery/jquery.min.js",
+            "plugins/bootstrap/js/bootstrap.bundle.min.js",
+            "plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js",
+            "plugins/toastr/toastr.min.js",
+            "plugins/daterangepicker/moment.min.js",
+            "plugins/daterangepicker/daterangepicker.js",
+            "plugins/select2/js/select2.full.min.js",
+            "plugins/summernote/summernote-bs4.min.js",
+            "plugins/summernote/lang/summernote-ja-JP.min.js",
+            "plugins/chart.js/Chart.min.js"
+        ],
+        "footer_js": [
+            "js/app.js",
+            "plugins/bs-custom-file-input/bs-custom-file-input.min.js"
+        ]
+    }
+}

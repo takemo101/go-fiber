@@ -2,14 +2,17 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const staticPath = path.join(__dirname, 'static');
 
 module.exports = {
     entry: './resource/js/app.js',
     // output setting
     output: {
         filename: 'js/app.js', // js output
-        path: path.join(__dirname, 'static') // output path
+        path: staticPath, // output path
     },
     module: {
         rules: [{
@@ -58,6 +61,17 @@ module.exports = {
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename: 'css/app.css', // css output
+        }),
+        new CopyPlugin({
+            patterns: [{
+                    from: './node_modules/admin-lte/plugins',
+                    to: path.join(staticPath, 'plugins')
+                },
+                {
+                    from: './resource/image',
+                    to: path.join(staticPath, 'image')
+                },
+            ],
         }),
     ],
     optimization: {

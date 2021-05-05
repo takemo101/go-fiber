@@ -2,10 +2,12 @@ app:
   name: "fiber"
   host: "127.0.0.1"
   port: 8000
+  url: "http://127.0.0.1:8000"
   version: "0.0.1"
   env: "developer"
   secret: "secret"
   debug: true
+  config: "./config"
 
 server:
   prefork: false

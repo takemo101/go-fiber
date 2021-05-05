@@ -1,0 +1,17 @@
+<div class="row mb-2">
+    <div class="col-sm-12">
+        {% if title %}
+        <h1>
+            {{ title }}
+            <span class="h6 ml-1">{{ function }}</span>
+            {% if hint %}
+            <a href="javascript:void(0)" class="h5 ml-1" data-toggle="hint-popover" title="Hint" data-content="{{ hint }}">
+                <i class="fas fa-question-circle"></i>
+            </a>
+            {% endif %}
+        </h1>
+        {% endif %}
+
+    </div>
+    <!-- /.col -->
+</div>

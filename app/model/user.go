@@ -1,21 +1,22 @@
 package model
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"github.com/takemo101/go-fiber/app/helper"
 	"gorm.io/gorm"
 )
 
 // User is auth user
 type User struct {
 	gorm.Model
-	Name string
-	Pass []byte
+	Name  string
+	Email string
+	Pass  []byte
 }
 
 // BeforeSave is Hook
 func (u *User) BeforeSave(db *gorm.DB) (err error) {
 	if len(u.Pass) > 0 {
-		hash, err := bcrypt.GenerateFromPassword([]byte(u.Pass), bcrypt.DefaultCost)
+		hash, err := helper.CreatePass(string(u.Pass))
 		if err != nil {
 			return err
 		}
