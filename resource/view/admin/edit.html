@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-md-8">
 
-        <form method="post" action="{{ url(admin.ID|stringformat:'admin/admin/%d/update') }}" id="update">
+        <form method="post" action="{{ url('admin/admin/%d/update', admin.ID) }}" id="update">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">基本設定</h3>
@@ -63,7 +63,7 @@
 </div>
 {% endblock %}
 {% block content_footer_left %}
-<form action="{{ url(admin.ID|stringformat:'admin/admin/%d/delete') }}" method="post" id="delete">
+<form action="{{ url('admin/admin/%d/delete', admin.ID) }}" method="post" id="delete">
     {% include 'form/csrf.html' %}
     <button class="btn btn-primary px-5  btn-warning" type="submit" data-class="js-dialog" data-form="#delete" data-type="delete">
         削除

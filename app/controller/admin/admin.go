@@ -107,14 +107,14 @@ func (ctl AdminController) Update(c *fiber.Ctx) error {
 	if err := form.Validate(false); err != nil {
 		middleware.SetSessionErrors(c, helper.ErrorsToMap(err))
 		middleware.SetSessionInputs(c, helper.StructToFormMap(&form))
-		return c.Redirect(ctl.path.URL("admin/admin/" + c.Params("id") + "/edit"))
+		return c.Redirect(ctl.path.URL("admin/admin/%s/edit", c.Params("id")))
 	}
 
 	if _, err := ctl.service.Update(uint(id), form); err != nil {
 		return err
 	}
 
-	return c.Redirect(ctl.path.URL("admin/admin/" + c.Params("id") + "/edit"))
+	return c.Redirect(ctl.path.URL("admin/admin/%s/edit", c.Params("id")))
 }
 
 // Delete admin delete process

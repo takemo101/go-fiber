@@ -29,14 +29,19 @@ func NewTemplateEngine(
 
 	engine.AddFunc("static", func(value interface{}) string {
 		if str, ok := value.(string); ok {
+			for _, prefix := range []string{"https://", "http://"} {
+				if strings.Contains(str, prefix) {
+					return str
+				}
+			}
 			return p.Static(str)
 		}
 		return ""
 	})
 
-	engine.AddFunc("url", func(value interface{}) string {
+	engine.AddFunc("url", func(value interface{}, a ...interface{}) string {
 		if str, ok := value.(string); ok {
-			return p.URL(str)
+			return p.URL(str, a...)
 		}
 		return ""
 	})

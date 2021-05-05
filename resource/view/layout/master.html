@@ -12,13 +12,13 @@
     <meta property="robots" content="{{ admin_meta.robots }}" >
     <link rel="shortcut icon" href="{{ static(admin_meta.favicon) }}">
     {% for link in adminlte_plugins.header_css %}
-        <link rel="stylesheet" media="all" href="{{ static(link) }}">
+        <link rel="stylesheet" media="all" href="{{ static(link.file) }}">
     {% endfor %}
     {% block header_style %}
     {% endblock %}
 
     {% for link in adminlte_plugins.header_js %}
-        <script src="{{ static(link) }}"></script>
+        <script src="{{ static(link.file) }}" {% if link.defer %}defer{% endif %}></script>
     {% endfor %}
     {% block header_script %}
     {% endblock %}
@@ -31,7 +31,7 @@
 {% block body %}
 {% endblock %}
 {% for link in adminlte_plugins.footer_js %}
-    <script src="{{ static(link) }}"></script>
+    <script src="{{ static(link.file) }}" {% if link.defer %}defer{% endif %}></script>
 {% endfor %}
 {% block footer_script %}
 {% endblock %}

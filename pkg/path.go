@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"fmt"
 	"path"
 )
 
@@ -21,6 +22,6 @@ func (p Path) Static(suffix string) string {
 	return p.URL(path.Join(p.config.Static.Prefix, suffix))
 }
 
-func (p Path) URL(suffix string) string {
-	return p.config.App.URL + "/" + suffix
+func (p Path) URL(suffix string, a ...interface{}) string {
+	return p.config.App.URL + "/" + fmt.Sprintf(suffix, a...)
 }
