@@ -27,7 +27,7 @@
                     {% include 'form/input.html' with name='email' value=admin.Email type='email' id="email" label='メールアドレス' input=inputs.email error=errors.email required=true %}
                     {% include 'form/input.html' with name='password' type='password' id="password" label='パスワード' error=errors.password %}
                     {% include 'form/input.html' with name='password_confirm' type='password' id="password_confirm" label='パスワード（確認）' error=errors.password_confirm %}
-                    {% include 'form/select.html' with name='role' id="role" label='権限' empty='--' value=admin.Role list=roles input=inputs.role error=errors.role required=true %}
+                    {% include 'form/select.html' with name='role' id="role" label='権限' empty='--' value=admin.Role.String() list=roles input=inputs.role error=errors.role required=true %}
                 </div>
             </div>
          </form>

@@ -33,6 +33,11 @@ func (s TodoService) Search(form form.TodoSearch, limit int) ([]model.Todo, erro
 	return s.Query.Search(form, limit)
 }
 
+// SearchYour search todos
+func (s TodoService) SearchYour(form form.TodoSearch, adminID uint, limit int) ([]model.Todo, error) {
+	return s.Query.SearchYour(form, adminID, limit)
+}
+
 // Store create todo
 func (s TodoService) Store(form form.Todo, adminID uint) (model.Todo, error) {
 
@@ -77,4 +82,9 @@ func (s TodoService) Find(id uint) (todo model.Todo, err error) {
 // Delete remove todo
 func (s TodoService) Delete(id uint) error {
 	return s.Repository.Delete(id)
+}
+
+// CheckOwner check todo owner
+func (s TodoService) CheckOwner(todo model.Todo, admin model.Admin) bool {
+	return todo.AdminID == admin.ID
 }

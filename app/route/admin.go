@@ -87,8 +87,8 @@ func (r AdminRoute) Setup() {
 			todo := system.Group("/todo")
 			{
 				todo.Get("/", r.todoController.Index)
+				todo.Get("/your", r.todoController.Your)
 				todo.Post("/store", r.todoController.Store)
-				todo.Post("/:id/update", r.todoController.Update)
 				todo.Post("/:id/change", r.todoController.ChangeStatus) // ajax
 				todo.Post("/:id/delete", r.todoController.Delete)
 			}

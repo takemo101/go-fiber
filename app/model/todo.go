@@ -47,19 +47,19 @@ func TodoStatusFromString(status string) TodoStatus {
 func ToTodoStatusArray() []KeyName {
 	return []KeyName{
 		{
-			Key:  TodoStatusThing,
+			Key:  string(TodoStatusThing),
 			Name: TodoStatusThing.Name(),
 		},
 		{
-			Key:  TodoStatusWork,
+			Key:  string(TodoStatusWork),
 			Name: TodoStatusWork.Name(),
 		},
 		{
-			Key:  TodoStatusCheck,
+			Key:  string(TodoStatusCheck),
 			Name: TodoStatusCheck.Name(),
 		},
 		{
-			Key:  TodoStatusComplete,
+			Key:  string(TodoStatusComplete),
 			Name: TodoStatusComplete.Name(),
 		},
 	}

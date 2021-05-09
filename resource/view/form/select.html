@@ -6,7 +6,7 @@
         {% endif %}
         {% if list %}
             {% for li in list %}
-                <option value="{{ li.Key }}" {% if li.Key == value %}selected{% endif %}>{{ li.Name }}</option>
+                <option value="{{ li.Key }}" {% if li.Key == input or li.Key == value %}selected{% endif %}>{{ li.Name }}</option>
             {% endfor %}
         {% endif %}
     </select>

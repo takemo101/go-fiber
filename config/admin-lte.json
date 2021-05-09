@@ -45,7 +45,18 @@
             "key": ":todo",
             "name": "ToDo",
             "icon": "fas fa-copy",
-            "path": "system/todo"
+            "path": "#",
+            "menus": [{
+                    "key": ":todo.index",
+                    "name": "検索",
+                    "path": "system/todo"
+                },
+                {
+                    "key": ":todo.your",
+                    "name": "あなたの",
+                    "path": "system/todo/your"
+                }
+            ]
         }
     ],
     "plugins": {

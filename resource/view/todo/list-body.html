@@ -1,0 +1,83 @@
+<script>
+    function changeStatusXData(action, status) {
+        return {
+            statuses: AppData.statuses,
+            status,
+            change() {
+                let formData = new FormData();
+                formData.append('status', this.status);
+                formData.append('csrf_token', $('meta[name=csrf_token]').attr('content'))
+                fetch(action, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then((response) => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.message);
+                    } else {
+                        console.log(data.error);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            },
+        };
+    }
+</script>
+<div class="card-body table-responsive p-0">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>
+                    追加日時<br/>
+                    更新日時
+                </th>
+                <th>
+                    投稿者名<br/>
+                    内容
+                </th>
+                <th>
+                    進捗状況
+                </th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for todo in todos %}
+            <tr x-data="changeStatusXData('{{url('system/todo/%d/change', todo.ID) }}', '{{ todo.Status }}')">
+                <td>{{ todo.ID }}</td>
+                <td>
+                    {{ todo.CreatedAt|date:'2006.01.02 15:04' }}<br/>
+                    {{ todo.UpdatedAt|date:'2006.01.02 15:04' }}
+                </td>
+                <td>
+                    <strong>{{ todo.Admin.Name|default:"--" }}</strong><br/>
+                    <small>{{ nl2br(todo.Text)|safe }}</small>
+                </td>
+                <td>
+                    <select name="status" class="form-control custom-select custom-select-sm" x-model="status" x-on:change="change()" {% if auth.ID != todo.AdminID %}disabled{% endif %}>
+                        <template x-for="st in statuses">
+                            <option :value="st.Key" x-text="st.Name" :selected="st.Key == status"></option>
+                        </template>
+                    </select>
+                </td>
+                <td>
+                    <button data-class="js-dialog" data-type="delete" data-form="#{{ todo.ID|stringformat:'delete-%d' }}" class="{% if auth.ID != todo.AdminID %}disabled{% endif %} btn btn-danger btn-sm" name="submit">
+                        <i class="fas fa-trash">
+                        </i>
+                    </button>
+                    {% if auth.ID == todo.AdminID %}
+                    <form action="{{ url('system/todo/%d/delete', todo.ID) }}" method="post" id="{{ todo.ID|stringformat:'delete-%d' }}">
+                        {% include 'form/csrf.html' %}
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- /.card-body -->

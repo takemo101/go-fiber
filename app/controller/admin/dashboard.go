@@ -2,7 +2,6 @@ package admin_controller
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/query"
 	"github.com/takemo101/go-fiber/pkg"
@@ -34,7 +33,7 @@ func NewDashboardController(
 // Dashboard render home
 func (ctl DashboardController) Dashboard(c *fiber.Ctx) error {
 
-	todos, todoErr := ctl.todoQuery.Search(form.TodoSearch{}, 10)
+	todos, todoErr := ctl.todoQuery.GetUpdateTodos(10)
 	if todoErr != nil {
 		return todoErr
 	}

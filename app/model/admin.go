@@ -39,11 +39,11 @@ func RoleFromString(role string) Role {
 func ToRoleArray() []KeyName {
 	return []KeyName{
 		{
-			Key:  RoleSystem,
+			Key:  string(RoleSystem),
 			Name: RoleSystem.Name(),
 		},
 		{
-			Key:  RoleAdmin,
+			Key:  string(RoleAdmin),
 			Name: RoleAdmin.Name(),
 		},
 	}

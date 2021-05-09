@@ -1,0 +1,58 @@
+{% extends 'layout/default.html' %}
+{% block title %}ToDo｜{% endblock %}
+{% block content_side %}
+    {% include 'include/sidebar.html' with active_key=':todo.your' %}
+{% endblock %}
+{% block content_header %}
+    {% include 'include/header.html' with title='ToDo' function='FUNCTION' %}
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+
+        <form method="post" action="{{ url('system/todo/store') }}" id="store">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">新規追加</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    {% include 'form/csrf.html' %}
+                    {% include 'form/select.html' with name='status' id="status" label='進捗状況' empty='--' list=statuses input=inputs.status error=errors.status required=true %}
+                    {% include 'form/textarea.html' with name='text' id="email" label='内容' rows="6" placeholder="やりたい事など" input=inputs.text error=errors.text required=true %}
+                </div>
+
+                <div class="card-footer text-right">
+                    <button class="btn btn-primary" type="submit" data-class="js-dialog" data-form="#store" data-type="store">
+                        追加
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="col-md-8">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">リスト</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            {% include 'todo/list-body.html' %}
+        </div>
+        <!-- /.card -->
+
+    </div>
+</div>
+{% endblock %}
