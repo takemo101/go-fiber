@@ -1,16 +1,16 @@
 {% extends 'layout/default.html' %}
-{% block title %}管理者｜{% endblock %}
+{% block title %}利用者｜{% endblock %}
 {% block content_side %}
-    {% include 'include/sidebar.html' with active_key=':admin.create' %}
+    {% include 'include/sidebar.html' with active_key=':user.create' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='管理者' function='USER' %}
+    {% include 'include/header.html' with title='利用者' function='USER' %}
 {% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ url('system/admin/store') }}" id="store">
+        <form method="post" action="{{ url('system/user/store') }}" id="store">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">基本設定</h3>
@@ -27,7 +27,6 @@
                     {% include 'form/input.html' with name='email' type='email' id="email" label='メールアドレス' input=inputs.email error=errors.email required=true %}
                     {% include 'form/input.html' with name='password' type='password' id="password" label='パスワード' error=errors.password required=true %}
                     {% include 'form/input.html' with name='password_confirm' type='password' id="password_confirm" label='パスワード（確認）' error=errors.password_confirm required=true %}
-                    {% include 'form/select.html' with name='role' id="role" label='権限' empty='--' list=roles input=inputs.role error=errors.role required=true %}
                 </div>
             </div>
         </form>

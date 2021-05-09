@@ -1,16 +1,16 @@
 {% extends 'layout/default.html' %}
-{% block title %}管理者｜{% endblock %}
+{% block title %}利用者｜{% endblock %}
 {% block content_side %}
-    {% include 'include/sidebar.html' with active_key=':admin.index' %}
+    {% include 'include/sidebar.html' with active_key=':user.index' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='管理者' function='USER' %}
+    {% include 'include/header.html' with title='利用者' function='USER' %}
 {% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-8">
 
-        <form method="post" action="{{ url('system/admin/%d/update', admin.ID) }}" id="update">
+        <form method="post" action="{{ url('system/user/%d/update', user.ID) }}" id="update">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">基本設定</h3>
@@ -23,11 +23,10 @@
 
                 <div class="card-body">
                     {% include 'form/csrf.html' %}
-                    {% include 'form/input.html' with name='name' value=admin.Name type='text' id="name" label='名前' input=inputs.name error=errors.name required=true %}
-                    {% include 'form/input.html' with name='email' value=admin.Email type='email' id="email" label='メールアドレス' input=inputs.email error=errors.email required=true %}
+                    {% include 'form/input.html' with name='name' value=user.Name type='text' id="name" label='名前' input=inputs.name error=errors.name required=true %}
+                    {% include 'form/input.html' with name='email' value=user.Email type='email' id="email" label='メールアドレス' input=inputs.email error=errors.email required=true %}
                     {% include 'form/input.html' with name='password' type='password' id="password" label='パスワード' error=errors.password %}
                     {% include 'form/input.html' with name='password_confirm' type='password' id="password_confirm" label='パスワード（確認）' error=errors.password_confirm %}
-                    {% include 'form/select.html' with name='role' id="role" label='権限' empty='--' value=admin.Role list=roles input=inputs.role error=errors.role required=true %}
                 </div>
             </div>
          </form>
@@ -49,13 +48,13 @@
                 <div class="row border-bottom pb-3">
                     <div class="col-12 col-sm-3 font-weight-bolder">追加日時</div>
                     <div class="col-12 col-sm-9">
-                        {{ admin.CreatedAt|date:'2006.01.02 15:04:05' }}
+                        {{ user.CreatedAt|date:'2006.01.02 15:04:05' }}
                     </div>
                 </div>
                 <div class="row border-bottom py-3">
                     <div class="col-12 col-sm-3 font-weight-bolder">更新日時</div>
                     <div class="col-12 col-sm-9">
-                        {{ admin.UpdatedAt|date:'2006.01.02 15:04:05' }}
+                        {{ user.UpdatedAt|date:'2006.01.02 15:04:05' }}
                     </div>
                 </div>
             </div>
@@ -65,7 +64,7 @@
 </div>
 {% endblock %}
 {% block content_footer_left %}
-<form action="{{ url('system/admin/%d/delete', admin.ID) }}" method="post" id="delete">
+<form action="{{ url('system/user/%d/delete', user.ID) }}" method="post" id="delete">
     {% include 'form/csrf.html' %}
     <button class="btn btn-primary px-5  btn-warning" type="submit" data-class="js-dialog" data-form="#delete" data-type="delete">
         削除

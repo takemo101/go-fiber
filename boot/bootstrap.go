@@ -6,6 +6,7 @@ import (
 	"github.com/takemo101/go-fiber/app/controller"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
+	"github.com/takemo101/go-fiber/app/query"
 	"github.com/takemo101/go-fiber/app/repository"
 	"github.com/takemo101/go-fiber/app/route"
 	"github.com/takemo101/go-fiber/app/service"
@@ -20,6 +21,7 @@ var Module = fx.Options(
 	middleware.Module,
 	helper.Module,
 	repository.Module,
+	query.Module,
 	service.Module,
 	support.Module,
 	route.Module,

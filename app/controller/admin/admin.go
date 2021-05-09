@@ -7,6 +7,7 @@ import (
 	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
+	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/pkg"
 )
@@ -36,7 +37,13 @@ func NewAdminController(
 
 // Index render admin list
 func (ctl AdminController) Index(c *fiber.Ctx) error {
-	admins, err := ctl.service.Search()
+	var form form.AdminSearch
+
+	if err := c.QueryParser(&form); err != nil {
+		return ctl.render.Error(err)
+	}
+
+	admins, err := ctl.service.Search(form, 20)
 	if err != nil {
 		return ctl.render.Error(err)
 	}
@@ -49,6 +56,7 @@ func (ctl AdminController) Index(c *fiber.Ctx) error {
 func (ctl AdminController) Create(c *fiber.Ctx) error {
 	return ctl.render.Render("admin/create", helper.DataMap{
 		"content_footer": true,
+		"roles":          model.ToRoleArray(),
 	})
 }
 
@@ -88,6 +96,7 @@ func (ctl AdminController) Edit(c *fiber.Ctx) error {
 
 	return ctl.render.Render("admin/edit", helper.DataMap{
 		"admin":          admin,
+		"roles":          model.ToRoleArray(),
 		"content_footer": true,
 	})
 }

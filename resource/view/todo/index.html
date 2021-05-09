@@ -7,5 +7,134 @@
     {% include 'include/header.html' with title='ToDo' function='FUNCTION' %}
 {% endblock %}
 {% block content %}
+<div class="row">
+    <div class="col-md-12">
 
+        <form method="post" action="{{ url('system/todo/store') }}" id="store">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">ToDo追加</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    {% include 'form/csrf.html' %}
+                    {% include 'form/select.html' with name='status' id="status" label='進捗状況' empty='--' list=statuses input=inputs.status error=errors.status required=true %}
+                    {% include 'form/textarea.html' with name='text' id="email" label='内容' rows="6" placeholder="やりたい事など" input=inputs.text error=errors.text required=true %}
+                </div>
+
+                <div class="card-footer text-right">
+                    <button class="btn btn-primary" type="submit" data-class="js-dialog" data-form="#store" data-type="store">
+                        追加
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">リスト</h3>
+                <div class="card-tools">
+                    <form action="" method="get">
+
+	                    <div class="input-group input-group-sm" style="width: 200px;">
+                            <input type="text" class="form-control" data-aire-component="input" name="keyword" placeholder="Search" data-aire-for="keyword" id="__aire-0-keyword1">
+
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <script>
+                function changeStatusXData(action, status) {
+                    return {
+                        statuses: AppData.statuses,
+                        status,
+                        change() {
+                            let formData = new FormData();
+                            formData.append('status', this.status);
+                            formData.append('csrf_token', $('meta[name=csrf_token]').attr('content'))
+                            fetch(action, {
+                                method: 'POST',
+                                body: formData,
+                            })
+                            .then((response) => response.json())
+                            .then(data => {
+                                console.log(data.message);
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+                        },
+                    };
+                }
+            </script>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>
+                                追加日時<br/>
+                                更新日時
+                            </th>
+                            <th>
+                                投稿者名<br/>
+                                内容
+                            </th>
+                            <th>
+                                進捗状況
+                            </th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for todo in todos %}
+                        <tr x-data="changeStatusXData('{{url('system/todo/%d/change', todo.ID) }}', '{{ todo.Status }}')">
+                            <td>{{ todo.ID }}</td>
+                            <td>
+                                {{ todo.CreatedAt|date:'2006.01.02 15:04' }}<br/>
+                                {{ todo.UpdatedAt|date:'2006.01.02 15:04' }}
+                            </td>
+                            <td>
+                                <strong>{{ todo.Admin.Name|default:"--" }}</strong><br/>
+                                <small>{{ nl2br(todo.Text)|safe }}</small>
+                            </td>
+                            <td>
+                                <select name="status" class="form-control custom-select custom-select-sm" x-model="status" x-on:change="change()">
+                                    <template x-for="st in statuses">
+                                        <option :value="st.Key" x-text="st.Name" :selected="st.Key == status"></option>
+                                    </template>
+                                </select>
+                            </td>
+                            <td>
+                                <button data-class="js-dialog" data-type="delete" data-form="#{{ todo.ID|stringformat:'delete-%d' }}" class="btn btn-danger btn-sm" name="submit">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                </button>
+                                <form action="{{ url('system/todo/%d/delete', todo.ID) }}" method="post" id="{{ todo.ID|stringformat:'delete-%d' }}">
+                                    {% include 'form/csrf.html' %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+
+    </div>
+</div>
 {% endblock %}

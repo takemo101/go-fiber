@@ -1,12 +1,75 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"strings"
+
+	"gorm.io/gorm"
+)
+
+// TodoStatus for admin
+type TodoStatus string
+
+const (
+	TodoStatusThing    TodoStatus = "thing"
+	TodoStatusWork     TodoStatus = "work"
+	TodoStatusCheck    TodoStatus = "check"
+	TodoStatusComplete TodoStatus = "complete"
+)
+
+func (r TodoStatus) String() string {
+	return string(r)
+}
+
+func (r TodoStatus) Name() string {
+	switch r {
+	case TodoStatusThing:
+		return "やること"
+	case TodoStatusWork:
+		return "作業中"
+	case TodoStatusCheck:
+		return "確認中"
+	}
+	return "完了"
+}
+
+func TodoStatusFromString(status string) TodoStatus {
+	switch strings.ToLower(status) {
+	case string(TodoStatusThing):
+		return TodoStatusThing
+	case string(TodoStatusWork):
+		return TodoStatusWork
+	case string(TodoStatusCheck):
+		return TodoStatusCheck
+	}
+	return TodoStatusComplete
+}
+
+func ToTodoStatusArray() []KeyName {
+	return []KeyName{
+		{
+			Key:  TodoStatusThing,
+			Name: TodoStatusThing.Name(),
+		},
+		{
+			Key:  TodoStatusWork,
+			Name: TodoStatusWork.Name(),
+		},
+		{
+			Key:  TodoStatusCheck,
+			Name: TodoStatusCheck.Name(),
+		},
+		{
+			Key:  TodoStatusComplete,
+			Name: TodoStatusComplete.Name(),
+		},
+	}
+}
 
 // Todo is todo list
 type Todo struct {
 	gorm.Model
-	Text    string `gorm:"type:text;not null"`
-	Status  string `gorm:"type:varchar(191);index;not null"`
-	AdminID uint   `gorm:"index"`
-	Admin   Admin  `gorm:"constraint:OnDelete:CASCADE;"`
+	Text    string     `gorm:"type:text;not null"`
+	Status  TodoStatus `gorm:"type:varchar(191);index;not null;default:up"`
+	AdminID uint       `gorm:"index"`
+	Admin   Admin      `gorm:"constraint:OnDelete:CASCADE;"`
 }

@@ -10,14 +10,17 @@ import (
 
 // AdminRoute is struct
 type AdminRoute struct {
-	logger          pkg.Logger
-	app             pkg.Application
-	csrf            middleware.Csrf
-	auth            middleware.SessionAdminAuth
-	render          *helper.ViewRender
-	adminController admin.AdminController
-	userController  admin.UserController
-	authController  admin.SessionAuthController
+	logger            pkg.Logger
+	app               pkg.Application
+	path              pkg.Path
+	csrf              middleware.Csrf
+	auth              middleware.SessionAdminAuth
+	render            *helper.ViewRender
+	adminController   admin.AdminController
+	userController    admin.UserController
+	todoController    admin.TodoController
+	accountController admin.AccountController
+	authController    admin.SessionAuthController
 }
 
 // Setup is setup route
@@ -26,6 +29,11 @@ func (r AdminRoute) Setup() {
 
 	app := r.app.App
 	render := r.render
+
+	// root redirect
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Redirect(r.path.URL("system"))
+	})
 
 	// admin http route
 	http := app.Group(
@@ -52,9 +60,6 @@ func (r AdminRoute) Setup() {
 		{
 			// dashboard route
 			system.Get("/", func(c *fiber.Ctx) error {
-				render.SetJS(helper.DataMap{
-					"Hello": "Yes",
-				})
 				return render.Render("home", helper.DataMap{
 					"Title": "Dashboard",
 				})
@@ -75,6 +80,28 @@ func (r AdminRoute) Setup() {
 			user := system.Group("/user")
 			{
 				user.Get("/", r.userController.Index)
+				user.Get("/create", r.userController.Create)
+				user.Post("/store", r.userController.Store)
+				user.Get("/:id/edit", r.userController.Edit)
+				user.Post("/:id/update", r.userController.Update)
+				user.Post("/:id/delete", r.userController.Delete)
+			}
+
+			// todo route
+			todo := system.Group("/todo")
+			{
+				todo.Get("/", r.todoController.Index)
+				todo.Post("/store", r.todoController.Store)
+				todo.Post("/:id/update", r.todoController.Update)
+				todo.Post("/:id/change", r.todoController.ChangeStatus) // ajax
+				todo.Post("/:id/delete", r.todoController.Delete)
+			}
+
+			// account route
+			account := system.Group("/account")
+			{
+				account.Get("/edit", r.accountController.Edit)
+				account.Post("/update", r.accountController.Update)
 			}
 
 			// auth logout route
@@ -87,22 +114,28 @@ func (r AdminRoute) Setup() {
 func NewAdminRoute(
 	logger pkg.Logger,
 	app pkg.Application,
+	path pkg.Path,
 	csrf middleware.Csrf,
 	auth middleware.SessionAdminAuth,
 	render *helper.ViewRender,
 	adminController admin.AdminController,
 	userController admin.UserController,
+	todoController admin.TodoController,
+	accountController admin.AccountController,
 	authController admin.SessionAuthController,
 ) AdminRoute {
 	return AdminRoute{
-		logger:          logger,
-		app:             app,
-		csrf:            csrf,
-		auth:            auth,
-		render:          render,
-		adminController: adminController,
-		userController:  userController,
-		authController:  authController,
+		logger:            logger,
+		app:               app,
+		path:              path,
+		csrf:              csrf,
+		auth:              auth,
+		render:            render,
+		adminController:   adminController,
+		userController:    userController,
+		todoController:    todoController,
+		accountController: accountController,
+		authController:    authController,
 	}
 }
 

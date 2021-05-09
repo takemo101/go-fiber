@@ -4,6 +4,7 @@ import (
 	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/model"
+	"github.com/takemo101/go-fiber/app/query"
 	"github.com/takemo101/go-fiber/app/repository"
 	"github.com/takemo101/go-fiber/pkg"
 )
@@ -11,23 +12,26 @@ import (
 // UserService service logic
 type UserService struct {
 	Repository repository.UserRepository
+	Query      query.UserQuery
 	logger     pkg.Logger
 }
 
 // NewUserService new service
 func NewUserService(
 	repository repository.UserRepository,
+	query query.UserQuery,
 	logger pkg.Logger,
 ) UserService {
 	return UserService{
 		Repository: repository,
+		Query:      query,
 		logger:     logger,
 	}
 }
 
 // Search search users
-func (s UserService) Search() (users []model.User, err error) {
-	return s.Repository.GetAll()
+func (s UserService) Search(form form.UserSearch, limit int) ([]model.User, error) {
+	return s.Query.Search(form, limit)
 }
 
 // Store create user

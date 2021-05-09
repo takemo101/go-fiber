@@ -52,6 +52,7 @@ func (v *ViewRender) SetName(name string) {
 
 func (v *ViewRender) Error(err error) error {
 	v.data.err = err
+	v.logger.Error(err)
 	v.SetName("error/error")
 	return nil
 }

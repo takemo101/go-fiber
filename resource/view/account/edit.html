@@ -1,16 +1,16 @@
 {% extends 'layout/default.html' %}
-{% block title %}管理者｜{% endblock %}
+{% block title %}アカウント｜{% endblock %}
 {% block content_side %}
-    {% include 'include/sidebar.html' with active_key=':admin.index' %}
+    {% include 'include/sidebar.html' with active_key=':account' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='管理者' function='USER' %}
+    {% include 'include/header.html' with title='アカウント' %}
 {% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-8">
 
-        <form method="post" action="{{ url('system/admin/%d/update', admin.ID) }}" id="update">
+        <form method="post" action="{{ url('system/account/update') }}" id="update">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">基本設定</h3>
@@ -27,7 +27,6 @@
                     {% include 'form/input.html' with name='email' value=admin.Email type='email' id="email" label='メールアドレス' input=inputs.email error=errors.email required=true %}
                     {% include 'form/input.html' with name='password' type='password' id="password" label='パスワード' error=errors.password %}
                     {% include 'form/input.html' with name='password_confirm' type='password' id="password_confirm" label='パスワード（確認）' error=errors.password_confirm %}
-                    {% include 'form/select.html' with name='role' id="role" label='権限' empty='--' value=admin.Role list=roles input=inputs.role error=errors.role required=true %}
                 </div>
             </div>
          </form>
@@ -63,14 +62,6 @@
     </div>
 
 </div>
-{% endblock %}
-{% block content_footer_left %}
-<form action="{{ url('system/admin/%d/delete', admin.ID) }}" method="post" id="delete">
-    {% include 'form/csrf.html' %}
-    <button class="btn btn-primary px-5  btn-warning" type="submit" data-class="js-dialog" data-form="#delete" data-type="delete">
-        削除
-    </button>
-</form>
 {% endblock %}
 {% block content_footer_right %}
 <button class="btn btn-primary px-5 " type="submit" data-class="js-dialog" data-form="#update" data-type="update">

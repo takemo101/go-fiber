@@ -1,0 +1,23 @@
+<div class="form-group">
+    <label for="{{ id }}" class="{% if required %}required{% endif %}">{{ label }}</label>
+    <select name="{{ name }}" class="form-control {% if error %}is-invalid{% endif %}" id="{{ id }}" {% if required %}required{% endif %}>
+        {% if empty %}
+            <option value="">{{ empty }}</option>
+        {% endif %}
+        {% if list %}
+            {% for li in list %}
+                <option value="{{ li.Key }}" {% if li.Key == value %}selected{% endif %}>{{ li.Name }}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+    {% if hint %}
+    <small class="form-text text-muted">
+        {{ hint }}
+    </small>
+    {% endif %}
+    {% if error %}
+        <div class="invalid-feedback d-block">
+            {{ error }}
+        </div>
+    {% endif %}
+</div>

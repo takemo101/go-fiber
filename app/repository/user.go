@@ -48,3 +48,25 @@ func (r UserRepository) Delete(id uint) error {
 func (r UserRepository) FindByEmail(email string) (user model.User, err error) {
 	return user, r.db.GormDB.Where("email = ?", email).First(&user).Error
 }
+
+// ExistsByEmail is exists by email
+func (r UserRepository) ExistsByEmail(email string) (bool, error) {
+	count := int64(0)
+	err := r.db.GormDB.Model(&model.User{}).
+		Where("email = ?", email).
+		Count(&count).
+		Error
+
+	return (count > 0), err
+}
+
+// ExistsByIDEmail is exists by id and email
+func (r UserRepository) ExistsByIDEmail(id uint, email string) (bool, error) {
+	count := int64(0)
+	err := r.db.GormDB.Model(&model.User{}).
+		Where("id <> ? AND email = ?", id, email).
+		Count(&count).
+		Error
+
+	return (count > 0), err
+}

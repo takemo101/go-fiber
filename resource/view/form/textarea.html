@@ -1,6 +1,6 @@
 <div class="form-group">
     <label for="{{ id }}" class="{% if required %}required{% endif %}">{{ label }}</label>
-    <input type="{{ type }}" name="{{ name }}" value="{% if input %}{{ input }}{% else %}{{ value }}{% endif %}" class="form-control {% if error %}is-invalid{% endif %}" id="{{ id }}" {% if required %}required{% endif %} {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>
+    <textarea type="{{ type }}" name="{{ name }}" class="form-control {% if error %}is-invalid{% endif %}" id="{{ id }}" {% if required %}required{% endif %} {% if placeholder %}placeholder="{{ placeholder }}"{% endif %} {% if rows %}rows="{{ rows }}"{% endif %}>{% if input %}{{ input }}{% else %}{{ value }}{% endif %}</textarea>
     {% if hint %}
     <small class="form-text text-muted">
         {{ hint }}

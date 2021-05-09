@@ -1,10 +1,10 @@
 {% extends 'layout/default.html' %}
-{% block title %}管理者｜{% endblock %}
+{% block title %}利用者｜{% endblock %}
 {% block content_side %}
-    {% include 'include/sidebar.html' with active_key=':admin.index' %}
+    {% include 'include/sidebar.html' with active_key=':user.index' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='管理者' function='USER' %}
+    {% include 'include/header.html' with title='利用者' function='USER' %}
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -37,34 +37,34 @@
                                 更新日時
                             </th>
                             <th>
-                                名前 [権限]<br/>
+                                名前<br/>
                                 メールアドレス
                             </th>
                             <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for admin in admins %}
+                        {% for user in users %}
                         <tr>
-                            <td>{{ admin.ID }}</td>
+                            <td>{{ user.ID }}</td>
                             <td>
-                                {{ admin.CreatedAt|date:'2006.01.02 15:04' }}<br/>
-                                {{ admin.UpdatedAt|date:'2006.01.02 15:04' }}
+                                {{ user.CreatedAt|date:'2006.01.02 15:04' }}<br/>
+                                {{ user.UpdatedAt|date:'2006.01.02 15:04' }}
                             </td>
                             <td>
-                                {{ admin.Name }} <span class="badge badge-primary">{{ admin.Role.Name() }}</span><br/>
-                                {{ admin.Email }}
+                                {{ user.Name }}<br/>
+                                {{ user.Email }}
                             </td>
                             <td>
-                                <a class="btn btn-info btn-sm" href="{{ url('system/admin/%d/edit', admin.ID) }}">
+                                <a class="btn btn-info btn-sm" href="{{ url('system/user/%d/edit', user.ID) }}">
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                 </a>
-                                <button data-class="js-dialog" data-type="delete" data-form="#{{ admin.ID|stringformat:'delete-%d' }}" class="btn btn-danger btn-sm" name="submit">
+                                <button data-class="js-dialog" data-type="delete" data-form="#{{ user.ID|stringformat:'delete-%d' }}" class="btn btn-danger btn-sm" name="submit">
                                     <i class="fas fa-trash">
                                     </i>
                                 </button>
-                                <form action="{{ url('system/admin/%d/delete', admin.ID) }}" method="post" id="{{ admin.ID|stringformat:'delete-%d' }}">
+                                <form action="{{ url('system/user/%d/delete', user.ID) }}" method="post" id="{{ user.ID|stringformat:'delete-%d' }}">
                                     {% include 'form/csrf.html' %}
                                 </form>
                             </td>
