@@ -1,0 +1,11 @@
+{% extends 'layout/default.html' %}
+{% block title %}ToDo｜{% endblock %}
+{% block content_side %}
+    {% include 'include/sidebar.html' with active_key=':todo' %}
+{% endblock %}
+{% block content_header %}
+    {% include 'include/header.html' with title='ToDo' function='FUNCTION' %}
+{% endblock %}
+{% block content %}
+
+{% endblock %}

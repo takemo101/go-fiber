@@ -1,26 +1,13 @@
 package model
 
 import (
-	"github.com/takemo101/go-fiber/app/helper"
 	"gorm.io/gorm"
 )
 
 // User is auth user
 type User struct {
 	gorm.Model
-	Name  string
-	Email string
+	Name  string `gorm:"type:varchar(191);index;not null"`
+	Email string `gorm:"type:varchar(191);uniqueIndex;not null"`
 	Pass  []byte
-}
-
-// BeforeSave is Hook
-func (u *User) BeforeSave(db *gorm.DB) (err error) {
-	if len(u.Pass) > 0 {
-		hash, err := helper.CreatePass(string(u.Pass))
-		if err != nil {
-			return err
-		}
-		u.Pass = hash
-	}
-	return
 }

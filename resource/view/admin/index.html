@@ -1,4 +1,5 @@
 {% extends 'layout/default.html' %}
+{% block title %}管理者｜{% endblock %}
 {% block content_side %}
     {% include 'include/sidebar.html' with active_key=':admin.index' %}
 {% endblock %}
@@ -55,7 +56,7 @@
                                 {{ admin.Email }}
                             </td>
                             <td>
-                                <a class="btn btn-info btn-sm" href="{{ url('admin/admin/%d/edit', admin.ID) }}">
+                                <a class="btn btn-info btn-sm" href="{{ url('system/admin/%d/edit', admin.ID) }}">
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                 </a>
@@ -63,7 +64,7 @@
                                     <i class="fas fa-trash">
                                     </i>
                                 </button>
-                                <form action="{{ url('admin/admin/%d/delete', admin.ID) }}" method="post" id="{{ admin.ID|stringformat:'delete-%d' }}">
+                                <form action="{{ url('system/admin/%d/delete', admin.ID) }}" method="post" id="{{ admin.ID|stringformat:'delete-%d' }}">
                                     {% include 'form/csrf.html' %}
                                 </form>
                             </td>

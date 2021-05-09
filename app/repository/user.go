@@ -44,7 +44,7 @@ func (r UserRepository) Delete(id uint) error {
 	return r.db.GormDB.Where("id = ?", id).Delete(&model.User{}).Error
 }
 
-// FindByName is find by name
-func (r UserRepository) FindByName(name string) (user model.User, err error) {
-	return user, r.db.GormDB.Where("name = ?", name).First(&user).Error
+// FindByEmail is find by email
+func (r UserRepository) FindByEmail(email string) (user model.User, err error) {
+	return user, r.db.GormDB.Where("email = ?", email).First(&user).Error
 }

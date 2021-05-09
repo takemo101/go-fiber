@@ -5,6 +5,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
+	"github.com/takemo101/go-fiber/app/repository"
 )
 
 // Admin create form
@@ -16,7 +17,7 @@ type Admin struct {
 }
 
 // Validate create or edit form validation
-func (form Admin) Validate(create bool) error {
+func (form Admin) Validate(create bool, id uint, repository repository.AdminRepository) error {
 	baseFields := []*validation.FieldRules{
 		validation.Field(
 			&form.Name,
@@ -27,6 +28,19 @@ func (form Admin) Validate(create bool) error {
 			&form.Email,
 			validation.Required.Error("メールアドレスを入力してください"),
 			is.Email.Error("メールアドレスは[xxx@xxx.com]のような形式で入力してください"),
+			validation.By(func(value interface{}) error {
+				email := value.(string)
+				var check bool
+				if create {
+					check, _ = repository.ExistsByEmail(email)
+				} else {
+					check, _ = repository.ExistsByIDEmail(id, email)
+				}
+				if check {
+					return errors.New("メールアドレスが重複しています")
+				}
+				return nil
+			}),
 		),
 	}
 

@@ -31,13 +31,12 @@ func NewCors(
 
 // Setup cors control middleware
 func (m Cors) Setup() {
+	m.logger.Info("setup cors")
 	m.app.App.Use(m.CreateHandler())
 }
 
 // CreateHandler is create middleware handler
 func (m Cors) CreateHandler() fiber.Handler {
-	m.logger.Info("setup cors")
-
 	config := cors.Config{
 		AllowMethods: strings.Join([]string{
 			"GET",

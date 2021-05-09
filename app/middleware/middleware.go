@@ -10,6 +10,7 @@ var Module = fx.Options(
 	fx.Provide(NewSecure),
 	fx.Provide(NewCsrf),
 	fx.Provide(NewCors),
+	fx.Provide(NewSessionAdminAuth),
 	fx.Provide(NewMiddleware),
 )
 

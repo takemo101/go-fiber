@@ -7,6 +7,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+// User create form
 type User struct {
 	Name            string `json:"name" form:"name"`
 	Email           string `json:"email" form:"email"`
@@ -14,7 +15,7 @@ type User struct {
 	PasswordConfirm string `json:"password_confirm" form:"password_confirm"`
 }
 
-// Validate admin form validation
+// Validate create or edit form validation
 func (form User) Validate(create bool) error {
 	baseFields := []*validation.FieldRules{
 		validation.Field(
@@ -55,4 +56,10 @@ func (form User) Validate(create bool) error {
 	}
 
 	return validation.ValidateStruct(&form, fields...)
+}
+
+// UserSearch search form
+type UserSearch struct {
+	Keyword string `json:"keyword" form:"keyword"`
+	Page    string `json:"page" form:"page"`
 }

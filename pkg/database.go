@@ -9,6 +9,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // Database is model
@@ -67,6 +68,10 @@ func NewDatabase(config Config) Database {
 
 	if err != nil {
 		log.Fatalf("database connection failed : %v", err)
+	}
+
+	if !config.App.Debug {
+		db.Logger.LogMode(logger.Silent)
 	}
 
 	return Database{

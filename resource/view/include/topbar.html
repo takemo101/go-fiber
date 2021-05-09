@@ -5,7 +5,18 @@
             <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="/admin" class="nav-link">Home</a>
+            <a href="{{ url('system') }}" class="nav-link">Home</a>
+        </li>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fa fa-fw fa-power-off"></i>
+                Logout
+            </a>
+            <form id="logout-form" action="{{ url('system/logout') }}" method="post" style="display: none;">
+                {% include 'form/csrf.html' %}
+            </form>
         </li>
     </ul>
 </nav>

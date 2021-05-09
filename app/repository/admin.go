@@ -44,7 +44,29 @@ func (r AdminRepository) Delete(id uint) error {
 	return r.db.GormDB.Where("id = ?", id).Delete(&model.Admin{}).Error
 }
 
-// FindByName is find by name
-func (r AdminRepository) FindByName(name string) (admin model.Admin, err error) {
-	return admin, r.db.GormDB.Where("name = ?", name).First(&admin).Error
+// FindByEmail is find by email
+func (r AdminRepository) FindByEmail(email string) (admin model.Admin, err error) {
+	return admin, r.db.GormDB.Where("email = ?", email).First(&admin).Error
+}
+
+// ExistsByEmail is exists by email
+func (r AdminRepository) ExistsByEmail(email string) (bool, error) {
+	count := int64(0)
+	err := r.db.GormDB.Model(&model.Admin{}).
+		Where("email = ?", email).
+		Count(&count).
+		Error
+
+	return (count > 0), err
+}
+
+// ExistsByIDEmail is exists by id and email
+func (r AdminRepository) ExistsByIDEmail(id uint, email string) (bool, error) {
+	count := int64(0)
+	err := r.db.GormDB.Model(&model.Admin{}).
+		Where("id <> ? AND email = ?", id, email).
+		Count(&count).
+		Error
+
+	return (count > 0), err
 }

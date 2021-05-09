@@ -51,5 +51,15 @@
     <aside class="control-sidebar control-sidebar-dark">
         <!-- Control sidebar content goes here -->
     </aside>
+
+    {% if messages.toastr_type %}
+    <script>
+        {% if messages.toastr_type == 'error' %}
+            toastr.error('{{ messages.message }}');
+        {% else %}
+            toastr.success('{{ messages.message }}');
+        {% endif %}
+    </script>
+    {% endif %}
 </div>
 {% endblock %}

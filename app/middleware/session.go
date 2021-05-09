@@ -36,6 +36,7 @@ func (m Session) Setup() {
 
 	gob.Register(SessionErrors{})
 	gob.Register(SessionInputs{})
+	gob.Register(SessionMessages{})
 
 	store := session.New(session.Config{
 		Expiration:     m.config.Session.Expiration,
@@ -121,4 +122,35 @@ func GetSessionValue(session *session.Session, key string) interface{} {
 func SetSessionValue(session *session.Session, key string, value interface{}) {
 	defer session.Save()
 	session.Set(key, value)
+}
+
+// SetErrorResource set session inputs and errors
+func SetErrorResource(c *fiber.Ctx, errors SessionErrors, inputs SessionInputs) {
+	SetSessionErrors(c, errors)
+	SetSessionInputs(c, inputs)
+}
+
+type SessionMessages map[string]interface{}
+
+// GetSessionMessages session flash messages process
+func GetSessionMessages(c *fiber.Ctx) (SessionMessages, error) {
+	session, err := GetSession(c)
+	if err != nil {
+		return nil, err
+	}
+	if messages := GetSessionValue(session, "session-messages"); messages != nil {
+		return messages.(SessionMessages), nil
+	}
+	return nil, errors.New("not found messages")
+}
+
+// SetSessionMessages session flash messages process
+func SetSessionMessages(c *fiber.Ctx, messages SessionMessages) error {
+	session, err := GetSession(c)
+	if err != nil {
+		return err
+	}
+
+	SetSessionValue(session, "session-messages", messages)
+	return nil
 }

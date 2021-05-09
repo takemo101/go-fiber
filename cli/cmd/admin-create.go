@@ -41,9 +41,9 @@ func (c AdminCreateCommand) Setup() {
 		},
 	}
 
-	cmd.Flags().StringVarP(&name, "name", "n", "name", "create admin name")
-	cmd.Flags().StringVarP(&email, "email", "e", "email", "create admin email")
-	cmd.Flags().StringVarP(&pass, "pass", "p", "pass", "create admin pass")
+	cmd.Flags().StringVarP(&name, "name", "n", "admin", "create admin name")
+	cmd.Flags().StringVarP(&email, "email", "e", "admin@example.com", "create admin email")
+	cmd.Flags().StringVarP(&pass, "pass", "p", "admin", "create admin pass")
 
 	c.root.Cmd.AddCommand(cmd)
 }

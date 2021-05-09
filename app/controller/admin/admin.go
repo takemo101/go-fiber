@@ -34,18 +34,18 @@ func NewAdminController(
 	}
 }
 
-// Index admin list
+// Index render admin list
 func (ctl AdminController) Index(c *fiber.Ctx) error {
 	admins, err := ctl.service.Search()
 	if err != nil {
-		return err
+		return ctl.render.Error(err)
 	}
 	return ctl.render.Render("admin/index", helper.DataMap{
 		"admins": admins,
 	})
 }
 
-// Create admin create form
+// Create render admin create form
 func (ctl AdminController) Create(c *fiber.Ctx) error {
 	return ctl.render.Render("admin/create", helper.DataMap{
 		"content_footer": true,
@@ -57,27 +57,28 @@ func (ctl AdminController) Store(c *fiber.Ctx) error {
 	var form form.Admin
 
 	if err := c.BodyParser(&form); err != nil {
-		return err
+		return ctl.render.Error(err)
 	}
 
-	if err := form.Validate(true); err != nil {
-		middleware.SetSessionErrors(c, helper.ErrorsToMap(err))
-		middleware.SetSessionInputs(c, helper.StructToFormMap(&form))
-		return c.Redirect(ctl.path.URL("admin/admin/create"))
+	if err := form.Validate(true, 0, ctl.service.Repository); err != nil {
+		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
+		SetToastr(c, ToastrError, ToastrError.Message())
+		return c.Redirect(ctl.path.URL("system/admin/create"))
 	}
 
 	if _, err := ctl.service.Store(form); err != nil {
-		return err
+		return ctl.render.Error(err)
 	}
 
-	return c.Redirect(ctl.path.URL("admin/admin"))
+	SetToastr(c, ToastrStore, ToastrStore.Message())
+	return c.Redirect(ctl.path.URL("system/admin"))
 }
 
-// Edit admin edit form
+// Edit render admin edit form
 func (ctl AdminController) Edit(c *fiber.Ctx) error {
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
-		return convErr
+		return ctl.render.Error(convErr)
 	}
 
 	admin, findErr := ctl.service.Find(uint(id))
@@ -95,38 +96,40 @@ func (ctl AdminController) Edit(c *fiber.Ctx) error {
 func (ctl AdminController) Update(c *fiber.Ctx) error {
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
-		return convErr
+		return ctl.render.Error(convErr)
 	}
 
 	var form form.Admin
 
 	if err := c.BodyParser(&form); err != nil {
-		return err
+		return ctl.render.Error(err)
 	}
 
-	if err := form.Validate(false); err != nil {
-		middleware.SetSessionErrors(c, helper.ErrorsToMap(err))
-		middleware.SetSessionInputs(c, helper.StructToFormMap(&form))
-		return c.Redirect(ctl.path.URL("admin/admin/%s/edit", c.Params("id")))
+	if err := form.Validate(false, uint(id), ctl.service.Repository); err != nil {
+		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
+		SetToastr(c, ToastrError, ToastrError.Message())
+		return c.Redirect(ctl.path.URL("system/admin/%s/edit", c.Params("id")))
 	}
 
 	if _, err := ctl.service.Update(uint(id), form); err != nil {
-		return err
+		return ctl.render.Error(err)
 	}
 
-	return c.Redirect(ctl.path.URL("admin/admin/%s/edit", c.Params("id")))
+	SetToastr(c, ToastrUpdate, ToastrUpdate.Message())
+	return c.Redirect(ctl.path.URL("system/admin/%s/edit", c.Params("id")))
 }
 
 // Delete admin delete process
 func (ctl AdminController) Delete(c *fiber.Ctx) error {
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
-		return convErr
+		return ctl.render.Error(convErr)
 	}
 
 	if err := ctl.service.Delete(uint(id)); err != nil {
-		return err
+		return ctl.render.Error(err)
 	}
 
-	return c.Redirect(ctl.path.URL("admin/admin"))
+	SetToastr(c, ToastrDelete, ToastrDelete.Message())
+	return c.Redirect(ctl.path.URL("system/admin"))
 }

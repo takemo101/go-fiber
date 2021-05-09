@@ -7,38 +7,28 @@ import (
 	"github.com/takemo101/go-fiber/app/repository"
 )
 
-// SessionAuth interface
-type SessionAuth interface {
-	Attempt(string, string, *session.Session) bool
-	AttemptSession(*session.Session) bool
-	Save(uint, *session.Session)
-	Logout(*session.Session)
-	ID() uint
-	Check() bool
-}
-
 // SessionAdminAuth is user authentication
 type SessionAdminAuth struct {
 	admin      *model.Admin
 	repository repository.AdminRepository
 }
 
-// NewSessionAuth is create auth support
+// NewSessionAdminAuth is create auth support
 func NewSessionAdminAuth(
 	repository repository.AdminRepository,
-) SessionAuth {
+) *SessionAdminAuth {
 	return &SessionAdminAuth{
 		repository: repository,
 	}
 }
 
 // Attempt is user login
-func (a *SessionAdminAuth) Attempt(name string, pass string, session *session.Session) bool {
+func (a *SessionAdminAuth) Attempt(email string, pass string, session *session.Session) bool {
 	if ok := a.AttemptSession(session); ok {
 		return ok
 	}
 
-	admin, err := a.repository.FindByName(name)
+	admin, err := a.repository.FindByEmail(email)
 	if err != nil {
 		return false
 	}
@@ -49,16 +39,16 @@ func (a *SessionAdminAuth) Attempt(name string, pass string, session *session.Se
 
 	a.admin = &admin
 	a.Save(admin.ID, session)
-
 	return true
 }
 
-// AttemptSession is session auth
+// AttemptSession session auth
 func (a *SessionAdminAuth) AttemptSession(session *session.Session) bool {
 	id, ok := session.Get("admin_id").(uint)
 	if ok {
 		admin, err := a.repository.GetOne(id)
 		if err == nil {
+			a.admin = &admin
 			a.Save(admin.ID, session)
 			return true
 		}
@@ -66,30 +56,30 @@ func (a *SessionAdminAuth) AttemptSession(session *session.Session) bool {
 	return false
 }
 
-// Save is save id to session
+// Save save id to session
 func (a *SessionAdminAuth) Save(id uint, session *session.Session) {
 	session.Set("admin_id", id)
 	session.Save()
 }
 
-// Logout is user logout
+// Logout admin logout
 func (a *SessionAdminAuth) Logout(session *session.Session) {
 	a.admin = nil
-	session.Delete("admin_id")
+	session.Set("admin_id", nil)
 	session.Save()
 }
 
-// User is user model
-func (a *SessionAdminAuth) User() *model.Admin {
+// Admin admin model
+func (a *SessionAdminAuth) Admin() *model.Admin {
 	return a.admin
 }
 
-// ID is user id
+// ID admin id
 func (a *SessionAdminAuth) ID() uint {
 	return a.admin.ID
 }
 
-// Check is check auth
+// Check check auth
 func (a *SessionAdminAuth) Check() bool {
 	return a.admin != nil
 }

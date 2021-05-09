@@ -8,4 +8,6 @@ import (
 // Module exported for initializing application
 var Module = fx.Options(
 	fx.Provide(admin.NewAdminController),
+	fx.Provide(admin.NewUserController),
+	fx.Provide(admin.NewSessionAuthController),
 )

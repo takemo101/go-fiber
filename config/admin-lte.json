@@ -11,12 +11,12 @@
             "menus": [{
                     "key": ":admin.index",
                     "name": "検索",
-                    "path": "admin/admin"
+                    "path": "system/admin"
                 },
                 {
                     "key": ":admin.create",
                     "name": "追加",
-                    "path": "admin/admin/create"
+                    "path": "system/admin/create"
                 }
             ]
         },
@@ -25,27 +25,10 @@
             "name": "FUNCTION"
         },
         {
-            "key": ":contact.index",
-            "name": "問い合わせ",
+            "key": ":todo",
+            "name": "ToDo",
             "icon": "fas fa-copy",
-            "path": "#",
-            "menus": [{
-                    "key": ":contact.index.edit",
-                    "name": "Edit",
-                    "path": "admin/system/edit"
-                },
-                {
-                    "key": ":contact.index.delete",
-                    "name": "Delete",
-                    "path": "admin/system/edit"
-                }
-            ]
-        },
-        {
-            "key": ":system.edit",
-            "name": "System",
-            "icon": "fas fa-copy",
-            "path": "admin/system/edit"
+            "path": "system/todo"
         }
     ],
     "plugins": {

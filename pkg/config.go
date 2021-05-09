@@ -11,6 +11,12 @@ import (
 	"github.com/jinzhu/configor"
 )
 
+const (
+	Production  = "production"
+	Development = "development"
+	Local       = "local"
+)
+
 // App config
 type App struct {
 	Name    string
@@ -107,7 +113,7 @@ type Config struct {
 	Cache
 	Session
 	Cors
-	MapData map[string]interface{}
+	ConfigMapData map[string]interface{}
 }
 
 func (app App) SecretKey() []byte {
@@ -128,12 +134,18 @@ func NewConfig() Config {
 	if Conf.App.Debug {
 		fmt.Println(Conf)
 	}
-	Conf.MapData = make(map[string]interface{})
+
+	if Conf.App.Env == "" {
+		Conf.App.Env = Local
+	}
+
+	Conf.ConfigMapData = make(map[string]interface{})
 	return Conf
 }
 
+// Load config json data
 func (c *Config) Load(key string) (map[string]interface{}, error) {
-	if mapValue, ok := c.MapData[key]; ok {
+	if mapValue, ok := c.ConfigMapData[key]; ok {
 		return mapValue.(map[string]interface{}), nil
 	}
 
@@ -147,7 +159,7 @@ func (c *Config) Load(key string) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.MapData[key] = v
+	c.ConfigMapData[key] = v
 
 	return v.(map[string]interface{}), nil
 }

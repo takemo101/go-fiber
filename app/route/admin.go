@@ -13,8 +13,11 @@ type AdminRoute struct {
 	logger          pkg.Logger
 	app             pkg.Application
 	csrf            middleware.Csrf
+	auth            middleware.SessionAdminAuth
 	render          *helper.ViewRender
 	adminController admin.AdminController
+	userController  admin.UserController
+	authController  admin.SessionAuthController
 }
 
 // Setup is setup route
@@ -24,28 +27,58 @@ func (r AdminRoute) Setup() {
 	app := r.app.App
 	render := r.render
 
-	admin := app.Group(
-		"/admin",
+	// admin http route
+	http := app.Group(
+		"/system",
 		r.csrf.CreateHandler("form:csrf_token"),
 		r.render.CreateHandler(r.ViewRenderCreateHandler),
 	)
 	{
-		admin.Get("/", func(c *fiber.Ctx) error {
-			render.SetJS(helper.DataMap{
-				"Hello": "Yes",
-			})
-			return render.Render("home", helper.DataMap{
-				"Title": "Dashboard",
-			})
-		})
-		user := admin.Group("/admin")
+		// auth login route
+		auth := http.Group(
+			"/auth",
+			r.auth.CreateHandler(false, "system"),
+		)
 		{
-			user.Get("/", r.adminController.Index)
-			user.Get("/create", r.adminController.Create)
-			user.Post("/store", r.adminController.Store)
-			user.Get("/:id/edit", r.adminController.Edit)
-			user.Post("/:id/update", r.adminController.Update)
-			user.Post("/:id/delete", r.adminController.Delete)
+			auth.Get("/login", r.authController.LoginForm)
+			auth.Post("/login", r.authController.Login)
+		}
+
+		// after login route
+		system := http.Group(
+			"/",
+			r.auth.CreateHandler(true, "system/auth/login"),
+		)
+		{
+			// dashboard route
+			system.Get("/", func(c *fiber.Ctx) error {
+				render.SetJS(helper.DataMap{
+					"Hello": "Yes",
+				})
+				return render.Render("home", helper.DataMap{
+					"Title": "Dashboard",
+				})
+			})
+
+			// admin route
+			admin := system.Group("/admin")
+			{
+				admin.Get("/", r.adminController.Index)
+				admin.Get("/create", r.adminController.Create)
+				admin.Post("/store", r.adminController.Store)
+				admin.Get("/:id/edit", r.adminController.Edit)
+				admin.Post("/:id/update", r.adminController.Update)
+				admin.Post("/:id/delete", r.adminController.Delete)
+			}
+
+			// user route
+			user := system.Group("/user")
+			{
+				user.Get("/", r.userController.Index)
+			}
+
+			// auth logout route
+			system.Post("/logout", r.authController.Logout)
 		}
 	}
 }
@@ -55,15 +88,21 @@ func NewAdminRoute(
 	logger pkg.Logger,
 	app pkg.Application,
 	csrf middleware.Csrf,
+	auth middleware.SessionAdminAuth,
 	render *helper.ViewRender,
 	adminController admin.AdminController,
+	userController admin.UserController,
+	authController admin.SessionAuthController,
 ) AdminRoute {
 	return AdminRoute{
 		logger:          logger,
 		app:             app,
 		csrf:            csrf,
+		auth:            auth,
 		render:          render,
 		adminController: adminController,
+		userController:  userController,
+		authController:  authController,
 	}
 }
 
@@ -94,19 +133,21 @@ func (r AdminRoute) ViewRenderCreateHandler(c *fiber.Ctx, vr *helper.ViewRender)
 
 	// csrf-token
 	csrfToken := middleware.GetCSRFToken(c)
-	vr.SetData(helper.DataMap{
-		"csrf_token": csrfToken,
-	})
-
 	// session errors
 	errors, _ := middleware.GetSessionErrors(c)
-	vr.SetData(helper.DataMap{
-		"errors": errors,
-	})
-
 	// session inputs
 	inputs, _ := middleware.GetSessionInputs(c)
+	// session messages
+	messages, _ := middleware.GetSessionMessages(c)
+
+	// admin user
+	auth := r.auth.Auth.Admin()
+
 	vr.SetData(helper.DataMap{
-		"inputs": inputs,
+		"csrf_token": csrfToken,
+		"errors":     errors,
+		"inputs":     inputs,
+		"messages":   messages,
+		"auth":       auth,
 	})
 }
