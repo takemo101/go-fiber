@@ -2,7 +2,7 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/takemo101/go-fiber/app/controller/admin"
+	admin_controller "github.com/takemo101/go-fiber/app/controller/admin"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/pkg"
@@ -10,17 +10,18 @@ import (
 
 // AdminRoute is struct
 type AdminRoute struct {
-	logger            pkg.Logger
-	app               pkg.Application
-	path              pkg.Path
-	csrf              middleware.Csrf
-	auth              middleware.SessionAdminAuth
-	render            *helper.ViewRender
-	adminController   admin.AdminController
-	userController    admin.UserController
-	todoController    admin.TodoController
-	accountController admin.AccountController
-	authController    admin.SessionAuthController
+	logger              pkg.Logger
+	app                 pkg.Application
+	path                pkg.Path
+	csrf                middleware.Csrf
+	auth                middleware.SessionAdminAuth
+	render              *helper.ViewRender
+	dashboardController admin_controller.DashboardController
+	adminController     admin_controller.AdminController
+	userController      admin_controller.UserController
+	todoController      admin_controller.TodoController
+	accountController   admin_controller.AccountController
+	authController      admin_controller.SessionAuthController
 }
 
 // Setup is setup route
@@ -28,7 +29,6 @@ func (r AdminRoute) Setup() {
 	r.logger.Info("setup admin-route")
 
 	app := r.app.App
-	render := r.render
 
 	// root redirect
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -59,11 +59,7 @@ func (r AdminRoute) Setup() {
 		)
 		{
 			// dashboard route
-			system.Get("/", func(c *fiber.Ctx) error {
-				return render.Render("home", helper.DataMap{
-					"Title": "Dashboard",
-				})
-			})
+			system.Get("/", r.dashboardController.Dashboard)
 
 			// admin route
 			admin := system.Group("/admin")
@@ -118,24 +114,26 @@ func NewAdminRoute(
 	csrf middleware.Csrf,
 	auth middleware.SessionAdminAuth,
 	render *helper.ViewRender,
-	adminController admin.AdminController,
-	userController admin.UserController,
-	todoController admin.TodoController,
-	accountController admin.AccountController,
-	authController admin.SessionAuthController,
+	dashboardController admin_controller.DashboardController,
+	adminController admin_controller.AdminController,
+	userController admin_controller.UserController,
+	todoController admin_controller.TodoController,
+	accountController admin_controller.AccountController,
+	authController admin_controller.SessionAuthController,
 ) AdminRoute {
 	return AdminRoute{
-		logger:            logger,
-		app:               app,
-		path:              path,
-		csrf:              csrf,
-		auth:              auth,
-		render:            render,
-		adminController:   adminController,
-		userController:    userController,
-		todoController:    todoController,
-		accountController: accountController,
-		authController:    authController,
+		logger:              logger,
+		app:                 app,
+		path:                path,
+		csrf:                csrf,
+		auth:                auth,
+		render:              render,
+		dashboardController: dashboardController,
+		adminController:     adminController,
+		userController:      userController,
+		todoController:      todoController,
+		accountController:   accountController,
+		authController:      authController,
 	}
 }
 

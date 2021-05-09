@@ -17,15 +17,15 @@ type Admin struct {
 	Role            string `json:"role" form:"role"`
 }
 
-func (form Admin) createFieldsRules(adminForm *Admin, create bool, id uint, repository repository.AdminRepository) []*validation.FieldRules {
+func (form *Admin) createFieldsRules(create bool, id uint, repository repository.AdminRepository) []*validation.FieldRules {
 	baseFields := []*validation.FieldRules{
 		validation.Field(
-			&adminForm.Name,
+			&form.Name,
 			validation.Required.Error("名前を入力してください"),
 			validation.Length(0, 80).Error("名前は80字以内で入力してください"),
 		),
 		validation.Field(
-			&adminForm.Email,
+			&form.Email,
 			validation.Required.Error("メールアドレスを入力してください"),
 			is.Email.Error("メールアドレスは[xxx@xxx.com]のような形式で入力してください"),
 			validation.By(func(value interface{}) error {
@@ -46,22 +46,22 @@ func (form Admin) createFieldsRules(adminForm *Admin, create bool, id uint, repo
 
 	var fields []*validation.FieldRules
 
-	if create || adminForm.Password != "" {
+	if create || form.Password != "" {
 		fields = append(
 			baseFields,
 			validation.Field(
-				&adminForm.Password,
+				&form.Password,
 				validation.Required.Error("パスワードを入力してください"),
 				validation.Length(5, 50).Error("パスワードは5から50文字以内で入力してください"),
 				validation.By(func(value interface{}) error {
-					if adminForm.PasswordConfirm != value.(string) {
+					if form.PasswordConfirm != value.(string) {
 						return errors.New("パスワードが一致しません")
 					}
 					return nil
 				}),
 			),
 			validation.Field(
-				&adminForm.PasswordConfirm,
+				&form.PasswordConfirm,
 				validation.Required.Error("パスワード（確認）を入力してください"),
 			),
 		)
@@ -74,7 +74,7 @@ func (form Admin) createFieldsRules(adminForm *Admin, create bool, id uint, repo
 
 // Validate create or edit form validation
 func (form Admin) Validate(create bool, id uint, repository repository.AdminRepository) error {
-	fields := form.createFieldsRules(&form, create, id, repository)
+	fields := form.createFieldsRules(create, id, repository)
 
 	fields = append(
 		fields,
@@ -89,7 +89,7 @@ func (form Admin) Validate(create bool, id uint, repository repository.AdminRepo
 
 // Validate edit account validation
 func (form Admin) AccountValidate(id uint, repository repository.AdminRepository) error {
-	fields := form.createFieldsRules(&form, false, id, repository)
+	fields := form.createFieldsRules(false, id, repository)
 	return validation.ValidateStruct(&form, fields...)
 }
 

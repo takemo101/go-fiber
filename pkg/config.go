@@ -2,10 +2,10 @@ package pkg
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"path"
+	"runtime"
 	"time"
 
 	"github.com/jinzhu/configor"
@@ -113,6 +113,7 @@ type Config struct {
 	Cache
 	Session
 	Cors
+	GoVersion     string
 	ConfigMapData map[string]interface{}
 }
 
@@ -131,9 +132,7 @@ func NewConfig() Config {
 		log.Fatalf("fail to load config.yml : %v", err)
 	}
 
-	if Conf.App.Debug {
-		fmt.Println(Conf)
-	}
+	Conf.GoVersion = runtime.Version()
 
 	if Conf.App.Env == "" {
 		Conf.App.Env = Local

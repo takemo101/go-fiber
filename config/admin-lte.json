@@ -6,7 +6,7 @@
         {
             "key": ":admin",
             "name": "管理者",
-            "icon": "fas fa-copy",
+            "icon": "fas fa-users",
             "path": "#",
             "menus": [{
                     "key": ":admin.index",
@@ -23,7 +23,7 @@
         {
             "key": ":user",
             "name": "利用者",
-            "icon": "fas fa-copy",
+            "icon": "fas fa-users",
             "path": "#",
             "menus": [{
                     "key": ":user.index",

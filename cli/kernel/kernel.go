@@ -1,8 +1,7 @@
 package kernel
 
 import (
-	"github.com/takemo101/go-fiber/app/repository"
-	"github.com/takemo101/go-fiber/app/support"
+	"github.com/takemo101/go-fiber/app"
 	"github.com/takemo101/go-fiber/cli/cmd"
 	"github.com/takemo101/go-fiber/pkg"
 	"go.uber.org/fx"
@@ -12,8 +11,7 @@ import (
 var Module = fx.Options(
 	pkg.Module,
 	cmd.Module,
-	repository.Module,
-	support.Module,
+	app.Module,
 	fx.Invoke(boot),
 )
 
