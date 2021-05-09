@@ -65,7 +65,7 @@
                     </select>
                 </td>
                 <td>
-                    <button data-class="js-dialog" data-type="delete" data-form="#{{ todo.ID|stringformat:'delete-%d' }}" class="{% if auth.ID != todo.AdminID %}disabled{% endif %} btn btn-danger btn-sm" name="submit">
+                    <button data-class="js-dialog" {% if auth.ID == todo.AdminID %}data-type="delete" data-form="#{{ todo.ID|stringformat:'delete-%d' }}"{% endif %} class="{% if auth.ID != todo.AdminID %}disabled{% endif %} btn btn-danger btn-sm" name="submit">
                         <i class="fas fa-trash">
                         </i>
                     </button>

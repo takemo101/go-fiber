@@ -11,7 +11,7 @@ import (
 type DashboardController struct {
 	logger    pkg.Logger
 	config    pkg.Config
-	render    *helper.ViewRender
+	response  *helper.ResponseHelper
 	todoQuery query.TodoQuery
 }
 
@@ -19,13 +19,13 @@ type DashboardController struct {
 func NewDashboardController(
 	logger pkg.Logger,
 	config pkg.Config,
-	render *helper.ViewRender,
+	response *helper.ResponseHelper,
 	todoQuery query.TodoQuery,
 ) DashboardController {
 	return DashboardController{
 		logger:    logger,
 		config:    config,
-		render:    render,
+		response:  response,
 		todoQuery: todoQuery,
 	}
 }
@@ -35,10 +35,10 @@ func (ctl DashboardController) Dashboard(c *fiber.Ctx) error {
 
 	todos, todoErr := ctl.todoQuery.GetUpdateTodos(10)
 	if todoErr != nil {
-		return todoErr
+		return ctl.response.Error(todoErr)
 	}
 
-	return ctl.render.Render("home", helper.DataMap{
+	return ctl.response.View("home", helper.DataMap{
 		"todos":  todos,
 		"config": ctl.config,
 	})

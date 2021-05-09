@@ -3,6 +3,9 @@
 {% block content_side %}
     {% include 'include/sidebar.html' %}
 {% endblock %}
+{% block content_header %}
+    {% include 'include/header.html' with title='ダッシュボード' %}
+{% endblock %}
 {% block content %}
 <div class="card-columns card-columns--many" id="panel">
     <div class="card">
