@@ -1,7 +1,7 @@
 package controller
 
 import (
-	admin_controller "github.com/takemo101/go-fiber/app/controller/admin"
+	"github.com/takemo101/go-fiber/app/controller/admin_controller"
 	"go.uber.org/fx"
 )
 

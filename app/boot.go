@@ -21,27 +21,27 @@ var Module = fx.Options(
 	support.Module,
 	route.Module,
 	controller.Module,
-	fx.Provide(NewMainModule),
+	fx.Provide(NewAppModule),
 )
 
-// MainAppModule is module root struct
-type MainModule struct {
+// AppModule is module root struct
+type AppModule struct {
 	routes      route.Routes
 	middlewares middleware.Middlewares
 }
 
-func NewMainModule(
+func NewAppModule(
 	routes route.Routes,
 	middlewares middleware.Middlewares,
-) MainModule {
-	return MainModule{
+) AppModule {
+	return AppModule{
 		routes:      routes,
 		middlewares: middlewares,
 	}
 }
 
 // Boot all setup
-func (main MainModule) Boot() {
-	main.middlewares.Setup()
-	main.routes.Setup()
+func (module AppModule) Boot() {
+	module.middlewares.Setup()
+	module.routes.Setup()
 }

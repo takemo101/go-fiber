@@ -2,7 +2,7 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
-	admin_controller "github.com/takemo101/go-fiber/app/controller/admin"
+	"github.com/takemo101/go-fiber/app/controller/admin_controller"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/pkg"

@@ -1,27 +1,23 @@
 package kernel
 
 import (
-	"github.com/takemo101/go-fiber/app"
 	"github.com/takemo101/go-fiber/cli/cmd"
 	"github.com/takemo101/go-fiber/pkg"
 	"go.uber.org/fx"
 )
 
-// Module exported for initializing application
-var Module = fx.Options(
-	pkg.Module,
-	cmd.Module,
-	app.Module,
-	fx.Invoke(boot),
-)
+// Booter cli boot interface
+type Booter interface {
+	Boot()
+}
 
 // boot is initialize cli
 func boot(
 	lifecycle fx.Lifecycle,
 	logger pkg.Logger,
 	database pkg.Database,
-	commands cmd.Commands,
 	root cmd.RootCommand,
+	commands cmd.Commands,
 ) {
 	sql, err := database.DB()
 	if err != nil {
@@ -38,4 +34,14 @@ func boot(
 	root.Cmd.Execute()
 
 	logger.Info("-- stop cli --")
+}
+
+// app run
+func Run(opts ...fx.Option) {
+	newOpts := append(
+		opts,
+		pkg.Module,
+		fx.Invoke(boot),
+	)
+	fx.New(newOpts...).Done()
 }

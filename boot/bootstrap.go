@@ -3,19 +3,14 @@ package boot
 import (
 	"context"
 
-	"github.com/takemo101/go-fiber/app"
-	"github.com/takemo101/go-fiber/module"
 	"github.com/takemo101/go-fiber/pkg"
 	"go.uber.org/fx"
 )
 
-// Module exported for initializing application
-var Module = fx.Options(
-	pkg.Module,
-	app.Module,
-	module.Module,
-	fx.Invoke(boot),
-)
+// Booter app boot interface
+type Booter interface {
+	Boot()
+}
 
 // boot is initialize application
 func boot(
@@ -23,8 +18,7 @@ func boot(
 	app pkg.Application,
 	logger pkg.Logger,
 	database pkg.Database,
-	main app.MainModule,
-	modules module.ModuleParts,
+	booter Booter,
 ) {
 	sql, err := database.DB()
 	if err != nil {
@@ -37,8 +31,7 @@ func boot(
 
 			sql.SetMaxOpenConns(10)
 			go func() {
-				main.Boot()
-				modules.Boot()
+				booter.Boot()
 				app.Run()
 			}()
 			return nil
@@ -49,4 +42,14 @@ func boot(
 			return nil
 		},
 	})
+}
+
+// app run
+func Run(opts ...fx.Option) {
+	newOpts := append(
+		opts,
+		pkg.Module,
+		fx.Invoke(boot),
+	)
+	fx.New(newOpts...).Run()
 }
