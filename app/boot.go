@@ -40,8 +40,8 @@ func NewAppModule(
 	}
 }
 
-// Boot all setup
-func (module AppModule) Boot() {
+// AppBoot all setup
+func (module AppModule) AppBoot() {
 	module.middlewares.Setup()
 	module.routes.Setup()
 }

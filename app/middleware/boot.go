@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/takemo101/go-fiber/pkg/contract"
 	"go.uber.org/fx"
 )
 
@@ -14,13 +15,8 @@ var Module = fx.Options(
 	fx.Provide(NewMiddleware),
 )
 
-// Middleware is interface
-type Middleware interface {
-	Setup()
-}
-
 // Middlewares is slice
-type Middlewares []Middleware
+type Middlewares []contract.Middleware
 
 // NewMiddleware is setup new middlewares
 func NewMiddleware(

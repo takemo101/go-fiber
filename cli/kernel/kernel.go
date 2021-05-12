@@ -6,9 +6,9 @@ import (
 	"go.uber.org/fx"
 )
 
-// Booter cli boot interface
-type Booter interface {
-	Boot()
+// CLIBooter cli boot interface
+type CLIBooter interface {
+	CLIBoot()
 }
 
 // boot is initialize cli
@@ -17,7 +17,7 @@ func boot(
 	logger pkg.Logger,
 	database pkg.Database,
 	root cmd.RootCommand,
-	commands cmd.Commands,
+	booter CLIBooter,
 ) {
 	sql, err := database.DB()
 	if err != nil {
@@ -30,7 +30,7 @@ func boot(
 
 	sql.SetMaxOpenConns(10)
 
-	commands.Setup()
+	booter.CLIBoot()
 	root.Cmd.Execute()
 
 	logger.Info("-- stop cli --")

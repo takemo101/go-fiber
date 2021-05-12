@@ -7,9 +7,9 @@ import (
 	"go.uber.org/fx"
 )
 
-// Booter app boot interface
-type Booter interface {
-	Boot()
+// AppBooter app boot interface
+type AppBooter interface {
+	AppBoot()
 }
 
 // boot is initialize application
@@ -18,7 +18,7 @@ func boot(
 	app pkg.Application,
 	logger pkg.Logger,
 	database pkg.Database,
-	booter Booter,
+	booter AppBooter,
 ) {
 	sql, err := database.DB()
 	if err != nil {
@@ -31,7 +31,7 @@ func boot(
 
 			sql.SetMaxOpenConns(10)
 			go func() {
-				booter.Boot()
+				booter.AppBoot()
 				app.Run()
 			}()
 			return nil

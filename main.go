@@ -6,10 +6,10 @@ import (
 	"go.uber.org/fx"
 )
 
-// NewBooter app create
-func NewBooter(
+// NewAppBooter app create
+func NewAppBooter(
 	app app.AppModule,
-) boot.Booter {
+) boot.AppBooter {
 	return app
 }
 
@@ -17,6 +17,6 @@ func main() {
 	// boot gin application
 	boot.Run(
 		app.Module,
-		fx.Provide(NewBooter),
+		fx.Provide(NewAppBooter),
 	)
 }

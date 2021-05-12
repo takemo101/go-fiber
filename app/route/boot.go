@@ -2,6 +2,7 @@ package route
 
 import (
 	"github.com/takemo101/go-fiber/pkg"
+	"github.com/takemo101/go-fiber/pkg/contract"
 	"go.uber.org/fx"
 )
 
@@ -13,12 +14,7 @@ var Module = fx.Options(
 )
 
 // Routes is slice
-type Routes []Route
-
-// Route is interface
-type Route interface {
-	Setup()
-}
+type Routes []contract.Route
 
 // NewRoute is setup routes
 func NewRoute(

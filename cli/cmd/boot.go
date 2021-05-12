@@ -1,6 +1,9 @@
 package cmd
 
-import "go.uber.org/fx"
+import (
+	"github.com/takemo101/go-fiber/pkg/contract"
+	"go.uber.org/fx"
+)
 
 // Module export
 var Module = fx.Options(
@@ -11,12 +14,7 @@ var Module = fx.Options(
 )
 
 // Commands is slice
-type Commands []Command
-
-// Command is interface
-type Command interface {
-	Setup()
-}
+type Commands []contract.Command
 
 // NewCommand is setup routes
 func NewCommand(
@@ -34,4 +32,9 @@ func (commands Commands) Setup() {
 	for _, cmd := range commands {
 		cmd.Setup()
 	}
+}
+
+// CLIBoot all command setup
+func (commands Commands) CLIBoot() {
+	commands.Setup()
 }
