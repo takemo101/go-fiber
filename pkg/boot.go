@@ -9,5 +9,6 @@ var Module = fx.Options(
 	fx.Provide(NewDatabase),
 	fx.Provide(NewTemplateEngine),
 	fx.Provide(NewPath),
+	fx.Provide(NewMailFactory),
 	fx.Provide(NewApplication),
 )

@@ -66,6 +66,20 @@ type Log struct {
 	Server string
 }
 
+// SMTP config
+type SMTP struct {
+	Host       string
+	Port       int
+	Identity   string
+	User       string
+	Pass       string
+	Encryption string
+	From       struct {
+		Address string
+		Name    string
+	}
+}
+
 // Static config
 type Static struct {
 	Prefix string
@@ -102,12 +116,26 @@ type Cors struct {
 	MaxAge  time.Duration
 }
 
+// JWT is config
+type JWT struct {
+	Signing struct {
+		Key    []byte
+		Method string
+	}
+	Context struct {
+		Key string
+	}
+	Lookup string
+	Scheme string
+}
+
 // Config full config
 type Config struct {
 	App
 	DB
 	Server
 	Log
+	SMTP
 	Static
 	Template
 	Cache

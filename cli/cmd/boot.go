@@ -9,6 +9,7 @@ import (
 var Module = fx.Options(
 	fx.Provide(NewMigrateCommand),
 	fx.Provide(NewAdminCreateCommand),
+	fx.Provide(NewMailCommand),
 	fx.Provide(NewCommandRoot),
 	fx.Provide(NewCommand),
 )
@@ -20,10 +21,12 @@ type Commands []contract.Command
 func NewCommand(
 	migrateCommand MigrateCommand,
 	adminCreateCommand AdminCreateCommand,
+	mailCommand MailCommand,
 ) Commands {
 	return Commands{
 		migrateCommand,
 		adminCreateCommand,
+		mailCommand,
 	}
 }
 
