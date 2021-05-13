@@ -20,7 +20,7 @@ type MailCreator interface {
 	Attach(string, io.Reader)
 	Text(string)
 	HTML(string)
-	TemplateFromString(text string, data BindData)
+	Parse(string, BindData) (string, error)
 	TemplateText(string, BindData)
 	TemplateHTML(string, BindData)
 	Send() error
@@ -100,13 +100,8 @@ func (creator *YakMailCreator) HTML(html string) {
 	creator.mail.HTML().Set(html)
 }
 
-func (creator *YakMailCreator) TemplateFromString(text string, data BindData) {
-	parse, err := creator.template.ParseFromString(text, data)
-	if err != nil {
-		creator.logger.Error(err)
-	} else {
-		creator.Text(parse)
-	}
+func (creator *YakMailCreator) Parse(text string, data BindData) (string, error) {
+	return creator.template.ParseFromString(text, data)
 }
 
 func (creator *YakMailCreator) TemplateText(path string, data BindData) {
