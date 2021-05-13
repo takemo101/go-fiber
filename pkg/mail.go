@@ -9,8 +9,6 @@ import (
 	"github.com/domodwyer/mailyak/v3"
 )
 
-type MailData map[string]interface{}
-
 // MailCreator interface
 type MailCreator interface {
 	From(string)
@@ -22,8 +20,9 @@ type MailCreator interface {
 	Attach(string, io.Reader)
 	Text(string)
 	HTML(string)
-	TemplateText(string, MailData)
-	TemplateHTML(string, MailData)
+	TemplateFromString(text string, data BindData)
+	TemplateText(string, BindData)
+	TemplateHTML(string, BindData)
 	Send() error
 }
 
@@ -36,19 +35,32 @@ type MailFactory interface {
 type YakMailCreator struct {
 	mail     *mailyak.MailYak
 	template TemplateEngine
+	logger   Logger
 }
 
 // YakMailFactory mailyak factory struct
 type YakMailFactory struct {
-	config SMTP
+	config   SMTP
+	template TemplateEngine
+	logger   Logger
 }
 
 // NewMailFactory constructor
 func NewMailFactory(
 	config Config,
+	template TemplateEngine,
+	logger Logger,
 ) MailFactory {
+
+	// template is once load
+	if err := template.Engine.Load(); err != nil {
+		logger.Error(err)
+	}
+
 	return YakMailFactory{
-		config: config.SMTP,
+		config:   config.SMTP,
+		template: template,
+		logger:   logger,
 	}
 }
 
@@ -88,10 +100,31 @@ func (creator *YakMailCreator) HTML(html string) {
 	creator.mail.HTML().Set(html)
 }
 
-func (creator *YakMailCreator) TemplateText(path string, data MailData) {
+func (creator *YakMailCreator) TemplateFromString(text string, data BindData) {
+	parse, err := creator.template.ParseFromString(text, data)
+	if err != nil {
+		creator.logger.Error(err)
+	} else {
+		creator.Text(parse)
+	}
 }
 
-func (creator *YakMailCreator) TemplateHTML(path string, data MailData) {
+func (creator *YakMailCreator) TemplateText(path string, data BindData) {
+	parse, err := creator.template.ParseTemplate(path, data)
+	if err != nil {
+		creator.logger.Error(err)
+	} else {
+		creator.Text(parse)
+	}
+}
+
+func (creator *YakMailCreator) TemplateHTML(path string, data BindData) {
+	parse, err := creator.template.ParseTemplate(path, data)
+	if err != nil {
+		creator.logger.Error(err)
+	} else {
+		creator.HTML(parse)
+	}
 }
 
 func (creator *YakMailCreator) Send() error {
@@ -131,6 +164,8 @@ func (factory YakMailFactory) Create() MailCreator {
 	mail.From(factory.config.From.Address)
 
 	return &YakMailCreator{
-		mail: mail,
+		mail:     mail,
+		template: factory.template,
+		logger:   factory.logger,
 	}
 }

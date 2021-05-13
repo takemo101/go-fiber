@@ -27,7 +27,9 @@ func (c MailCommand) Setup() {
 			mail := c.factory.Create()
 			mail.Subject(subject)
 			mail.To(to)
-			mail.Text(message)
+			mail.TemplateText("mail/test", pkg.BindData{
+				"message": message,
+			})
 			if err := mail.Send(); err != nil {
 				fmt.Println(err)
 			} else {

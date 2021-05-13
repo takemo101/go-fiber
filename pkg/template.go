@@ -1,10 +1,14 @@
 package pkg
 
 import (
+	"fmt"
 	"strings"
 
+	"github.com/flosch/pongo2/v4"
 	"github.com/gofiber/template/django"
 )
+
+type BindData map[string]interface{}
 
 // TemplateEngine is view engine
 type TemplateEngine struct {
@@ -15,6 +19,7 @@ type TemplateEngine struct {
 func NewTemplateEngine(
 	config Config,
 	p Path,
+	logger Logger,
 ) TemplateEngine {
 	engine := django.New(config.Template.Path, config.Template.Suffix)
 	engine.Reload(config.Template.Reload)
@@ -49,4 +54,23 @@ func NewTemplateEngine(
 	return TemplateEngine{
 		Engine: engine,
 	}
+}
+
+// ParseTemplate parse from template file
+func (template TemplateEngine) ParseTemplate(path string, data BindData) (string, error) {
+	tmpl, ok := template.Engine.Templates[path]
+	if !ok {
+		return "", fmt.Errorf("template %s does not exist", path)
+	}
+
+	return tmpl.Execute(pongo2.Context(data))
+}
+
+// ParseFromString parse from string
+func (template TemplateEngine) ParseFromString(text string, data BindData) (string, error) {
+	tmpl, err := pongo2.FromString(text)
+	if err != nil {
+		return "", err
+	}
+	return tmpl.Execute(pongo2.Context(data))
 }
