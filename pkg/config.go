@@ -119,7 +119,7 @@ type Cors struct {
 // JWT is config
 type JWT struct {
 	Signing struct {
-		Key    []byte
+		Key    string
 		Method string
 	}
 	Context struct {
