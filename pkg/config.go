@@ -141,6 +141,7 @@ type Config struct {
 	Cache
 	Session
 	Cors
+	JWT
 	GoVersion     string
 	ConfigMapData map[string]interface{}
 }
