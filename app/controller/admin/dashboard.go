@@ -1,4 +1,4 @@
-package admin_controller
+package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -7,7 +7,7 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// DashboardController
+// DashboardController is home dashboard
 type DashboardController struct {
 	logger    pkg.Logger
 	config    pkg.Config

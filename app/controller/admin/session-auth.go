@@ -1,4 +1,4 @@
-package admin_controller
+package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -10,7 +10,7 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// SessionAuthController is index
+// SessionAuthController is session auth
 type SessionAuthController struct {
 	logger   pkg.Logger
 	response *helper.ResponseHelper

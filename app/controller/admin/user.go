@@ -1,4 +1,4 @@
-package admin_controller
+package controller
 
 import (
 	"strconv"
@@ -7,59 +7,57 @@ import (
 	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
-	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// AdminController is index
-type AdminController struct {
+// UserController is user
+type UserController struct {
 	logger   pkg.Logger
 	response *helper.ResponseHelper
-	service  service.AdminService
+	service  service.UserService
 }
 
-// NewAdminController is create admin controller
-func NewAdminController(
+// NewUserController is create user controller
+func NewUserController(
 	logger pkg.Logger,
 	response *helper.ResponseHelper,
-	service service.AdminService,
-) AdminController {
-	return AdminController{
+	service service.UserService,
+) UserController {
+	return UserController{
 		logger:   logger,
 		response: response,
 		service:  service,
 	}
 }
 
-// Index render admin list
-func (ctl AdminController) Index(c *fiber.Ctx) error {
-	var form form.AdminSearch
+// Index render user list
+func (ctl UserController) Index(c *fiber.Ctx) error {
+	var form form.UserSearch
 
 	if err := c.QueryParser(&form); err != nil {
 		return ctl.response.Error(err)
 	}
 
-	admins, err := ctl.service.Search(form, 20)
+	users, err := ctl.service.Search(form, 20)
 	if err != nil {
 		return ctl.response.Error(err)
 	}
-	return ctl.response.View("admin/index", helper.DataMap{
-		"admins": admins,
+	return ctl.response.View("user/index", helper.DataMap{
+		"users": users,
 	})
 }
 
-// Create render admin create form
-func (ctl AdminController) Create(c *fiber.Ctx) error {
-	return ctl.response.View("admin/create", helper.DataMap{
+// Create render user create form
+func (ctl UserController) Create(c *fiber.Ctx) error {
+	return ctl.response.View("user/create", helper.DataMap{
 		"content_footer": true,
-		"roles":          model.ToRoleArray(),
 	})
 }
 
-// Store admin store process
-func (ctl AdminController) Store(c *fiber.Ctx) error {
-	var form form.Admin
+// Store user store process
+func (ctl UserController) Store(c *fiber.Ctx) error {
+	var form form.User
 
 	if err := c.BodyParser(&form); err != nil {
 		return ctl.response.Error(err)
@@ -76,36 +74,35 @@ func (ctl AdminController) Store(c *fiber.Ctx) error {
 	}
 
 	SetToastr(c, ToastrStore, ToastrStore.Message())
-	return ctl.response.Redirect(c, "system/admin")
+	return ctl.response.Redirect(c, "system/user")
 }
 
-// Edit render admin edit form
-func (ctl AdminController) Edit(c *fiber.Ctx) error {
+// Edit render user edit form
+func (ctl UserController) Edit(c *fiber.Ctx) error {
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return ctl.response.Error(convErr)
 	}
 
-	admin, findErr := ctl.service.Find(uint(id))
+	user, findErr := ctl.service.Find(uint(id))
 	if findErr != nil {
 		return ctl.response.Error(findErr)
 	}
 
-	return ctl.response.View("admin/edit", helper.DataMap{
-		"admin":          admin,
-		"roles":          model.ToRoleArray(),
+	return ctl.response.View("user/edit", helper.DataMap{
+		"user":           user,
 		"content_footer": true,
 	})
 }
 
-// Update admin update process
-func (ctl AdminController) Update(c *fiber.Ctx) error {
+// Update user update process
+func (ctl UserController) Update(c *fiber.Ctx) error {
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return ctl.response.Error(convErr)
 	}
 
-	var form form.Admin
+	var form form.User
 
 	if err := c.BodyParser(&form); err != nil {
 		return ctl.response.Error(err)
@@ -125,8 +122,8 @@ func (ctl AdminController) Update(c *fiber.Ctx) error {
 	return ctl.response.Back(c)
 }
 
-// Delete admin delete process
-func (ctl AdminController) Delete(c *fiber.Ctx) error {
+// Delete user delete process
+func (ctl UserController) Delete(c *fiber.Ctx) error {
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return ctl.response.Error(convErr)
@@ -137,5 +134,5 @@ func (ctl AdminController) Delete(c *fiber.Ctx) error {
 	}
 
 	SetToastr(c, ToastrDelete, ToastrDelete.Message())
-	return ctl.response.Redirect(c, "system/admin")
+	return ctl.response.Redirect(c, "system/user")
 }

@@ -1,4 +1,4 @@
-package admin_controller
+package controller
 
 import (
 	"strconv"
@@ -12,7 +12,7 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// TodoController is index
+// TodoController is todo
 type TodoController struct {
 	logger   pkg.Logger
 	response *helper.ResponseHelper

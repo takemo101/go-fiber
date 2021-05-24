@@ -1,4 +1,4 @@
-package admin_controller
+package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -9,7 +9,7 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// AccountController is index
+// AccountController is account
 type AccountController struct {
 	logger   pkg.Logger
 	response *helper.ResponseHelper
