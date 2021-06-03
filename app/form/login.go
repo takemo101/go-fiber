@@ -10,7 +10,6 @@ import (
 type Login struct {
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
-	Remember bool   `json:"remember" form:"remember"`
 }
 
 // Validate login form validation

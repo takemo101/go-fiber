@@ -2,6 +2,7 @@ package helper
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/imdario/mergo"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
@@ -38,7 +39,7 @@ func (helper *ResponseHelper) Json(c *fiber.Ctx, data fiber.Map) error {
 	return c.JSON(data)
 }
 
-// Json response json success
+// JsonSuccessWith response json success
 func (helper *ResponseHelper) JsonSuccess(c *fiber.Ctx, message string) error {
 	return helper.Json(c, fiber.Map{
 		"success": true,
@@ -46,12 +47,49 @@ func (helper *ResponseHelper) JsonSuccess(c *fiber.Ctx, message string) error {
 	})
 }
 
-// Json response json error
+// JsonSuccess response json success with data
+func (helper *ResponseHelper) JsonSuccessWith(c *fiber.Ctx, message string, data fiber.Map) error {
+	mainData := fiber.Map{
+		"success": true,
+		"message": message,
+	}
+	mergo.Merge(
+		&mainData,
+		data,
+	)
+	return helper.Json(c, mainData)
+}
+
+// JsonError response json error
 func (helper *ResponseHelper) JsonError(c *fiber.Ctx, err error) error {
 	c.Status(fiber.StatusInternalServerError)
 	return helper.Json(c, fiber.Map{
 		"success": false,
-		"error":   err,
+		"error":   err.Error(),
+	})
+}
+
+// JsonErrorWith response json error with data
+func (helper *ResponseHelper) JsonErrorWith(c *fiber.Ctx, err error, data fiber.Map) error {
+	mainData := fiber.Map{
+		"success": false,
+		"error":   err.Error(),
+	}
+	mergo.Merge(
+		&mainData,
+		data,
+	)
+	c.Status(fiber.StatusInternalServerError)
+	return helper.Json(c, mainData)
+}
+
+// JsonErrorMessages response json error with error_messages
+func (helper *ResponseHelper) JsonErrorMessages(c *fiber.Ctx, err error, messages map[string]string) error {
+	c.Status(fiber.StatusUnprocessableEntity)
+	return helper.Json(c, fiber.Map{
+		"success":        false,
+		"error":          err.Error(),
+		"error_messages": messages,
 	})
 }
 

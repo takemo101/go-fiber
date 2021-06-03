@@ -2,7 +2,7 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/takemo101/go-fiber/app/controller/admin_controller"
+	controller "github.com/takemo101/go-fiber/app/controller/admin"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/pkg"
@@ -16,12 +16,12 @@ type AdminRoute struct {
 	csrf                middleware.Csrf
 	auth                middleware.SessionAdminAuth
 	render              *helper.ViewRender
-	dashboardController admin_controller.DashboardController
-	adminController     admin_controller.AdminController
-	userController      admin_controller.UserController
-	todoController      admin_controller.TodoController
-	accountController   admin_controller.AccountController
-	authController      admin_controller.SessionAuthController
+	dashboardController controller.DashboardController
+	adminController     controller.AdminController
+	userController      controller.UserController
+	todoController      controller.TodoController
+	accountController   controller.AccountController
+	authController      controller.SessionAuthController
 }
 
 // Setup is setup route
@@ -114,12 +114,12 @@ func NewAdminRoute(
 	csrf middleware.Csrf,
 	auth middleware.SessionAdminAuth,
 	render *helper.ViewRender,
-	dashboardController admin_controller.DashboardController,
-	adminController admin_controller.AdminController,
-	userController admin_controller.UserController,
-	todoController admin_controller.TodoController,
-	accountController admin_controller.AccountController,
-	authController admin_controller.SessionAuthController,
+	dashboardController controller.DashboardController,
+	adminController controller.AdminController,
+	userController controller.UserController,
+	todoController controller.TodoController,
+	accountController controller.AccountController,
+	authController controller.SessionAuthController,
 ) AdminRoute {
 	return AdminRoute{
 		logger:              logger,
