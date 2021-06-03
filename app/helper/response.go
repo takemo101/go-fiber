@@ -39,7 +39,7 @@ func (helper *ResponseHelper) Json(c *fiber.Ctx, data fiber.Map) error {
 	return c.JSON(data)
 }
 
-// JsonSuccessWith response json success
+// JsonSuccess response json success
 func (helper *ResponseHelper) JsonSuccess(c *fiber.Ctx, message string) error {
 	return helper.Json(c, fiber.Map{
 		"success": true,
@@ -47,7 +47,7 @@ func (helper *ResponseHelper) JsonSuccess(c *fiber.Ctx, message string) error {
 	})
 }
 
-// JsonSuccess response json success with data
+// JsonSuccessWith response json success with data
 func (helper *ResponseHelper) JsonSuccessWith(c *fiber.Ctx, message string, data fiber.Map) error {
 	mainData := fiber.Map{
 		"success": true,
