@@ -49,6 +49,17 @@ func (s UserService) Store(form form.User) (model.User, error) {
 	return s.Repository.Save(user)
 }
 
+// StoreByModel create user by model
+func (s UserService) StoreByModel(user model.User) (model.User, error) {
+	pass, passErr := s.GeneratePass(string(user.Pass))
+	if passErr != nil {
+		return model.User{}, passErr
+	}
+
+	user.Pass = pass
+	return s.Repository.Save(user)
+}
+
 // Update edit user
 func (s UserService) Update(id uint, form form.User) (model.User, error) {
 	user, err := s.Find(id)

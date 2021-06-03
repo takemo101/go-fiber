@@ -50,6 +50,17 @@ func (s AdminService) Store(form form.Admin) (model.Admin, error) {
 	return s.Repository.Save(admin)
 }
 
+// StoreByModel create admin by model
+func (s AdminService) StoreByModel(admin model.Admin) (model.Admin, error) {
+	pass, passErr := s.GeneratePass(string(admin.Pass))
+	if passErr != nil {
+		return model.Admin{}, passErr
+	}
+
+	admin.Pass = pass
+	return s.Repository.Save(admin)
+}
+
 // Update edit admin
 func (s AdminService) Update(id uint, form form.Admin) (model.Admin, error) {
 	admin, err := s.Find(id)

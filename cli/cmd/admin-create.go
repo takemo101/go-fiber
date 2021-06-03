@@ -5,15 +5,15 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/takemo101/go-fiber/app/model"
-	"github.com/takemo101/go-fiber/app/repository"
+	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
 // AdminCreateCommand is struct
 type AdminCreateCommand struct {
-	logger     pkg.Logger
-	root       RootCommand
-	repository repository.AdminRepository
+	logger  pkg.Logger
+	root    RootCommand
+	service service.AdminService
 }
 
 // Setup is setup route
@@ -31,7 +31,7 @@ func (c AdminCreateCommand) Setup() {
 				Email: email,
 				Pass:  []byte(pass),
 			}
-			newUser, err := c.repository.Save(admin)
+			newUser, err := c.service.StoreByModel(admin)
 			if err != nil {
 				c.logger.Error(err)
 				fmt.Println(err)
@@ -52,11 +52,11 @@ func (c AdminCreateCommand) Setup() {
 func NewAdminCreateCommand(
 	root RootCommand,
 	logger pkg.Logger,
-	repository repository.AdminRepository,
+	service service.AdminService,
 ) AdminCreateCommand {
 	return AdminCreateCommand{
-		root:       root,
-		logger:     logger,
-		repository: repository,
+		root:    root,
+		logger:  logger,
+		service: service,
 	}
 }
