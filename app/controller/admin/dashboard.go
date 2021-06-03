@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/query"
+	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
@@ -11,7 +12,7 @@ import (
 type DashboardController struct {
 	logger    pkg.Logger
 	config    pkg.Config
-	response  *helper.ResponseHelper
+	value     support.RequestValue
 	todoQuery query.TodoQuery
 }
 
@@ -19,26 +20,26 @@ type DashboardController struct {
 func NewDashboardController(
 	logger pkg.Logger,
 	config pkg.Config,
-	response *helper.ResponseHelper,
+	value support.RequestValue,
 	todoQuery query.TodoQuery,
 ) DashboardController {
 	return DashboardController{
 		logger:    logger,
 		config:    config,
-		response:  response,
+		value:     value,
 		todoQuery: todoQuery,
 	}
 }
 
 // Dashboard render home
 func (ctl DashboardController) Dashboard(c *fiber.Ctx) error {
-
+	response := ctl.value.GetResponseHelper(c)
 	todos, todoErr := ctl.todoQuery.GetUpdateTodos(10)
 	if todoErr != nil {
-		return ctl.response.Error(todoErr)
+		return response.Error(todoErr)
 	}
 
-	return ctl.response.View("home", helper.DataMap{
+	return response.View("home", helper.DataMap{
 		"todos":  todos,
 		"config": ctl.config,
 	})

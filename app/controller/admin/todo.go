@@ -9,49 +9,48 @@ import (
 	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/service"
+	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
 // TodoController is todo
 type TodoController struct {
-	logger   pkg.Logger
-	response *helper.ResponseHelper
-	service  service.TodoService
-	auth     middleware.SessionAdminAuth
+	logger  pkg.Logger
+	service service.TodoService
+	value   support.RequestValue
 }
 
 // NewTodoController is create todo controller
 func NewTodoController(
 	logger pkg.Logger,
-	response *helper.ResponseHelper,
 	service service.TodoService,
-	auth middleware.SessionAdminAuth,
+	value support.RequestValue,
 ) TodoController {
 	return TodoController{
-		logger:   logger,
-		response: response,
-		service:  service,
-		auth:     auth,
+		logger:  logger,
+		service: service,
+		value:   value,
 	}
 }
 
 // Index render todo list
 func (ctl TodoController) Index(c *fiber.Ctx) error {
 	var form form.TodoSearch
+	response := ctl.value.GetResponseHelper(c)
 
 	if err := c.QueryParser(&form); err != nil {
-		return ctl.response.Error(err)
+		return response.Error(err)
 	}
 
 	todos, err := ctl.service.Search(form, 20)
 	if err != nil {
-		return ctl.response.Error(err)
+		return response.Error(err)
 	}
 
-	ctl.response.JS(helper.DataMap{
+	response.JS(helper.DataMap{
 		"statuses": model.ToTodoStatusArray(),
 	})
-	return ctl.response.View("todo/index", helper.DataMap{
+	return response.View("todo/index", helper.DataMap{
 		"todos":    todos,
 		"statuses": model.ToTodoStatusArray(),
 	})
@@ -60,20 +59,22 @@ func (ctl TodoController) Index(c *fiber.Ctx) error {
 // Your render todo list
 func (ctl TodoController) Your(c *fiber.Ctx) error {
 	var form form.TodoSearch
+	auth := ctl.value.GetSessionAdminAuth(c)
+	response := ctl.value.GetResponseHelper(c)
 
 	if err := c.QueryParser(&form); err != nil {
-		return ctl.response.Error(err)
+		return response.Error(err)
 	}
 
-	todos, err := ctl.service.SearchYour(form, ctl.auth.Auth.ID(), 20)
+	todos, err := ctl.service.SearchYour(form, auth.ID(), 20)
 	if err != nil {
-		return ctl.response.Error(err)
+		return response.Error(err)
 	}
 
-	ctl.response.JS(helper.DataMap{
+	response.JS(helper.DataMap{
 		"statuses": model.ToTodoStatusArray(),
 	})
-	return ctl.response.View("todo/your", helper.DataMap{
+	return response.View("todo/your", helper.DataMap{
 		"todos":    todos,
 		"statuses": model.ToTodoStatusArray(),
 	})
@@ -82,84 +83,90 @@ func (ctl TodoController) Your(c *fiber.Ctx) error {
 // Store todo store process
 func (ctl TodoController) Store(c *fiber.Ctx) error {
 	var form form.Todo
+	auth := ctl.value.GetSessionAdminAuth(c)
+	response := ctl.value.GetResponseHelper(c)
 
 	if err := c.BodyParser(&form); err != nil {
-		return ctl.response.Error(err)
+		return response.Error(err)
 	}
 
 	if err := form.Validate(); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
 		SetToastr(c, ToastrError, ToastrError.Message())
-		return ctl.response.Back(c)
+		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Store(form, ctl.auth.Auth.ID()); err != nil {
-		return ctl.response.Error(err)
+	if _, err := ctl.service.Store(form, auth.ID()); err != nil {
+		return response.Error(err)
 	}
 
 	SetToastr(c, ToastrStore, ToastrStore.Message())
-	return ctl.response.Back(c)
+	return response.Back(c)
 }
 
 // ChangeStatus todo update process
 func (ctl TodoController) ChangeStatus(c *fiber.Ctx) error {
+	response := ctl.value.GetResponseHelper(c)
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
-		return ctl.response.JsonError(c, convErr)
+		return response.JsonError(c, convErr)
 	}
 
 	uID := uint(id)
 
 	// check todo owner
-	if err := ctl.checkTodoOwner(uID); err != nil {
-		return ctl.response.JsonError(c, err)
+	if err := ctl.checkTodoOwner(c, uID); err != nil {
+		return response.JsonError(c, err)
 	}
 
 	var form form.Todo
 
 	if err := c.BodyParser(&form); err != nil {
-		return ctl.response.JsonError(c, err)
+		return response.JsonError(c, err)
 	}
 
 	if _, err := ctl.service.ChangeStatus(uID, form.Status); err != nil {
-		return ctl.response.JsonError(c, err)
+		return response.JsonError(c, err)
 	}
 
-	return ctl.response.JsonSuccess(c, "change stauts successfully")
+	return response.JsonSuccess(c, "change stauts successfully")
 }
 
 // Delete todo delete process
 func (ctl TodoController) Delete(c *fiber.Ctx) error {
+	response := ctl.value.GetResponseHelper(c)
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
-		return ctl.response.Error(convErr)
+		return response.Error(convErr)
 	}
 
 	uID := uint(id)
 
 	// check todo owner
-	if err := ctl.checkTodoOwner(uID); err != nil {
-		return ctl.response.Error(err)
+	if err := ctl.checkTodoOwner(c, uID); err != nil {
+		return response.Error(err)
 	}
 
 	if err := ctl.service.Delete(uID); err != nil {
-		return ctl.response.Error(err)
+		return response.Error(err)
 	}
 
 	SetToastr(c, ToastrDelete, ToastrDelete.Message())
-	return ctl.response.Back(c)
+	return response.Back(c)
 }
 
 // checkTodoOwner todo admin owner check
-func (ctl TodoController) checkTodoOwner(id uint) error {
+func (ctl TodoController) checkTodoOwner(c *fiber.Ctx, id uint) error {
 	// find todo
 	todo, findErr := ctl.service.Find(id)
 	if findErr != nil {
 		return findErr
 	}
 
+	auth := ctl.value.GetSessionAdminAuth(c)
+
 	// todo owner check
-	if !ctl.service.CheckOwner(todo, *ctl.auth.Auth.Admin()) {
+	if !ctl.service.CheckOwner(todo, *auth.Admin()) {
 		return fiber.ErrUnauthorized
 	}
 	return nil

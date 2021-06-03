@@ -28,6 +28,7 @@ func NewViewRender(
 	logger pkg.Logger,
 ) *ViewRender {
 	return &ViewRender{
+		data:   new(ViewData),
 		logger: logger,
 	}
 }
@@ -57,8 +58,7 @@ func (v *ViewRender) Error(err error) error {
 	return nil
 }
 
-func (v *ViewRender) Next(c *fiber.Ctx, handler func(*fiber.Ctx, *ViewRender)) error {
-	v.data = new(ViewData)
+func (v *ViewRender) HandleRender(c *fiber.Ctx, handler func(*fiber.Ctx, *ViewRender)) error {
 	err := c.Next()
 	if err == nil && len(v.data.name) > 0 {
 		handler(c, v)
@@ -79,12 +79,4 @@ func (v *ViewRender) Next(c *fiber.Ctx, handler func(*fiber.Ctx, *ViewRender)) e
 		}
 	}
 	return err
-}
-
-func (v *ViewRender) CreateHandler(handler func(*fiber.Ctx, *ViewRender)) fiber.Handler {
-	v.logger.Info("setup view-render")
-
-	return func(c *fiber.Ctx) error {
-		return v.Next(c, handler)
-	}
 }

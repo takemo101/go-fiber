@@ -11,7 +11,7 @@ type SessionAdminAuth struct {
 	logger pkg.Logger
 	app    pkg.Application
 	path   pkg.Path
-	Auth   *support.SessionAdminAuth
+	value  support.RequestValue
 }
 
 // NewSessionAdminAuth is create middleware
@@ -19,13 +19,13 @@ func NewSessionAdminAuth(
 	logger pkg.Logger,
 	app pkg.Application,
 	path pkg.Path,
-	auth *support.SessionAdminAuth,
+	value support.RequestValue,
 ) SessionAdminAuth {
 	return SessionAdminAuth{
 		logger: logger,
 		app:    app,
 		path:   path,
-		Auth:   auth,
+		value:  value,
 	}
 }
 
@@ -38,12 +38,13 @@ func (m SessionAdminAuth) Setup() {
 // CreateHandler is create middleware handler
 func (m SessionAdminAuth) CreateHandler(login bool, redirect string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		auth := m.value.GetSessionAdminAuth(c)
 		session, err := GetSession(c)
 		if err != nil {
 			return err
 		}
 
-		ok := m.Auth.AttemptSession(session)
+		ok := auth.AttemptSession(session)
 
 		if (login && ok) || (!login && !ok) {
 			return c.Next()

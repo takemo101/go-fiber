@@ -5,6 +5,7 @@ import (
 	controller "github.com/takemo101/go-fiber/app/controller/admin"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
+	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
@@ -14,8 +15,9 @@ type AdminRoute struct {
 	app                 pkg.Application
 	path                pkg.Path
 	csrf                middleware.Csrf
+	value               support.RequestValue
 	auth                middleware.SessionAdminAuth
-	render              *helper.ViewRender
+	render              middleware.ViewRender
 	dashboardController controller.DashboardController
 	adminController     controller.AdminController
 	userController      controller.UserController
@@ -112,8 +114,9 @@ func NewAdminRoute(
 	app pkg.Application,
 	path pkg.Path,
 	csrf middleware.Csrf,
+	value support.RequestValue,
+	render middleware.ViewRender,
 	auth middleware.SessionAdminAuth,
-	render *helper.ViewRender,
 	dashboardController controller.DashboardController,
 	adminController controller.AdminController,
 	userController controller.UserController,
@@ -126,6 +129,7 @@ func NewAdminRoute(
 		app:                 app,
 		path:                path,
 		csrf:                csrf,
+		value:               value,
 		auth:                auth,
 		render:              render,
 		dashboardController: dashboardController,
@@ -172,13 +176,14 @@ func (r AdminRoute) ViewRenderCreateHandler(c *fiber.Ctx, vr *helper.ViewRender)
 	messages, _ := middleware.GetSessionMessages(c)
 
 	// admin user
-	auth := r.auth.Auth.Admin()
+	auth := r.value.GetSessionAdminAuth(c)
+	admin := auth.Admin()
 
 	vr.SetData(helper.DataMap{
 		"csrf_token": csrfToken,
 		"errors":     errors,
 		"inputs":     inputs,
 		"messages":   messages,
-		"auth":       auth,
+		"auth":       admin,
 	})
 }

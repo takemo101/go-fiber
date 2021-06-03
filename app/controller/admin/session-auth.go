@@ -12,62 +12,66 @@ import (
 
 // SessionAuthController is session auth
 type SessionAuthController struct {
-	logger   pkg.Logger
-	response *helper.ResponseHelper
-	auth     *support.SessionAdminAuth
-	service  service.AdminService
+	logger  pkg.Logger
+	value   support.RequestValue
+	service service.AdminService
 }
 
 // NewSessionAuthController is create auth controller
 func NewSessionAuthController(
 	logger pkg.Logger,
-	response *helper.ResponseHelper,
-	auth *support.SessionAdminAuth,
+	value support.RequestValue,
 	service service.AdminService,
 ) SessionAuthController {
 	return SessionAuthController{
-		logger:   logger,
-		response: response,
-		auth:     auth,
-		service:  service,
+		logger:  logger,
+		value:   value,
+		service: service,
 	}
 }
 
 // LoginForm render login form
 func (ctl SessionAuthController) LoginForm(c *fiber.Ctx) error {
-	return ctl.response.View("auth/login", helper.DataMap{})
+	response := ctl.value.GetResponseHelper(c)
+	return response.View("auth/login", helper.DataMap{})
 }
 
 // Login login auth process
 func (ctl SessionAuthController) Login(c *fiber.Ctx) error {
 	var form form.Login
+	response := ctl.value.GetResponseHelper(c)
 
 	session, sessionErr := middleware.GetSession(c)
 	if sessionErr != nil {
-		return ctl.response.Error(sessionErr)
+		return response.Error(sessionErr)
 	}
 
 	if err := c.BodyParser(&form); err != nil {
-		return ctl.response.Error(err)
+		return response.Error(err)
 	}
+
+	auth := ctl.value.GetSessionAdminAuth(c)
 
 	if err := form.Validate(func(email string, pass string) bool {
-		return ctl.auth.Attempt(email, pass, session)
+		return auth.Attempt(email, pass, session)
 	}); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
-		return ctl.response.Back(c)
+		return response.Back(c)
 	}
 
-	return ctl.response.Redirect(c, "system")
+	return response.Redirect(c, "system")
 }
 
 // Logout logout auth process
 func (ctl SessionAuthController) Logout(c *fiber.Ctx) error {
+	response := ctl.value.GetResponseHelper(c)
 	session, sessionErr := middleware.GetSession(c)
 	if sessionErr != nil {
-		return ctl.response.Error(sessionErr)
+		return response.Error(sessionErr)
 	}
 
-	ctl.auth.Logout(session)
-	return ctl.response.Redirect(c, "system/auth/login")
+	auth := ctl.value.GetSessionAdminAuth(c)
+
+	auth.Logout(session)
+	return response.Redirect(c, "system/auth/login")
 }

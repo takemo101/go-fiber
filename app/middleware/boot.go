@@ -12,6 +12,8 @@ var Module = fx.Options(
 	fx.Provide(NewCsrf),
 	fx.Provide(NewCors),
 	fx.Provide(NewSessionAdminAuth),
+	fx.Provide(NewViewRender),
+	fx.Provide(NewRequestValueInit),
 	fx.Provide(NewMiddleware),
 )
 
@@ -22,11 +24,13 @@ type Middlewares []contract.Middleware
 func NewMiddleware(
 	session Session,
 	secure Secure,
+	value RequestValueInit,
 
 ) Middlewares {
 	return Middlewares{
 		session,
 		secure,
+		value,
 	}
 }
 
