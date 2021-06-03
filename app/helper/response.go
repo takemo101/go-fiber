@@ -60,13 +60,18 @@ func (helper *ResponseHelper) JsonSuccessWith(c *fiber.Ctx, message string, data
 	return helper.Json(c, mainData)
 }
 
-// JsonError response json error
-func (helper *ResponseHelper) JsonError(c *fiber.Ctx, err error) error {
-	c.Status(fiber.StatusInternalServerError)
+// JsonErrorSimple response json error
+func (helper *ResponseHelper) JsonErrorSimple(c *fiber.Ctx, err error) error {
 	return helper.Json(c, fiber.Map{
 		"success": false,
 		"error":   err.Error(),
 	})
+}
+
+// JsonError response json error
+func (helper *ResponseHelper) JsonError(c *fiber.Ctx, err error) error {
+	c.Status(fiber.StatusInternalServerError)
+	return helper.JsonErrorSimple(c, err)
 }
 
 // JsonErrorWith response json error with data

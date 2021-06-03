@@ -82,3 +82,4 @@ jwt:
     key: "user"
   lookup: "header:Authorization"
   scheme: "Bearer"
+  expiration: 72

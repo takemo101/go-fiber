@@ -125,8 +125,9 @@ type JWT struct {
 	Context struct {
 		Key string
 	}
-	Lookup string
-	Scheme string
+	Lookup     string
+	Scheme     string
+	Expiration time.Duration
 }
 
 // Config full config
