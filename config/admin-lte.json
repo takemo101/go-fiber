@@ -42,6 +42,12 @@
             "name": "FUNCTION"
         },
         {
+            "key": ":menu",
+            "name": "案件",
+            "icon": "fas fa-paper-plane",
+            "path": "system/menu"
+        },
+        {
             "key": ":todo",
             "name": "ToDo",
             "icon": "fas fa-copy",
@@ -55,6 +61,27 @@
                     "key": ":todo.your",
                     "name": "あなたの",
                     "path": "system/todo/your"
+                }
+            ]
+        },
+        {
+            "is_header": true,
+            "name": "SETTING"
+        },
+        {
+            "key": ":master",
+            "name": "マスタデータ",
+            "icon": "fas fa-database",
+            "path": "#",
+            "menus": [{
+                    "key": ":master.category",
+                    "name": "カテゴリ",
+                    "path": "system/category"
+                },
+                {
+                    "key": ":master.tag",
+                    "name": "タグ",
+                    "path": "system/tag"
                 }
             ]
         }

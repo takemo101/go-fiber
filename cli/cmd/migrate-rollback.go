@@ -10,28 +10,28 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// MigrateRollbackCommand is struct
-type MigrateRollbackCommand struct {
+// RollbackCommand is struct
+type RollbackCommand struct {
 	logger     pkg.Logger
 	root       RootCommand
 	db         pkg.Database
 	migrations []*gormigrate.Migration
 }
 
-// Setup is setup route
-func (c MigrateRollbackCommand) Setup() {
-	c.logger.Info("setup migrate-command")
+// Setup is setup command
+func (c RollbackCommand) Setup() {
+	c.logger.Info("setup migrate:rollback-command")
 
-	var rollback string
+	var process string
 
 	cmd := &cobra.Command{
-		Use:   "migrate",
-		Short: "auto migrate",
+		Use:   "migrate:rollback",
+		Short: "migration migrate down",
 		Run: func(cmd *cobra.Command, args []string) {
 
 			m := gormigrate.New(c.db.GormDB, gormigrate.DefaultOptions, c.migrations)
 
-			switch n := strings.ToLower(rollback); n {
+			switch n := strings.ToLower(process); n {
 			case "step":
 				if err := m.RollbackLast(); err != nil {
 					fmt.Println(err)
@@ -53,32 +53,27 @@ func (c MigrateRollbackCommand) Setup() {
 						fmt.Println("finish rollback to id:" + n)
 					}
 				} else {
-					if err := m.Migrate(); err != nil {
-						fmt.Println(err)
-					} else {
-						fmt.Println("finish migrate")
-					}
+
 				}
 			}
 		},
 	}
 
-	cmd.Flags().StringVarP(&rollback, "rollback", "r", "", "migrate process name migrate or rollback")
+	cmd.Flags().StringVarP(&process, "process", "p", "step", "migrate process name step or all or id")
 
 	c.root.Cmd.AddCommand(cmd)
 }
 
-// NewMigrateRollbackCommand create migrate command
-func NewMigrateRollbackCommand(
+// NewRollbackCommand create migrate command
+func NewRollbackCommand(
 	root RootCommand,
 	logger pkg.Logger,
 	db pkg.Database,
-) MigrateRollbackCommand {
-	return MigrateRollbackCommand{
-		root:   root,
-		logger: logger,
-		db:     db,
-		// add migrations ...
+) RollbackCommand {
+	return RollbackCommand{
+		root:       root,
+		logger:     logger,
+		db:         db,
 		migrations: database.Migrations,
 	}
 }
