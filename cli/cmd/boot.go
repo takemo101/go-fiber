@@ -7,7 +7,8 @@ import (
 
 // Module export
 var Module = fx.Options(
-	fx.Provide(NewMigrateCommand),
+	fx.Provide(NewMigrateRollbackCommand),
+	fx.Provide(NewAutoMigrateCommand),
 	fx.Provide(NewAdminCreateCommand),
 	fx.Provide(NewMailCommand),
 	fx.Provide(NewCommandRoot),
@@ -19,12 +20,14 @@ type Commands []contract.Command
 
 // NewCommand is setup routes
 func NewCommand(
-	migrateCommand MigrateCommand,
+	migrateRollbackCommand MigrateRollbackCommand,
+	autoMigrateCommand AutoMigrateCommand,
 	adminCreateCommand AdminCreateCommand,
 	mailCommand MailCommand,
 ) Commands {
 	return Commands{
-		migrateCommand,
+		migrateRollbackCommand,
+		autoMigrateCommand,
 		adminCreateCommand,
 		mailCommand,
 	}

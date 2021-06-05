@@ -8,51 +8,48 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// MigrateCommand is struct
-type MigrateCommand struct {
+// AutoMigrateCommand is struct
+type AutoMigrateCommand struct {
 	logger pkg.Logger
 	root   RootCommand
 	db     pkg.Database
+	models Models
 }
 
 // Models is slice interface{}
 type Models []interface{}
 
 // Setup is setup route
-func (c MigrateCommand) Setup() {
-	c.logger.Info("setup migurate-command")
+func (c AutoMigrateCommand) Setup() {
+	c.logger.Info("setup auto_migrate-command")
 
 	c.root.Cmd.AddCommand(&cobra.Command{
 		Use:   "migrate",
 		Short: "auto migrate",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			c.db.GormDB.AutoMigrate(GetModels()...)
+			c.db.GormDB.AutoMigrate(c.models...)
 
 			fmt.Println("finish migrate")
 		},
 	})
 }
 
-// NewMigrateCommand create migrate command
-func NewMigrateCommand(
+// NewAutoMigrateCommand create migrate command
+func NewAutoMigrateCommand(
 	root RootCommand,
 	logger pkg.Logger,
 	db pkg.Database,
-) MigrateCommand {
-	return MigrateCommand{
+) AutoMigrateCommand {
+	return AutoMigrateCommand{
 		root:   root,
 		logger: logger,
 		db:     db,
-	}
-}
-
-// GetModels is auto migrate model
-func GetModels() Models {
-	return Models{
-		&model.Todo{},
-		&model.User{},
-		&model.Admin{},
 		// add migrate model ...
+		models: Models{
+			&model.Todo{},
+			&model.User{},
+			&model.Admin{},
+		},
 	}
 }

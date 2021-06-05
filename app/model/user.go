@@ -10,4 +10,5 @@ type User struct {
 	Name  string `gorm:"type:varchar(191);index;not null"`
 	Email string `gorm:"type:varchar(191);uniqueIndex;not null"`
 	Pass  []byte
+	Menus []Menu
 }

@@ -6,6 +6,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/domodwyer/mailyak/v3 v3.3.3
 	github.com/flosch/pongo2/v4 v4.0.2
+	github.com/go-gormigrate/gormigrate/v2 v2.0.0 // indirect
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/gofiber/fiber/v2 v2.7.1
 	github.com/gofiber/template v1.6.8
@@ -18,5 +19,5 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	gorm.io/driver/mysql v1.0.5
 	gorm.io/driver/sqlite v1.1.4
-	gorm.io/gorm v1.21.6
+	gorm.io/gorm v1.21.10
 )
