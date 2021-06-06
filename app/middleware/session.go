@@ -64,35 +64,30 @@ type SessionErrors map[string]string
 
 // GetSessionErrors session errors process
 func GetSessionErrors(c *fiber.Ctx) (SessionErrors, error) {
-	session, err := GetSession(c)
+	sessionErrors, err := GetSessionValue(c, "session-errors")
 	if err != nil {
 		return nil, err
 	}
-	if errors := GetSessionValue(session, "session-errors"); errors != nil {
-		return errors.(SessionErrors), nil
+	if sessionErrors != nil {
+		return sessionErrors.(SessionErrors), nil
 	}
 	return nil, errors.New("not found errors")
 }
 
 // SetSessionErrors session errors process
 func SetSessionErrors(c *fiber.Ctx, errors SessionErrors) error {
-	session, err := GetSession(c)
-	if err != nil {
-		return err
-	}
-	SetSessionValue(session, "session-errors", errors)
-	return nil
+	return SetSessionValue(c, "session-errors", errors)
 }
 
 type SessionInputs map[string]interface{}
 
 // GetSessionInputs session old inputs process
 func GetSessionInputs(c *fiber.Ctx) (SessionInputs, error) {
-	session, err := GetSession(c)
+	inputs, err := GetSessionValue(c, "session-inputs")
 	if err != nil {
 		return nil, err
 	}
-	if inputs := GetSessionValue(session, "session-inputs"); inputs != nil {
+	if inputs != nil {
 		return inputs.(SessionInputs), nil
 	}
 	return nil, errors.New("not found inputs")
@@ -100,28 +95,33 @@ func GetSessionInputs(c *fiber.Ctx) (SessionInputs, error) {
 
 // SetSessionInputs session old inputs process
 func SetSessionInputs(c *fiber.Ctx, inputs SessionInputs) error {
+	return SetSessionValue(c, "session-inputs", inputs)
+}
+
+// GetSessionValue get session value
+func GetSessionValue(c *fiber.Ctx, key string) (interface{}, error) {
+	session, err := GetSession(c)
+	if err != nil {
+		return nil, err
+	}
+
+	if value := session.Get(key); value != nil {
+		defer session.Save()
+		session.Set(key, nil)
+		return value, nil
+	}
+	return nil, nil
+}
+
+// SetSessionValue set session value
+func SetSessionValue(c *fiber.Ctx, key string, value interface{}) error {
 	session, err := GetSession(c)
 	if err != nil {
 		return err
 	}
-	SetSessionValue(session, "session-inputs", inputs)
-	return nil
-}
-
-// GetSessionValue get session value
-func GetSessionValue(session *session.Session, key string) interface{} {
-	if value := session.Get(key); value != nil {
-		defer session.Save()
-		session.Set(key, nil)
-		return value
-	}
-	return nil
-}
-
-// SetSessionValue set session value
-func SetSessionValue(session *session.Session, key string, value interface{}) {
 	defer session.Save()
 	session.Set(key, value)
+	return nil
 }
 
 // SetErrorResource set session inputs and errors
@@ -134,11 +134,11 @@ type SessionMessages map[string]interface{}
 
 // GetSessionMessages session flash messages process
 func GetSessionMessages(c *fiber.Ctx) (SessionMessages, error) {
-	session, err := GetSession(c)
+	messages, err := GetSessionValue(c, "session-messages")
 	if err != nil {
 		return nil, err
 	}
-	if messages := GetSessionValue(session, "session-messages"); messages != nil {
+	if messages != nil {
 		return messages.(SessionMessages), nil
 	}
 	return nil, errors.New("not found messages")
@@ -146,11 +146,5 @@ func GetSessionMessages(c *fiber.Ctx) (SessionMessages, error) {
 
 // SetSessionMessages session flash messages process
 func SetSessionMessages(c *fiber.Ctx, messages SessionMessages) error {
-	session, err := GetSession(c)
-	if err != nil {
-		return err
-	}
-
-	SetSessionValue(session, "session-messages", messages)
-	return nil
+	return SetSessionValue(c, "session-messages", messages)
 }

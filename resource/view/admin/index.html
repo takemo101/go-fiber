@@ -66,6 +66,7 @@
                                 </button>
                                 <form action="{{ url('system/admin/%d/delete', admin.ID) }}" method="post" id="{{ admin.ID|stringformat:'delete-%d' }}">
                                     {% include 'form/csrf.html' %}
+                                    <input type="hidden" name="_method" value="delete">
                                 </form>
                             </td>
                         </tr>

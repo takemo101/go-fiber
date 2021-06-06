@@ -5,6 +5,7 @@ import (
 	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
+	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
@@ -53,14 +54,19 @@ func (ctl AccountController) Update(c *fiber.Ctx) error {
 
 	if err := form.AccountValidate(auth.ID(), ctl.service.Repository); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
-		SetToastr(c, ToastrError, ToastrError.Message())
+		SetToastr(c, ToastrError, ToastrError.Message(), Messages{})
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Update(auth.ID(), form); err != nil {
+	if _, err := ctl.service.Update(auth.ID(), object.NewAdminInput(
+		form.Name,
+		form.Email,
+		form.Password,
+		form.Role,
+	)); err != nil {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrUpdate, ToastrUpdate.Message())
+	SetToastr(c, ToastrUpdate, ToastrUpdate.Message(), Messages{})
 	return response.Back(c)
 }

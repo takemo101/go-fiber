@@ -7,6 +7,7 @@ import (
 	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
+	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
@@ -41,7 +42,10 @@ func (ctl UserController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	users, err := ctl.service.Search(form, 20)
+	users, err := ctl.service.Search(object.NewUserSearchInput(
+		form.Keyword,
+		form.Page,
+	), 20)
 	if err != nil {
 		return response.Error(err)
 	}
@@ -69,15 +73,19 @@ func (ctl UserController) Store(c *fiber.Ctx) error {
 
 	if err := form.Validate(true, 0, ctl.service.Repository); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
-		SetToastr(c, ToastrError, ToastrError.Message())
+		SetToastr(c, ToastrError, ToastrError.Message(), Messages{})
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Store(form); err != nil {
+	if _, err := ctl.service.Store(object.NewUserInput(
+		form.Name,
+		form.Email,
+		form.Password,
+	)); err != nil {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrStore, ToastrStore.Message())
+	SetToastr(c, ToastrStore, ToastrStore.Message(), Messages{})
 	return response.Redirect(c, "system/user")
 }
 
@@ -116,15 +124,19 @@ func (ctl UserController) Update(c *fiber.Ctx) error {
 
 	if err := form.Validate(false, uint(id), ctl.service.Repository); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
-		SetToastr(c, ToastrError, ToastrError.Message())
+		SetToastr(c, ToastrError, ToastrError.Message(), Messages{})
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Update(uint(id), form); err != nil {
+	if _, err := ctl.service.Update(uint(id), object.NewUserInput(
+		form.Name,
+		form.Email,
+		form.Password,
+	)); err != nil {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrUpdate, ToastrUpdate.Message())
+	SetToastr(c, ToastrUpdate, ToastrUpdate.Message(), Messages{})
 	return response.Back(c)
 }
 
@@ -140,6 +152,6 @@ func (ctl UserController) Delete(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrDelete, ToastrDelete.Message())
+	SetToastr(c, ToastrDelete, ToastrDelete.Message(), Messages{})
 	return response.Redirect(c, "system/user")
 }

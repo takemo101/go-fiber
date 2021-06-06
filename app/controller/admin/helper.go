@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/imdario/mergo"
 	"github.com/takemo101/go-fiber/app/middleware"
 )
 
@@ -33,9 +34,25 @@ func (t Toastr) Message() string {
 	return ""
 }
 
-func SetToastr(c *fiber.Ctx, ttype Toastr, message string) error {
-	return middleware.SetSessionMessages(c, middleware.SessionMessages{
+type Messages middleware.SessionMessages
+
+func SetToastr(c *fiber.Ctx, ttype Toastr, message string, data Messages) error {
+	messages := Messages{
 		"toastr_type": string(ttype),
 		"message":     message,
-	})
+	}
+	err := mergo.Merge(
+		&messages,
+		data,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return SetMessages(c, messages)
+}
+
+func SetMessages(c *fiber.Ctx, messages Messages) error {
+	return middleware.SetSessionMessages(c, middleware.SessionMessages(messages))
 }

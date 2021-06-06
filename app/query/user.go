@@ -1,8 +1,8 @@
 package query
 
 import (
-	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/model"
+	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
@@ -19,6 +19,6 @@ func NewUserQuery(db pkg.Database) UserQuery {
 }
 
 // Search gets limit users
-func (r UserQuery) Search(form form.UserSearch, limit int) (users []model.User, err error) {
+func (r UserQuery) Search(object object.UserSearchInput, limit int) (users []model.User, err error) {
 	return users, r.db.GormDB.Order("id desc").Limit(limit).Find(&users).Error
 }

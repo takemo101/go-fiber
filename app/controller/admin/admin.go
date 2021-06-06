@@ -8,6 +8,7 @@ import (
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/app/model"
+	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
@@ -42,7 +43,10 @@ func (ctl AdminController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	admins, err := ctl.service.Search(form, 20)
+	admins, err := ctl.service.Search(object.NewAdminSearchInput(
+		form.Keyword,
+		form.Page,
+	), 20)
 	if err != nil {
 		return response.Error(err)
 	}
@@ -71,15 +75,20 @@ func (ctl AdminController) Store(c *fiber.Ctx) error {
 
 	if err := form.Validate(true, 0, ctl.service.Repository); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
-		SetToastr(c, ToastrError, ToastrError.Message())
+		SetToastr(c, ToastrError, ToastrError.Message(), Messages{})
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Store(form); err != nil {
+	if _, err := ctl.service.Store(object.NewAdminInput(
+		form.Name,
+		form.Email,
+		form.Password,
+		form.Role,
+	)); err != nil {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrStore, ToastrStore.Message())
+	SetToastr(c, ToastrStore, ToastrStore.Message(), Messages{})
 	return response.Redirect(c, "system/admin")
 }
 
@@ -118,17 +127,24 @@ func (ctl AdminController) Update(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	if err := form.Validate(false, uint(id), ctl.service.Repository); err != nil {
+	uID := uint(id)
+
+	if err := form.Validate(false, uID, ctl.service.Repository); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
-		SetToastr(c, ToastrError, ToastrError.Message())
+		SetToastr(c, ToastrError, ToastrError.Message(), Messages{})
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Update(uint(id), form); err != nil {
+	if _, err := ctl.service.Update(uID, object.NewAdminInput(
+		form.Name,
+		form.Email,
+		form.Password,
+		form.Role,
+	)); err != nil {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrUpdate, ToastrUpdate.Message())
+	SetToastr(c, ToastrUpdate, ToastrUpdate.Message(), Messages{})
 	return response.Back(c)
 }
 
@@ -144,6 +160,6 @@ func (ctl AdminController) Delete(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrDelete, ToastrDelete.Message())
+	SetToastr(c, ToastrDelete, ToastrDelete.Message(), Messages{})
 	return response.Redirect(c, "system/admin")
 }

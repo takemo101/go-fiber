@@ -13,7 +13,9 @@ require (
 	github.com/imdario/mergo v0.3.12
 	github.com/jinzhu/configor v1.2.1
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
+	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/spf13/cobra v1.1.3
+	github.com/thoas/go-funk v0.8.0 // indirect
 	go.uber.org/fx v1.13.1
 	go.uber.org/zap v1.16.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9

@@ -8,6 +8,7 @@ import (
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/app/model"
+	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
 	"github.com/takemo101/go-fiber/pkg"
@@ -42,7 +43,10 @@ func (ctl TodoController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	todos, err := ctl.service.Search(form, 20)
+	todos, err := ctl.service.Search(object.NewTodoSearchInput(
+		form.Keyword,
+		form.Page,
+	), 20)
 	if err != nil {
 		return response.Error(err)
 	}
@@ -66,7 +70,10 @@ func (ctl TodoController) Your(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	todos, err := ctl.service.SearchYour(form, auth.ID(), 20)
+	todos, err := ctl.service.SearchYour(object.NewTodoSearchInput(
+		form.Keyword,
+		form.Page,
+	), auth.ID(), 20)
 	if err != nil {
 		return response.Error(err)
 	}
@@ -92,15 +99,18 @@ func (ctl TodoController) Store(c *fiber.Ctx) error {
 
 	if err := form.Validate(); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
-		SetToastr(c, ToastrError, ToastrError.Message())
+		SetToastr(c, ToastrError, ToastrError.Message(), Messages{})
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Store(form, auth.ID()); err != nil {
+	if _, err := ctl.service.Store(object.NewTodoInput(
+		form.Text,
+		form.Status,
+	), auth.ID()); err != nil {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrStore, ToastrStore.Message())
+	SetToastr(c, ToastrStore, ToastrStore.Message(), Messages{})
 	return response.Back(c)
 }
 
@@ -151,7 +161,7 @@ func (ctl TodoController) Delete(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	SetToastr(c, ToastrDelete, ToastrDelete.Message())
+	SetToastr(c, ToastrDelete, ToastrDelete.Message(), Messages{})
 	return response.Back(c)
 }
 

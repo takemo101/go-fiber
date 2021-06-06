@@ -1,0 +1,114 @@
+<script>
+    function editXData(name, isActive) {
+        return {
+            data: {
+                name,
+                isActive
+            },
+            input: {
+                name,
+                isActive,
+            },
+            click: false,
+            toggle() {
+                this.click = !this.click
+            },
+        };
+    }
+</script>
+<div class="card-body p-0">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" style="border-width: 0 0 2px 0;">
+            <div class="row">
+                <div class="col-1 d-flex align-items-end">
+                </div>
+                <div class="col-1 d-flex align-items-end">
+                    <strong>ID</strong>
+                </div>
+                <div class="col-5 d-flex align-items-end">
+                    <strong>タグ名</strong>
+                </div>
+                <div class="col-2 d-flex align-items-end">
+                    <strong>表示状態</strong>
+                </div>
+                <div class="col d-flex align-items-end">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="list-group list-group-flush" id="sortable">
+        {% for category in categories %}
+        <li class="list-group-item sortable-item" x-data="editXData('{{ category.Name }}', {{ category.IsActive|yesno:'true, false' }})" data-id="{{ category.ID }}">
+            <form method="post" action="{{ url('system/category/%d/update', category.ID) }}" id="update">
+                {% include 'form/csrf.html' %}
+                <input type="hidden" name="_method" value="put">
+                <div class="row">
+                    <div class="col-1">
+                        <a href="javascript:void(0)" class="text-secondary">
+                            <i class="fas fa-arrows-alt-v"></i>
+                        </a>
+                    </div>
+                    <div class="col-1">
+                        {{ category.ID }}
+                    </div>
+                    <div class="col-5">
+                        <span x-show="!click">
+                            {{ category.Name }}
+                        </span>
+                        <span x-show="click">
+                            {% include 'form/simple-input-sm.html' with name='name' value=category.Name type='text' id="name" placeholder=category.Name required=true xmodel='input.name' %}
+                        </span>
+                    </div>
+                    <div class="col-2">
+                        <span x-show="!click">
+                            {% if category.IsActive %}
+                                <span class="badge badge-primary">表示</span>
+                            {% else %}
+                                <span class="badge badge-secondary">非表示</span>
+                            {% endif %}
+                        </span>
+                        <span x-show="click">
+                            {% include 'form/simple-checkbox.html' with name='is_active' type='text' id='is_active-'|add:category.ID label='表示する' value='1' input=category.IsActive xmodel='input.isActive' %}
+                        </span>
+                    </div>
+                    <div class="col">
+                        <span x-show="!click">
+                            <a class="btn btn-info btn-sm" href="javascript:void(0)" x-on:click="toggle()">
+                                <i class="fas fa-pencil-alt"></i>
+                                </i>
+                            </a>
+                            <a href="javascript:void(0)" data-class="js-dialog" data-type="delete" data-form="#delete-{{ category.ID }}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash">
+                                </i>
+                            </a>
+                        </span>
+                        <span x-show="click" >
+                            <button class="btn btn-primary btn-sm " type="submit" data-class="js-dialog" data-type="update">
+                                更新
+                            </button>
+                            <button class="btn btn-primary btn-light btn-sm " type="button" x-on:click="toggle()">
+                                キャンセル
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+            <form action="{{ url('system/category/%d/delete', category.ID) }}" method="post" id="{{ category.ID|stringformat:'delete-%d' }}">
+                {% include 'form/csrf.html' %}
+                <input type="hidden" name="_method" value="delete">
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<!-- /.card-body -->
+<div class="card-footer text-right">
+    <form action="{{ url('system/category/sort') }}" method="post" id="sort" enctype="multipart/form-data">
+        {% include 'form/csrf.html' %}
+        <input type="hidden" name="_method" value="patch">
+	    <button class="btn btn-primary " id="sort-submit" type="submit" data-class="js-dialog" data-type="message" data-title="SAVE" data-message="並び順を保存しますか？">
+	        並び順を保存
+        </button>
+    </form>
+</div>
+<!-- /.card-footer -->

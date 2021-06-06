@@ -1,8 +1,6 @@
 package model
 
 import (
-	"strings"
-
 	"gorm.io/gorm"
 )
 
@@ -30,18 +28,6 @@ func (r MenuProcess) Name() string {
 		return "契約破棄"
 	}
 	return "契約完了"
-}
-
-func MenuProcessFromString(process string) MenuProcess {
-	switch strings.ToLower(process) {
-	case string(MenuProcessNone):
-		return MenuProcessNone
-	case string(MenuProcessMatch):
-		return MenuProcessMatch
-	case string(MenuProcessCancel):
-		return MenuProcessCancel
-	}
-	return MenuProcessComplete
 }
 
 func ToMenuProcessArray() []KeyName {
@@ -92,20 +78,6 @@ func (r MenuStatus) Name() string {
 		return "公開中"
 	}
 	return "非公開"
-}
-
-func MenuStatusFromString(status string) MenuStatus {
-	switch strings.ToLower(status) {
-	case string(MenuStatusDraft):
-		return MenuStatusDraft
-	case string(MenuStatusApply):
-		return MenuStatusApply
-	case string(MenuStatusRemand):
-		return MenuStatusRemand
-	case string(MenuStatusRelease):
-		return MenuStatusRelease
-	}
-	return MenuStatusPrivate
 }
 
 func ToMenuStatusArray() []KeyName {

@@ -1,8 +1,8 @@
 package query
 
 import (
-	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/model"
+	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
@@ -19,6 +19,6 @@ func NewAdminQuery(db pkg.Database) AdminQuery {
 }
 
 // Search gets limit admins
-func (r AdminQuery) Search(form form.AdminSearch, limit int) (admins []model.Admin, err error) {
+func (r AdminQuery) Search(object object.AdminSearchInput, limit int) (admins []model.Admin, err error) {
 	return admins, r.db.GormDB.Order("id desc").Limit(limit).Find(&admins).Error
 }

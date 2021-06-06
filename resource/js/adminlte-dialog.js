@@ -218,6 +218,7 @@ var DialogUtil = /** @class */ (function() {
 }());
 
 var $Dialog = new DialogUtil();
+window.$Dialog = $Dialog;
 $(function() {
     /**
      * data-class="js-dialog" と data-type="" は必ず設定する

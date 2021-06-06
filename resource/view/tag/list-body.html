@@ -1,0 +1,93 @@
+<script>
+    function editXData(name) {
+        return {
+            name,
+            input: name,
+            click: false,
+            toggle() {
+                this.click = !this.click
+            },
+        };
+    }
+</script>
+<div class="card-body p-0">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" style="border-width: 0 0 2px 0;">
+            <div class="row">
+                <div class="col-1 d-flex align-items-end">
+                </div>
+                <div class="col-1 d-flex align-items-end">
+                    <strong>ID</strong>
+                </div>
+                <div class="col-8 d-flex align-items-end">
+                    <strong>タグ名</strong>
+                </div>
+                <div class="col d-flex align-items-end">
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="list-group list-group-flush" id="sortable">
+        {% for tag in tags %}
+        <li class="list-group-item sortable-item" x-data="editXData('{{ tag.Name }}')" data-id="{{ tag.ID }}">
+            <form method="post" action="{{ url('system/tag/%d/update', tag.ID) }}" id="update">
+                {% include 'form/csrf.html' %}
+                <input type="hidden" name="_method" value="put">
+                <div class="row">
+                    <div class="col-1">
+                        <a href="javascript:void(0)" class="text-secondary">
+                            <i class="fas fa-arrows-alt-v"></i>
+                        </a>
+                    </div>
+                    <div class="col-1">
+                        {{ tag.ID }}
+                    </div>
+                    <div class="col-8">
+                        <span x-show="!click">
+                            {{ tag.Name }}
+                        </span>
+                        <span x-show="click">
+                            {% include 'form/simple-input-sm.html' with name='name' value=tag.Name type='text' id="name" placeholder=tag.Name required=true xmodel='input' %}
+                        </span>
+                    </div>
+                    <div class="col">
+                        <span x-show="!click">
+                            <a class="btn btn-info btn-sm" href="javascript:void(0)" x-on:click="toggle()">
+                                <i class="fas fa-pencil-alt"></i>
+                                </i>
+                            </a>
+                            <a href="javascript:void(0)" data-class="js-dialog" data-type="delete" data-form="#delete-{{ tag.ID }}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash">
+                                </i>
+                            </a>
+                        </span>
+                        <span x-show="click" >
+                            <button class="btn btn-primary btn-sm " type="submit" data-class="js-dialog" data-type="update">
+                                更新
+                            </button>
+                            <button class="btn btn-primary btn-light btn-sm " type="button" x-on:click="toggle()">
+                                キャンセル
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+            <form action="{{ url('system/tag/%d/delete', tag.ID) }}" method="post" id="{{ tag.ID|stringformat:'delete-%d' }}">
+                {% include 'form/csrf.html' %}
+                <input type="hidden" name="_method" value="delete">
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<!-- /.card-body -->
+<div class="card-footer text-right">
+    <form action="{{ url('system/tag/sort') }}" method="post" id="sort" enctype="multipart/form-data">
+        {% include 'form/csrf.html' %}
+        <input type="hidden" name="_method" value="patch">
+	    <button class="btn btn-primary " id="sort-submit" type="submit" data-class="js-dialog" data-type="message" data-title="SAVE" data-message="並び順を保存しますか？">
+	        並び順を保存
+        </button>
+    </form>
+</div>
+<!-- /.card-footer -->

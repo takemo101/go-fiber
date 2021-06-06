@@ -22,6 +22,9 @@ type AdminRoute struct {
 	adminController     controller.AdminController
 	userController      controller.UserController
 	todoController      controller.TodoController
+	tagController       controller.TagController
+	categoryController  controller.CategoryController
+	menuController      controller.MenuController
 	accountController   controller.AccountController
 	authController      controller.SessionAuthController
 }
@@ -70,8 +73,8 @@ func (r AdminRoute) Setup() {
 				admin.Get("/create", r.adminController.Create)
 				admin.Post("/store", r.adminController.Store)
 				admin.Get("/:id/edit", r.adminController.Edit)
-				admin.Post("/:id/update", r.adminController.Update)
-				admin.Post("/:id/delete", r.adminController.Delete)
+				admin.Put("/:id/update", r.adminController.Update)
+				admin.Delete("/:id/delete", r.adminController.Delete)
 			}
 
 			// user route
@@ -81,8 +84,8 @@ func (r AdminRoute) Setup() {
 				user.Get("/create", r.userController.Create)
 				user.Post("/store", r.userController.Store)
 				user.Get("/:id/edit", r.userController.Edit)
-				user.Post("/:id/update", r.userController.Update)
-				user.Post("/:id/delete", r.userController.Delete)
+				user.Put("/:id/update", r.userController.Update)
+				user.Delete("/:id/delete", r.userController.Delete)
 			}
 
 			// todo route
@@ -91,15 +94,46 @@ func (r AdminRoute) Setup() {
 				todo.Get("/", r.todoController.Index)
 				todo.Get("/your", r.todoController.Your)
 				todo.Post("/store", r.todoController.Store)
-				todo.Post("/:id/change", r.todoController.ChangeStatus) // ajax
-				todo.Post("/:id/delete", r.todoController.Delete)
+				todo.Patch("/:id/change", r.todoController.ChangeStatus) // ajax
+				todo.Delete("/:id/delete", r.todoController.Delete)
+			}
+
+			// tag route
+			tag := system.Group("/tag")
+			{
+				tag.Get("/", r.tagController.Index)
+				tag.Post("/store", r.tagController.Store)
+				tag.Patch("/sort", r.tagController.Sort)
+				tag.Put("/:id/update", r.tagController.Update)
+				tag.Delete("/:id/delete", r.tagController.Delete)
+			}
+
+			// category route
+			category := system.Group("/category")
+			{
+				category.Get("/", r.categoryController.Index)
+				category.Post("/store", r.categoryController.Store)
+				category.Patch("/sort", r.categoryController.Sort)
+				category.Put("/:id/update", r.categoryController.Update)
+				category.Delete("/:id/delete", r.categoryController.Delete)
+			}
+
+			// menu route
+			menu := system.Group("/menu")
+			{
+				menu.Get("/", r.menuController.Index)
+				menu.Get("/create/:user_id", r.menuController.Create)
+				menu.Post("/store/:user_id", r.menuController.Store)
+				menu.Get("/:id/edit", r.menuController.Edit)
+				menu.Put("/:id/update", r.menuController.Update)
+				menu.Delete("/:id/delete", r.menuController.Delete)
 			}
 
 			// account route
 			account := system.Group("/account")
 			{
 				account.Get("/edit", r.accountController.Edit)
-				account.Post("/update", r.accountController.Update)
+				account.Put("/update", r.accountController.Update)
 			}
 
 			// auth logout route
@@ -121,6 +155,9 @@ func NewAdminRoute(
 	adminController controller.AdminController,
 	userController controller.UserController,
 	todoController controller.TodoController,
+	tagController controller.TagController,
+	categoryController controller.CategoryController,
+	menuController controller.MenuController,
 	accountController controller.AccountController,
 	authController controller.SessionAuthController,
 ) AdminRoute {
@@ -136,6 +173,9 @@ func NewAdminRoute(
 		adminController:     adminController,
 		userController:      userController,
 		todoController:      todoController,
+		tagController:       tagController,
+		categoryController:  categoryController,
+		menuController:      menuController,
 		accountController:   accountController,
 		authController:      authController,
 	}

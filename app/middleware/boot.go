@@ -7,6 +7,7 @@ import (
 
 // Module export
 var Module = fx.Options(
+	fx.Provide(NewMethodOverride),
 	fx.Provide(NewSession),
 	fx.Provide(NewSecure),
 	fx.Provide(NewCsrf),
@@ -22,12 +23,14 @@ type Middlewares []contract.Middleware
 
 // NewMiddleware is setup new middlewares
 func NewMiddleware(
+	methodOverride MethodOverride,
 	session Session,
 	secure Secure,
 	value RequestValueInit,
 
 ) Middlewares {
 	return Middlewares{
+		methodOverride,
 		session,
 		secure,
 		value,

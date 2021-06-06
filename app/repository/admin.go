@@ -44,8 +44,8 @@ func (r AdminRepository) Delete(id uint) error {
 	return r.db.GormDB.Where("id = ?", id).Delete(&model.Admin{}).Error
 }
 
-// FindByEmail is find by email
-func (r AdminRepository) FindByEmail(email string) (admin model.Admin, err error) {
+// GetOneByEmail is find by email
+func (r AdminRepository) GetOneByEmail(email string) (admin model.Admin, err error) {
 	return admin, r.db.GormDB.Where("email = ?", email).First(&admin).Error
 }
 

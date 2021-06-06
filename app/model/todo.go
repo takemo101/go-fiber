@@ -1,8 +1,6 @@
 package model
 
 import (
-	"strings"
-
 	"gorm.io/gorm"
 )
 
@@ -30,18 +28,6 @@ func (r TodoStatus) Name() string {
 		return "確認中"
 	}
 	return "完了"
-}
-
-func TodoStatusFromString(status string) TodoStatus {
-	switch strings.ToLower(status) {
-	case string(TodoStatusThing):
-		return TodoStatusThing
-	case string(TodoStatusWork):
-		return TodoStatusWork
-	case string(TodoStatusCheck):
-		return TodoStatusCheck
-	}
-	return TodoStatusComplete
 }
 
 func ToTodoStatusArray() []KeyName {

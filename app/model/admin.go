@@ -1,8 +1,6 @@
 package model
 
 import (
-	"strings"
-
 	"gorm.io/gorm"
 )
 
@@ -26,14 +24,6 @@ func (r Role) Name() string {
 		return "通常管理者"
 	}
 	return ""
-}
-
-func RoleFromString(role string) Role {
-	switch strings.ToLower(role) {
-	case string(RoleSystem):
-		return RoleSystem
-	}
-	return RoleAdmin
 }
 
 func ToRoleArray() []KeyName {

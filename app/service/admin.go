@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/takemo101/go-fiber/app/form"
 	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/model"
+	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/query"
 	"github.com/takemo101/go-fiber/app/repository"
 	"github.com/takemo101/go-fiber/pkg"
@@ -30,29 +30,29 @@ func NewAdminService(
 }
 
 // Search search admins
-func (s AdminService) Search(form form.AdminSearch, limit int) ([]model.Admin, error) {
-	return s.Query.Search(form, limit)
+func (s AdminService) Search(object object.AdminSearchInput, limit int) ([]model.Admin, error) {
+	return s.Query.Search(object, limit)
 }
 
 // Store create admin
-func (s AdminService) Store(form form.Admin) (model.Admin, error) {
-	pass, passErr := s.GeneratePass(form.Password)
+func (s AdminService) Store(object object.AdminInput) (model.Admin, error) {
+	pass, passErr := s.GeneratePass(object.GetPass())
 	if passErr != nil {
 		return model.Admin{}, passErr
 	}
 
 	admin := model.Admin{
-		Name:  form.Name,
-		Email: form.Email,
+		Name:  object.GetName(),
+		Email: object.GetEmail(),
 		Pass:  pass,
-		Role:  model.RoleFromString(form.Role),
+		Role:  object.GetRole(),
 	}
 	return s.Repository.Save(admin)
 }
 
 // StoreByModel create admin by model
 func (s AdminService) StoreByModel(admin model.Admin) (model.Admin, error) {
-	pass, passErr := s.GeneratePass(string(admin.Pass))
+	pass, passErr := s.GeneratePass(admin.Pass)
 	if passErr != nil {
 		return model.Admin{}, passErr
 	}
@@ -62,21 +62,21 @@ func (s AdminService) StoreByModel(admin model.Admin) (model.Admin, error) {
 }
 
 // Update edit admin
-func (s AdminService) Update(id uint, form form.Admin) (model.Admin, error) {
+func (s AdminService) Update(id uint, object object.AdminInput) (model.Admin, error) {
 	admin, err := s.Find(id)
 	if err != nil {
 		return admin, err
 	}
 
-	admin.Name = form.Name
-	admin.Email = form.Email
+	admin.Name = object.GetName()
+	admin.Email = object.GetEmail()
 
-	if form.Role != "" {
-		admin.Role = model.RoleFromString(form.Role)
+	if object.HasRole() {
+		admin.Role = object.GetRole()
 	}
 
-	if form.Password != "" {
-		pass, passErr := s.GeneratePass(form.Password)
+	if object.HasPass() {
+		pass, passErr := s.GeneratePass(object.GetPass())
 		if passErr != nil {
 			return model.Admin{}, passErr
 		}
@@ -97,7 +97,7 @@ func (s AdminService) Delete(id uint) error {
 }
 
 // GeneratePass generate hash password
-func (s AdminService) GeneratePass(pass string) ([]byte, error) {
+func (s AdminService) GeneratePass(pass []byte) ([]byte, error) {
 	hash, err := helper.CreatePass(pass)
 	if err != nil {
 		return nil, err

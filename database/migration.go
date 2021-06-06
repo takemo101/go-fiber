@@ -68,8 +68,8 @@ var Migrations = []*gormigrate.Migration{
 		Migrate: func(tx *gorm.DB) error {
 			type Category struct {
 				gorm.Model
-				Name     string `gorm:"type:varchar(191);not null"`
-				Sort     uint   `gorm:"index;default:1"`
+				Name     string `gorm:"type:varchar(191);uniqueIndex;not null"`
+				Sort     uint   `gorm:"uniqueIndex;default:1"`
 				IsActive bool   `gorm:"index;default:true"`
 			}
 			return tx.AutoMigrate(&Category{})
@@ -85,7 +85,8 @@ var Migrations = []*gormigrate.Migration{
 		Migrate: func(tx *gorm.DB) error {
 			type Tag struct {
 				gorm.Model
-				Name string `gorm:"type:varchar(191);not null"`
+				Name string `gorm:"type:varchar(191);uniqueIndex;not null"`
+				Sort uint   `gorm:"uniqueIndex;default:1"`
 			}
 			return tx.AutoMigrate(&Tag{})
 		},

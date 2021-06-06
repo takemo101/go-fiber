@@ -28,7 +28,7 @@ func (a *SessionAdminAuth) Attempt(email string, pass string, session *session.S
 		return ok
 	}
 
-	admin, err := a.repository.FindByEmail(email)
+	admin, err := a.repository.GetOneByEmail(email)
 	if err != nil {
 		return false
 	}

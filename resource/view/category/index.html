@@ -1,0 +1,75 @@
+{% extends 'layout/default.html' %}
+{% block title %}カテゴリ｜{% endblock %}
+{% block content_side %}
+    {% include 'include/sidebar.html' with active_key=':master.category' %}
+{% endblock %}
+{% block content_header %}
+    {% include 'include/header.html' with title='カテゴリ' function='FUNCTION' %}
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+
+        <form method="post" action="{{ url('system/category/store') }}" id="store">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">新規追加</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    {% include 'form/csrf.html' %}
+
+                        {% include 'form/input.html' with name='name' type='text' id="name" label='カテゴリ名' input=inputs.name error=errors.name required=true notbind=messages.edit %}
+                        {% include 'form/checkbox.html' with name='is_active' type='text' id="is_active" label='表示する' value='1' input=inputs.is_active error=errors.is_active notbind=messages.edit %}
+
+                </div>
+
+                <div class="card-footer text-right">
+                    <button class="btn btn-primary" type="submit" data-class="js-dialog" data-form="#store" data-type="store">
+                        追加
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="col-md-8">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">リスト</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            {% include 'category/list-body.html' %}
+        </div>
+        <!-- /.card -->
+
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_script %}
+<script>
+$(function() {
+    var sortable = new Sortable(document.getElementById('sortable'), {
+        handle: '.sortable-item',
+        group: 'sort',
+        animation: 150,
+    });
+
+    // ソートの更新ボタンを押したときの動作
+    $Utility.sortEvent('sort-submit');
+});
+</script>
+{% endblock %}
