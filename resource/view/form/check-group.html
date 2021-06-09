@@ -1,0 +1,29 @@
+<div class="form-group">
+    {% if label %}
+        <label for="{{ id }}" class="{% if required %}required{% endif %}">{{ label }}</label>
+    {% endif %}
+    {% for li in list %}
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" name="{{ name }}" value="{{ li.Key }}" class="custom-control-input" id="{{ id }}-{{ li.Key }}"
+        {% if !notbind %}
+            {% if input %}
+                {% for v in input %}{% if li.Key in v %}checked="checked"{% endif %}{% endfor %}
+            {% elif value %}
+                {% for v in value %}{% if li.Key in v %}checked="checked"{% endif %}{% endfor %}
+            {% endif %}
+        {% endif %}
+    >
+        <label for="{{ id }}-{{ li.Key }}" class="custom-control-label">{{ li.Name }}</label>
+    </div>
+    {% endfor %}
+    {% if hint %}
+    <small class="form-text text-muted">
+        {{ hint }}
+    </small>
+    {% endif %}
+    {% if !notbind and error %}
+        <div class="invalid-feedback d-block">
+            {{ error }}
+        </div>
+    {% endif %}
+</div>

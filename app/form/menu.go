@@ -12,7 +12,7 @@ type Menu struct {
 	Content    string   `json:"content" form:"content"`
 	Process    string   `json:"process" form:"process"`
 	Status     string   `json:"status" form:"status"`
-	TagIDs     []string `json:"tag_ids[]" form:"tag_ids[]"`
+	TagIDs     []string `json:"tag_ids" form:"tag_ids"`
 	CategoryID string   `json:"category_id" form:"category_id"`
 }
 
@@ -23,6 +23,7 @@ func (form Menu) Validate(
 ) error {
 	categoryIDs := categoryRepository.GetAllStringIDs()
 	tagIDs := tagRepository.GetAllStringIDs()
+
 	fields := []*validation.FieldRules{
 		validation.Field(
 			&form.Title,
@@ -36,7 +37,7 @@ func (form Menu) Validate(
 		validation.Field(
 			&form.Process,
 			validation.Required.Error("進捗状況を選択してください"),
-			validation.In(
+			validation.NotIn(
 				model.MenuProcessNone,
 				model.MenuProcessMatch,
 				model.MenuProcessCancel,
@@ -44,9 +45,9 @@ func (form Menu) Validate(
 			).Error("進捗状況に正しい値を設定してください"),
 		),
 		validation.Field(
-			&form.Process,
+			&form.Status,
 			validation.Required.Error("投稿状況を選択してください"),
-			validation.In(
+			validation.NotIn(
 				model.MenuStatusDraft,
 				model.MenuStatusApply,
 				model.MenuStatusRemand,
@@ -58,13 +59,13 @@ func (form Menu) Validate(
 			&form.TagIDs,
 			validation.Required.Error("タグを選択してください"),
 			validation.Each(
-				validation.In(tagIDs).Error("タグの値を正しく設定してください"),
+				validation.NotIn(tagIDs).Error("タグの値を正しく設定してください"),
 			),
 		),
 		validation.Field(
 			&form.CategoryID,
 			validation.Required.Error("カテゴリを選択してください"),
-			validation.In(categoryIDs).Error("カテゴリの値を正しく設定してください"),
+			validation.NotIn(categoryIDs).Error("カテゴリの値を正しく設定してください"),
 		),
 	}
 

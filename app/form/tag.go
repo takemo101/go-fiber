@@ -40,7 +40,7 @@ func (form Tag) Validate(create bool, id uint, repository repository.TagReposito
 
 // Tag sort input
 type TagSort struct {
-	IDs []string `json:"ids[]" form:"ids[]"`
+	IDs []string `json:"ids" form:"ids"`
 }
 
 // Validate sort input validation

@@ -4,7 +4,7 @@
     {% include 'include/sidebar.html' with active_key=':master.category' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='カテゴリ' function='FUNCTION' %}
+    {% include 'include/header.html' with title='カテゴリ' function='FUNCTION' first_label='カテゴリ' %}
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -23,10 +23,8 @@
 
                 <div class="card-body">
                     {% include 'form/csrf.html' %}
-
-                        {% include 'form/input.html' with name='name' type='text' id="name" label='カテゴリ名' input=inputs.name error=errors.name required=true notbind=messages.edit %}
-                        {% include 'form/checkbox.html' with name='is_active' type='text' id="is_active" label='表示する' value='1' input=inputs.is_active error=errors.is_active notbind=messages.edit %}
-
+                    {% include 'form/input.html' with name='name' type='text' id="name" label='カテゴリ名' input=inputs.name error=errors.name required=true notbind=messages.edit %}
+                    {% include 'form/check.html' with name='is_active' type='text' id="is_active" label='表示する' value='1' input=inputs.is_active error=errors.is_active notbind=messages.edit %}
                 </div>
 
                 <div class="card-footer text-right">

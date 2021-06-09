@@ -13,6 +13,14 @@ func NewAppBooter(
 	return app
 }
 
+// @title GoFiber
+// @version 1.0
+// @description GoFiber Api Doc
+// @termsOfService http://swagger.io/terms/
+// @contact.name takemo
+// @contact.email takemo101@gmail.com
+// @host localhost:8000
+// @BasePath /api
 func main() {
 	// boot gin application
 	boot.Run(

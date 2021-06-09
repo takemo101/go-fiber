@@ -95,7 +95,7 @@
             </form>
             <form action="{{ url('system/category/%d/delete', category.ID) }}" method="post" id="{{ category.ID|stringformat:'delete-%d' }}">
                 {% include 'form/csrf.html' %}
-                <input type="hidden" name="_method" value="delete">
+                {% include 'form/method.html' with method='delete' %}
             </form>
         </li>
         {% endfor %}
@@ -105,7 +105,7 @@
 <div class="card-footer text-right">
     <form action="{{ url('system/category/sort') }}" method="post" id="sort" enctype="multipart/form-data">
         {% include 'form/csrf.html' %}
-        <input type="hidden" name="_method" value="patch">
+        {% include 'form/method.html' with method='patch' %}
 	    <button class="btn btn-primary " id="sort-submit" type="submit" data-class="js-dialog" data-type="message" data-title="SAVE" data-message="並び順を保存しますか？">
 	        並び順を保存
         </button>

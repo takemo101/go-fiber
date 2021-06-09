@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	JWTUserAuthKey      string = "jwt-user-auth"
 	SessionAdminAuthKey string = "session-admin-auth"
 	ViewRenderKey       string = "view-render"
 	ResponseHelperKey   string = "response-helper"
@@ -19,6 +20,19 @@ type RequestValue struct {
 // NewRequestValue
 func NewRequestValue() RequestValue {
 	return RequestValue{}
+}
+
+// GetJWTUserAuth
+func (r RequestValue) GetJWTUserAuth(c *fiber.Ctx) *JWTUserAuth {
+	if auth, ok := c.Locals(JWTUserAuthKey).(*JWTUserAuth); ok {
+		return auth
+	}
+	return nil
+}
+
+// SetJWTUserAuth
+func (r RequestValue) SetJWTUserAuth(c *fiber.Ctx, auth *JWTUserAuth) {
+	c.Locals(JWTUserAuthKey, auth)
 }
 
 // GetSessionAdminAuth

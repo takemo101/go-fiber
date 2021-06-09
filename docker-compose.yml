@@ -49,3 +49,32 @@ services:
       - 8025:8025
     networks:
       - fiber
+  # SwaggerEditor
+  swagger-editor:
+    image: swaggerapi/swagger-editor
+    ports:
+      - "8001:8080"
+    networks:
+      - fiber
+  # SwaggerUI
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8002:8080"
+    volumes:
+      - ./docker/swagger/openapi.yaml:/usr/share/nginx/html/openapi.yaml
+    environment:
+      SWAGGER_JSON: /openapi.yaml
+      API_URL: "./openapi.yaml"
+    networks:
+      - fiber
+  # SwaggerAPISprout
+  swagger-api:
+    image: danielgtaylor/apisprout
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./docker/swagger/openapi.yaml:/openapi.yaml
+    command: /openapi.yaml --watch
+    networks:
+      - fiber

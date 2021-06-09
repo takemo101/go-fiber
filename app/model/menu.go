@@ -1,6 +1,9 @@
 package model
 
 import (
+	"strconv"
+
+	"github.com/thoas/go-funk"
 	"gorm.io/gorm"
 )
 
@@ -119,10 +122,21 @@ type Menu struct {
 	User       User        `gorm:"constraint:OnDelete:SET NULL;"`
 }
 
+func (m Menu) GetCategoryStringID() string {
+	return strconv.Itoa(int(m.CategoryID))
+}
+
+func (m Menu) GetTagStringIDs() []string {
+	sIDs := funk.Map(m.Tags, func(tag Tag) string {
+		return strconv.Itoa(int(tag.ID))
+	})
+	return sIDs.([]string)
+}
+
 // MenuTag is menu 2 tag
 type MenuTag struct {
-	MenuID uint `gorm:"primary_key"`
+	MenuID uint `gorm:"primaryKey"`
 	Menu   Menu `gorm:"constraint:OnDelete:CASCADE;"`
-	TagID  uint `gorm:"primary_key"`
+	TagID  uint `gorm:"primaryKey"`
 	Tag    Tag  `gorm:"constraint:OnDelete:CASCADE;"`
 }

@@ -4,7 +4,7 @@
     {% include 'include/sidebar.html' with active_key=':admin.index' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='管理者' function='USER' %}
+    {% include 'include/header.html' with title='管理者' function='USER' first_label='管理者' %}
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -66,7 +66,7 @@
                                 </button>
                                 <form action="{{ url('system/admin/%d/delete', admin.ID) }}" method="post" id="{{ admin.ID|stringformat:'delete-%d' }}">
                                     {% include 'form/csrf.html' %}
-                                    <input type="hidden" name="_method" value="delete">
+                                    {% include 'form/method.html' with method='delete' %}
                                 </form>
                             </td>
                         </tr>

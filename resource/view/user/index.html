@@ -4,7 +4,7 @@
     {% include 'include/sidebar.html' with active_key=':user.index' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='利用者' function='USER' %}
+    {% include 'include/header.html' with title='利用者' function='USER' first_label='利用者' %}
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -56,7 +56,7 @@
                                 {{ user.Email }}
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ url('system/menu/create/%d', user.ID) }}">
+                                <a class="btn btn-primary btn-sm" href="{{ url('system/menu/create/user/%d', user.ID) }}">
                                     <i class="fas fa-plus">
                                     </i>
                                 </a>
@@ -70,7 +70,7 @@
                                 </button>
                                 <form action="{{ url('system/user/%d/delete', user.ID) }}" method="post" id="{{ user.ID|stringformat:'delete-%d' }}">
                                     {% include 'form/csrf.html' %}
-                                    <input type="hidden" name="_method" value="delete">
+                                    {% include 'form/method.html' with method='delete' %}
                                 </form>
                             </td>
                         </tr>

@@ -4,7 +4,7 @@
     {% include 'include/sidebar.html' with active_key=':todo.index' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='ToDo' function='FUNCTION' %}
+    {% include 'include/header.html' with title='ToDo' function='FUNCTION' first_label='ToDo' first_link=url('system/todo') %}
 {% endblock %}
 {% block content %}
 <div class="row">

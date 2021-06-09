@@ -14,6 +14,7 @@ type DashboardController struct {
 	config    pkg.Config
 	value     support.RequestValue
 	todoQuery query.TodoQuery
+	menuQuery query.MenuQuery
 }
 
 // NewDashboardController is create dashboard
@@ -22,12 +23,14 @@ func NewDashboardController(
 	config pkg.Config,
 	value support.RequestValue,
 	todoQuery query.TodoQuery,
+	menuQuery query.MenuQuery,
 ) DashboardController {
 	return DashboardController{
 		logger:    logger,
 		config:    config,
 		value:     value,
 		todoQuery: todoQuery,
+		menuQuery: menuQuery,
 	}
 }
 
@@ -39,8 +42,14 @@ func (ctl DashboardController) Dashboard(c *fiber.Ctx) error {
 		return response.Error(todoErr)
 	}
 
+	menus, menuErr := ctl.menuQuery.GetUpdateMenus(10)
+	if menuErr != nil {
+		return response.Error(menuErr)
+	}
+
 	return response.View("home", helper.DataMap{
 		"todos":  todos,
+		"menus":  menus,
 		"config": ctl.config,
 	})
 }

@@ -5,6 +5,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
+	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/repository"
 )
 
@@ -81,6 +82,10 @@ func (form Admin) Validate(create bool, id uint, repository repository.AdminRepo
 		validation.Field(
 			&form.Role,
 			validation.Required.Error("権限を選択してください"),
+			validation.NotIn(
+				model.RoleSystem,
+				model.RoleAdmin,
+			).Error("権限に正しい値を設定してください"),
 		),
 	)
 

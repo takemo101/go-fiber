@@ -134,9 +134,9 @@ var Migrations = []*gormigrate.Migration{
 				gorm.Model
 			}
 			type MenuTag struct {
-				MenuID uint `gorm:"primary_key"`
+				MenuID uint `gorm:"primaryKey"`
 				Menu   Menu `gorm:"constraint:OnDelete:CASCADE;"`
-				TagID  uint `gorm:"primary_key"`
+				TagID  uint `gorm:"primaryKey"`
 				Tag    Tag  `gorm:"constraint:OnDelete:CASCADE;"`
 			}
 			return tx.AutoMigrate(&MenuTag{})

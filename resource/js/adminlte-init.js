@@ -1,3 +1,4 @@
+// for file input
 $(function() {
     bsCustomFileInput.init();
 });

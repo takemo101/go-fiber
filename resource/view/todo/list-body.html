@@ -6,9 +6,9 @@
             change() {
                 let formData = new FormData();
                 formData.append('status', this.status);
-                formData.append('csrf_token', $('meta[name=csrf_token]').attr('content'))
+                formData.append('csrf_token', AppData.csrfToken)
                 fetch(action, {
-                    method: 'patch',
+                    method: 'PATCH',
                     body: formData,
                 })
                 .then((response) => response.json())
@@ -72,7 +72,7 @@
                     {% if auth.ID == todo.AdminID %}
                     <form action="{{ url('system/todo/%d/delete', todo.ID) }}" method="post" id="{{ todo.ID|stringformat:'delete-%d' }}">
                         {% include 'form/csrf.html' %}
-                        <input type="hidden" name="_method" value="delete">
+                        {% include 'form/method.html' with method='delete' %}
                     </form>
                     {% endif %}
                 </td>

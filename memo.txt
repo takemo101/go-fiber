@@ -1,2 +1,6 @@
 ### 参考
 https://github.com/create-go-app/fiber-go-template
+
+
+### json レスポンス参考
+https://developer.ntt.com/ja/blog/5fdb9438-e14f-485a-968d-37fcc52a7931

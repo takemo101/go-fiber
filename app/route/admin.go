@@ -122,8 +122,9 @@ func (r AdminRoute) Setup() {
 			menu := system.Group("/menu")
 			{
 				menu.Get("/", r.menuController.Index)
-				menu.Get("/create/:user_id", r.menuController.Create)
-				menu.Post("/store/:user_id", r.menuController.Store)
+				menu.Get("/create/user/:id", r.menuController.Create)
+				menu.Post("/store/user/:id", r.menuController.Store)
+				menu.Get("/:id/detail", r.menuController.Detail)
 				menu.Get("/:id/edit", r.menuController.Edit)
 				menu.Put("/:id/update", r.menuController.Update)
 				menu.Delete("/:id/delete", r.menuController.Delete)
@@ -225,5 +226,11 @@ func (r AdminRoute) ViewRenderCreateHandler(c *fiber.Ctx, vr *helper.ViewRender)
 		"inputs":     inputs,
 		"messages":   messages,
 		"auth":       admin,
+	})
+	vr.SetJS(helper.DataMap{
+		"csrfToken": csrfToken,
+		"errors":    errors,
+		"inputs":    inputs,
+		"messages":  messages,
 	})
 }

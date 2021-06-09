@@ -1,0 +1,77 @@
+{% extends 'layout/default.html' %}
+{% block title %}案件｜{% endblock %}
+{% block content_side %}
+    {% include 'include/sidebar.html' with active_key=':menu.create' %}
+{% endblock %}
+{% block content_header %}
+    {% include 'include/header.html' with title='案件' function='FUNCTION' first_label='案件' first_link=url('system/menu') second_label='追加' %}
+{% endblock %}
+{% block content %}
+<form method="post" action="{{ url('system/menu/store/user/%d', user.ID) }}" id="store">
+    <div class="row">
+        <div class="col-md-8">
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">案件情報</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    {% include 'form/csrf.html' %}
+                    <div class="form-group">
+                        <label>利用者名</label>
+                        <p>
+                            <a href="{{ url('system/user/%d/edit', user.ID) }}">
+                                {{ user.Name }}
+                            </a>
+                        </p>
+                    </div>
+                    {% include 'form/input.html' with name='title' type='text' id="title" label='タイトル' input=inputs.title error=errors.title required=true %}
+                    {% include 'form/textarea.html' with name='content' id="content" label='内容' rows="6" placeholder="案件内容" input=inputs.content error=errors.content required=true %}
+                    {% include 'form/select.html' with name='process' id="process" label='進捗状況' empty='--' list=processes input=inputs.process error=errors.process required=true %}
+                    {% include 'form/select.html' with name='status' id="status" label='投稿状況' empty='--' list=statuses input=inputs.status error=errors.status required=true %}
+                    {% include 'form/select.html' with name='category_id' id="category_id" label='カテゴリー' empty='--' list=categories input=inputs.category_id error=errors.category_id required=true %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">タグ</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% include 'form/check-group.html' with name='tag_ids' id="tag_ids" list=tags input=inputs.tag_ids error=errors.tag_ids required=true %}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block content_footer_right %}
+<button class="btn btn-primary px-5 " data-aire-component="button" type="submit" data-class="js-dialog" data-form="#store" data-type="store">
+	追加
+</button>
+{% endblock %}
+{% block footer_script %}
+<script>
+$(function() {
+    $Utility.summernote('content', {
+        height: 280,
+        lang: 'ja-JP',
+    });
+});
+</script>
+{% endblock %}

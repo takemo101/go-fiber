@@ -26,7 +26,7 @@ var AdminLteUtility = /** @class */ (function() {
             form.children('input[name^="' + inputName + '"]').remove();
             (elementID ? $('#' + elementID + ' [data-' + dataID + ']') : $('[data-' + dataID + ']')).each(function(index, element) {
                 var id = $(element).data(dataID);
-                form.append($('<input>').val(id).attr('type', 'hidden').attr('name', inputName + '[]'));
+                form.append($('<input>').val(id).attr('type', 'hidden').attr('name', inputName));
             });
         });
     };

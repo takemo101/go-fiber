@@ -18,7 +18,7 @@ func NewMenuQuery(db pkg.Database) MenuQuery {
 	}
 }
 
-// Search gets limit menus
+// Search get menus
 func (r MenuQuery) Search(object object.MenuSearchInput, limit int) (menus []model.Menu, err error) {
 	return menus, r.db.GormDB.
 		Preload("Tags").
@@ -27,4 +27,9 @@ func (r MenuQuery) Search(object object.MenuSearchInput, limit int) (menus []mod
 		Order("id desc").
 		Limit(limit).
 		Find(&menus).Error
+}
+
+// GetUpdateMenus get menus order by update_at
+func (r MenuQuery) GetUpdateMenus(limit int) (menus []model.Menu, err error) {
+	return menus, r.db.GormDB.Order("updated_at desc").Limit(limit).Find(&menus).Error
 }

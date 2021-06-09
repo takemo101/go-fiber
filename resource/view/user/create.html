@@ -4,7 +4,7 @@
     {% include 'include/sidebar.html' with active_key=':user.create' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='利用者' function='USER' %}
+    {% include 'include/header.html' with title='利用者' function='USER' first_label='利用者' first_link=url('system/user') second_label='追加' %}
 {% endblock %}
 {% block content %}
 <div class="row">

@@ -6,6 +6,22 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
+// JsonStatus json status message type
+type JsonStatus string
+
+// JsonStatus json status messages
+const (
+	Success JsonStatus = "success"
+	Fail    JsonStatus = "fail"
+	Error   JsonStatus = "error"
+)
+
+// JsonError json error type
+type JsonError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 // ResponseHelper response helper
 type ResponseHelper struct {
 	path   pkg.Path
@@ -42,7 +58,7 @@ func (helper *ResponseHelper) Json(c *fiber.Ctx, data fiber.Map) error {
 // JsonSuccess response json success
 func (helper *ResponseHelper) JsonSuccess(c *fiber.Ctx, message string) error {
 	return helper.Json(c, fiber.Map{
-		"success": true,
+		"status":  Success,
 		"message": message,
 	})
 }
@@ -50,51 +66,66 @@ func (helper *ResponseHelper) JsonSuccess(c *fiber.Ctx, message string) error {
 // JsonSuccessWith response json success with data
 func (helper *ResponseHelper) JsonSuccessWith(c *fiber.Ctx, message string, data fiber.Map) error {
 	mainData := fiber.Map{
-		"success": true,
+		"status":  Success,
 		"message": message,
 	}
 	mergo.Merge(
 		&mainData,
-		data,
+		fiber.Map{
+			"data": data,
+		},
 	)
 	return helper.Json(c, mainData)
 }
 
 // JsonErrorSimple response json error
-func (helper *ResponseHelper) JsonErrorSimple(c *fiber.Ctx, err error) error {
+func (helper *ResponseHelper) JsonErrorSimple(c *fiber.Ctx, err error, code int) error {
+	c.Status(code)
 	return helper.Json(c, fiber.Map{
-		"success": false,
-		"error":   err.Error(),
+		"status": Error,
+		"error": JsonError{
+			Code:    code,
+			Message: err.Error(),
+		},
 	})
 }
 
 // JsonError response json error
 func (helper *ResponseHelper) JsonError(c *fiber.Ctx, err error) error {
-	c.Status(fiber.StatusInternalServerError)
-	return helper.JsonErrorSimple(c, err)
+	return helper.JsonErrorSimple(c, err, fiber.StatusInternalServerError)
 }
 
 // JsonErrorWith response json error with data
 func (helper *ResponseHelper) JsonErrorWith(c *fiber.Ctx, err error, data fiber.Map) error {
+	code := fiber.StatusInternalServerError
 	mainData := fiber.Map{
-		"success": false,
-		"error":   err.Error(),
+		"status": Error,
+		"error": JsonError{
+			Code:    code,
+			Message: err.Error(),
+		},
 	}
 	mergo.Merge(
 		&mainData,
-		data,
+		fiber.Map{
+			"data": data,
+		},
 	)
-	c.Status(fiber.StatusInternalServerError)
+	c.Status(code)
 	return helper.Json(c, mainData)
 }
 
 // JsonErrorMessages response json error with error_messages
 func (helper *ResponseHelper) JsonErrorMessages(c *fiber.Ctx, err error, messages map[string]string) error {
-	c.Status(fiber.StatusUnprocessableEntity)
+	code := fiber.StatusUnprocessableEntity
+	c.Status(code)
 	return helper.Json(c, fiber.Map{
-		"success":        false,
-		"error":          err.Error(),
-		"error_messages": messages,
+		"status": Fail,
+		"error": JsonError{
+			Code:    code,
+			Message: err.Error(),
+		},
+		"messages": messages,
 	})
 }
 

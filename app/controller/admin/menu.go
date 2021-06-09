@@ -66,11 +66,30 @@ func (ctl MenuController) Index(c *fiber.Ctx) error {
 	})
 }
 
+// Detail render menu detail
+func (ctl MenuController) Detail(c *fiber.Ctx) error {
+	response := ctl.value.GetResponseHelper(c)
+	id, convErr := strconv.Atoi(c.Params("id"))
+	if convErr != nil {
+		return response.Error(convErr)
+	}
+
+	menu, findErr := ctl.service.Find(uint(id))
+	if findErr != nil {
+		return response.Error(findErr)
+	}
+
+	return response.View("menu/detail", helper.DataMap{
+		"content_footer": true,
+		"menu":           menu,
+	})
+}
+
 // Create render menu create form
 func (ctl MenuController) Create(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 
-	userID, convErr := strconv.Atoi(c.Params("user_id"))
+	userID, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return response.Error(convErr)
 	}
@@ -104,7 +123,7 @@ func (ctl MenuController) Create(c *fiber.Ctx) error {
 func (ctl MenuController) Store(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 
-	userID, convErr := strconv.Atoi(c.Params("user_id"))
+	userID, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return response.Error(convErr)
 	}
@@ -141,7 +160,7 @@ func (ctl MenuController) Store(c *fiber.Ctx) error {
 	}
 
 	SetToastr(c, ToastrStore, ToastrStore.Message(), Messages{})
-	return response.Back(c)
+	return response.Redirect(c, "system/menu")
 }
 
 // Edit render menu edit form
@@ -167,7 +186,7 @@ func (ctl MenuController) Edit(c *fiber.Ctx) error {
 		return response.Error(categoryErr)
 	}
 
-	return response.View("menu/create", helper.DataMap{
+	return response.View("menu/edit", helper.DataMap{
 		"content_footer": true,
 		"processes":      model.ToMenuProcessArray(),
 		"statuses":       model.ToMenuStatusArray(),
@@ -227,5 +246,5 @@ func (ctl MenuController) Delete(c *fiber.Ctx) error {
 	}
 
 	SetToastr(c, ToastrDelete, ToastrDelete.Message(), Messages{})
-	return response.Back(c)
+	return response.Redirect(c, "system/menu")
 }

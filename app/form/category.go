@@ -41,7 +41,7 @@ func (form Category) Validate(create bool, id uint, repository repository.Catego
 
 // Category sort input
 type CategorySort struct {
-	IDs []string `json:"ids[]" form:"ids[]"`
+	IDs []string `json:"ids" form:"ids"`
 }
 
 // Validate sort input validation

@@ -1,0 +1,140 @@
+{% extends 'layout/default.html' %}
+{% block title %}案件｜{% endblock %}
+{% block content_side %}
+    {% include 'include/sidebar.html' with active_key=':menu.create' %}
+{% endblock %}
+{% block content_header %}
+    {% include 'include/header.html' with title='案件' function='FUNCTION' first_label='案件' first_link=url('system/menu') second_label='詳細:ID '|add:menu.ID %}
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">案件情報</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row border-bottom pb-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">利用者名</div>
+                    <div class="col-12 col-sm-9">
+                        <a href="{{ url('system/user/%d/edit', menu.User.ID) }}">
+                            {{ menu.User.Name }}
+                        </a>
+                    </div>
+                </div>
+                <div class="row border-bottom py-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">タイトル</div>
+                    <div class="col-12 col-sm-9">
+                        {{ menu.Title }}
+                    </div>
+                </div>
+                <div class="row border-bottom py-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">内容</div>
+                    <div class="col-12 col-sm-9">
+                        {{ menu.Content|safe }}
+                    </div>
+                </div>
+                <div class="row border-bottom py-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">進捗状況</div>
+                    <div class="col-12 col-sm-9">
+                        {{ menu.Process.Name() }}
+                    </div>
+                </div>
+                <div class="row border-bottom py-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">投稿状況</div>
+                    <div class="col-12 col-sm-9">
+                        {{ menu.Status.Name() }}
+                    </div>
+                </div>
+                <div class="row border-bottom py-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">カテゴリ</div>
+                    <div class="col-12 col-sm-9">
+                        {{ menu.Category.Name }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">タグ</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5>
+                {%for tag in menu.Tags %}
+                    <span class="badge badge-info">
+                        {{ tag.Name }}
+                    </span>
+                {% endfor %}
+                </h5>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">日付情報</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row border-bottom pb-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">追加日時</div>
+                    <div class="col-12 col-sm-9">
+                        {{ menu.CreatedAt|date:'2006.01.02 15:04:05' }}
+                    </div>
+                </div>
+                <div class="row border-bottom py-3">
+                    <div class="col-12 col-sm-3 font-weight-bolder">更新日時</div>
+                    <div class="col-12 col-sm-9">
+                        {{ menu.UpdatedAt|date:'2006.01.02 15:04:05' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block content_footer_left %}
+<form action="{{ url('system/menu/%d/delete', menu.ID) }}" method="post" id="delete">
+    {% include 'form/csrf.html' %}
+    {% include 'form/method.html' with method='delete' %}
+    <button class="btn btn-primary px-5  btn-warning" type="submit" data-class="js-dialog" data-form="#delete" data-type="delete">
+        削除
+    </button>
+</form>
+{% endblock %}
+{% block content_footer_right %}
+<a href="{{ url('system/menu/%d/edit', menu.ID) }}" class="btn btn-info px-5 ">
+	編集
+</a>
+{% endblock %}
+{% block footer_script %}
+<script>
+$(function() {
+    $Utility.summernote('content', {
+        height: 280,
+        lang: 'ja-JP',
+    });
+});
+</script>
+{% endblock %}

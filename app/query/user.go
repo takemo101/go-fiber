@@ -18,7 +18,7 @@ func NewUserQuery(db pkg.Database) UserQuery {
 	}
 }
 
-// Search gets limit users
+// Search get users limit
 func (r UserQuery) Search(object object.UserSearchInput, limit int) (users []model.User, err error) {
 	return users, r.db.GormDB.Order("id desc").Limit(limit).Find(&users).Error
 }

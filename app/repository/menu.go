@@ -68,7 +68,7 @@ func (r MenuRepository) UpdateWithTagIDs(menu model.Menu, tagIDs []uint) (model.
 			return deleteErr
 		}
 
-		if menuErr := tx.Create(&menu).Error; menuErr != nil {
+		if menuErr := tx.Omit("Tags").Save(&menu).Error; menuErr != nil {
 			return menuErr
 		}
 
