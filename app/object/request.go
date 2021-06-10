@@ -8,51 +8,44 @@ import (
 	"github.com/thoas/go-funk"
 )
 
-// MenuInput input form to service
-type MenuInput struct {
+// RequestInput input form to service
+type RequestInput struct {
 	title      string
 	content    string
-	process    string
 	status     string
 	tagIDs     []string
 	categoryID string
 }
 
-func NewMenuInput(
+func NewRequestInput(
 	title string,
 	content string,
-	process string,
 	status string,
 	tagIDs []string,
 	categoryID string,
-) MenuInput {
-	return MenuInput{
+) RequestInput {
+	return RequestInput{
 		title:      title,
 		content:    content,
-		process:    process,
 		status:     status,
 		tagIDs:     tagIDs,
 		categoryID: categoryID,
 	}
 }
 
-func (o MenuInput) GetTitle() string {
+func (o RequestInput) GetTitle() string {
 	return strings.TrimSpace(o.title)
 }
 
-func (o MenuInput) GetContent() string {
+func (o RequestInput) GetContent() string {
 	return o.content
 }
 
-func (o MenuInput) GetProcess() model.MenuProcess {
-	return model.MenuProcess(o.process)
+func (o RequestInput) GetStatus() model.RequestStatus {
+	return model.RequestStatus(o.status)
 }
 
-func (o MenuInput) GetStatus() model.MenuStatus {
-	return model.MenuStatus(o.status)
-}
-
-func (o MenuInput) GetTagIDs() []uint {
+func (o RequestInput) GetTagIDs() []uint {
 	uintIDs := funk.Map(o.tagIDs, func(id string) uint {
 		if iID, err := strconv.Atoi(id); err == nil {
 			return uint(iID)
@@ -62,34 +55,34 @@ func (o MenuInput) GetTagIDs() []uint {
 	return funk.UniqUInt(uintIDs.([]uint))
 }
 
-func (o MenuInput) GetCategoryID() uint {
+func (o RequestInput) GetCategoryID() uint {
 	if id, err := strconv.Atoi(o.categoryID); err == nil {
 		return uint(id)
 	}
 	return 0
 }
 
-// MenuSearchInput search form to service
-type MenuSearchInput struct {
+// RequestSearchInput search form to service
+type RequestSearchInput struct {
 	keyword string
 	page    string
 }
 
-func NewMenuSearchInput(
+func NewRequestSearchInput(
 	keyword string,
 	page string,
-) MenuSearchInput {
-	return MenuSearchInput{
+) RequestSearchInput {
+	return RequestSearchInput{
 		keyword: keyword,
 		page:    page,
 	}
 }
 
-func (o MenuSearchInput) GetKeyword() string {
+func (o RequestSearchInput) GetKeyword() string {
 	return strings.TrimSpace(o.keyword)
 }
 
-func (o MenuSearchInput) GetPage() int {
+func (o RequestSearchInput) GetPage() int {
 	if page, err := strconv.Atoi(o.page); err == nil {
 		return page
 	}

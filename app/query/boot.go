@@ -7,5 +7,5 @@ var Module = fx.Options(
 	fx.Provide(NewAdminQuery),
 	fx.Provide(NewUserQuery),
 	fx.Provide(NewTodoQuery),
-	fx.Provide(NewMenuQuery),
+	fx.Provide(NewRequestQuery),
 )

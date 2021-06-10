@@ -40,7 +40,7 @@ func (m Session) Setup() {
 
 	store := session.New(session.Config{
 		Expiration:     m.config.Session.Expiration,
-		CookieName:     m.config.Session.Name,
+		KeyLookup:      "cookie:" + m.config.Session.Name,
 		CookieDomain:   m.config.Session.Domain,
 		CookiePath:     m.config.Session.Path,
 		CookieSecure:   m.config.Session.Secure,

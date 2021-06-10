@@ -7,6 +7,7 @@ import (
 
 // Module export
 var Module = fx.Options(
+	fx.Provide(NewTestCommand),
 	fx.Provide(NewMigrateCommand),
 	fx.Provide(NewRollbackCommand),
 	fx.Provide(NewAutoMigrateCommand),
@@ -22,6 +23,7 @@ type Commands []contract.Command
 
 // NewCommand is setup command
 func NewCommand(
+	testCommand TestCommand,
 	migrateCommand MigrateCommand,
 	rollbackCommand RollbackCommand,
 	autoMigrateCommand AutoMigrateCommand,
@@ -30,6 +32,7 @@ func NewCommand(
 	mailCommand MailCommand,
 ) Commands {
 	return Commands{
+		testCommand,
 		migrateCommand,
 		rollbackCommand,
 		autoMigrateCommand,

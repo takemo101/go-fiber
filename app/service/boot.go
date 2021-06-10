@@ -9,5 +9,7 @@ var Module = fx.Options(
 	fx.Provide(NewTodoService),
 	fx.Provide(NewTagService),
 	fx.Provide(NewCategoryService),
-	fx.Provide(NewMenuService),
+	fx.Provide(NewRequestService),
+	fx.Provide(NewSuggestService),
+	fx.Provide(NewDiscussionService),
 )

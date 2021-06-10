@@ -9,6 +9,8 @@ var Models = []interface{}{
 	&model.Todo{},
 	&model.Category{},
 	&model.Tag{},
-	&model.Menu{},
-	&model.MenuTag{},
+	&model.Request{},
+	&model.RequestTag{},
+	&model.Suggest{},
+	&model.Discussion{},
 }

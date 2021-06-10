@@ -69,8 +69,8 @@ var Migrations = []*gormigrate.Migration{
 			type Category struct {
 				gorm.Model
 				Name     string `gorm:"type:varchar(191);uniqueIndex;not null"`
-				Sort     uint   `gorm:"uniqueIndex;default:1"`
-				IsActive bool   `gorm:"index;default:true"`
+				Sort     uint   `gorm:"index;default:1"`
+				IsActive bool   `gorm:"index"`
 			}
 			return tx.AutoMigrate(&Category{})
 		},
@@ -86,7 +86,7 @@ var Migrations = []*gormigrate.Migration{
 			type Tag struct {
 				gorm.Model
 				Name string `gorm:"type:varchar(191);uniqueIndex;not null"`
-				Sort uint   `gorm:"uniqueIndex;default:1"`
+				Sort uint   `gorm:"index;default:1"`
 			}
 			return tx.AutoMigrate(&Tag{})
 		},
@@ -95,7 +95,7 @@ var Migrations = []*gormigrate.Migration{
 			return tx.Migrator().DropTable(&Tag{})
 		},
 	},
-	// create menus
+	// create requests
 	{
 		ID: "202106050006",
 		Migrate: func(tx *gorm.DB) error {
@@ -105,45 +105,100 @@ var Migrations = []*gormigrate.Migration{
 			type User struct {
 				gorm.Model
 			}
-			type Menu struct {
+			type Request struct {
 				gorm.Model
 				Title      string   `gorm:"type:varchar(191);not null"`
 				Content    string   `gorm:"type:longtext;not null"`
-				Process    string   `gorm:"type:varchar(20);index;not null;default:none"`
 				Status     string   `gorm:"type:varchar(20);index;not null;default:draft"`
 				CategoryID uint     `gorm:"index"`
 				Category   Category `gorm:"constraint:OnDelete:SET NULL;"`
 				UserID     uint     `gorm:"index"`
 				User       User     `gorm:"constraint:OnDelete:SET NULL;"`
 			}
-			return tx.AutoMigrate(&Menu{})
+			return tx.AutoMigrate(&Request{})
 		},
 		Rollback: func(tx *gorm.DB) error {
-			type Menu struct{}
-			return tx.Migrator().DropTable(&Menu{})
+			type Request struct{}
+			return tx.Migrator().DropTable(&Request{})
 		},
 	},
-	// create menu_tags
+	// create request_tags
 	{
 		ID: "202106050007",
 		Migrate: func(tx *gorm.DB) error {
-			type Menu struct {
+			type Request struct {
 				gorm.Model
 			}
 			type Tag struct {
 				gorm.Model
 			}
-			type MenuTag struct {
-				MenuID uint `gorm:"primaryKey"`
-				Menu   Menu `gorm:"constraint:OnDelete:CASCADE;"`
-				TagID  uint `gorm:"primaryKey"`
-				Tag    Tag  `gorm:"constraint:OnDelete:CASCADE;"`
+			type RequestTag struct {
+				RequestID uint    `gorm:"primaryKey"`
+				Request   Request `gorm:"constraint:OnDelete:CASCADE;"`
+				TagID     uint    `gorm:"primaryKey"`
+				Tag       Tag     `gorm:"constraint:OnDelete:CASCADE;"`
 			}
-			return tx.AutoMigrate(&MenuTag{})
+			return tx.AutoMigrate(&RequestTag{})
 		},
 		Rollback: func(tx *gorm.DB) error {
-			type MenuTag struct{}
-			return tx.Migrator().DropTable(&MenuTag{})
+			type RequestTag struct{}
+			return tx.Migrator().DropTable(&RequestTag{})
+		},
+	},
+	// create suggest
+	{
+		ID: "202106050008",
+		Migrate: func(tx *gorm.DB) error {
+			type Request struct {
+				gorm.Model
+			}
+			type User struct {
+				gorm.Model
+			}
+			type Suggest struct {
+				gorm.Model
+				Status      string  `gorm:"type:varchar(20);index;not null;default:discussion"`
+				RequestID   uint    `gorm:"index;not null"`
+				Request     Request `gorm:"constraint:OnDelete:CASCADE;"`
+				SuggesterID uint    `gorm:"index"`
+				Suggester   User    `gorm:"constraint:OnDelete:SET NULL;"`
+			}
+
+			return tx.AutoMigrate(&Suggest{})
+		},
+		Rollback: func(tx *gorm.DB) error {
+			type Suggest struct{}
+			return tx.Migrator().DropTable(&Suggest{})
+		},
+	},
+	// create discussion
+	{
+		ID: "202106050009",
+		Migrate: func(tx *gorm.DB) error {
+			type User struct {
+				gorm.Model
+			}
+			type Suggest struct {
+				gorm.Model
+			}
+			type Discussion struct {
+				gorm.Model
+				Type       string  `gorm:"type:varchar(20);index;not null;default:suggest"`
+				Message    string  `gorm:"type:text;not null"`
+				IsRead     bool    `gorm:"index"`
+				SenderID   uint    `gorm:"index"`
+				Sender     User    `gorm:"constraint:OnDelete:SET NULL;"`
+				ReceiverID uint    `gorm:"index"`
+				Receiver   User    `gorm:"constraint:OnDelete:SET NULL;"`
+				SuggestID  uint    `gorm:"index;not null"`
+				Suggest    Suggest `gorm:"constraint:OnDelete:CASCADE;"`
+			}
+
+			return tx.AutoMigrate(&Discussion{})
+		},
+		Rollback: func(tx *gorm.DB) error {
+			type Discussion struct{}
+			return tx.Migrator().DropTable(&Discussion{})
 		},
 	},
 }

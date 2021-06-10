@@ -2,12 +2,12 @@ package model
 
 import "gorm.io/gorm"
 
-// Category is menu category
+// Category is request category
 type Category struct {
 	gorm.Model
 	Name     string `gorm:"type:varchar(191);uniqueIndex;not null"`
-	Sort     uint   `gorm:"uniqueIndex;default:1"`
-	IsActive bool   `gorm:"index;default:true"`
+	Sort     uint   `gorm:"index;default:1"`
+	IsActive bool   `gorm:"index"`
 }
 
 func CategoriesToArray(categories []Category) []KeyName {

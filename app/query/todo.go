@@ -35,7 +35,7 @@ func (r TodoQuery) SearchYour(object object.TodoSearchInput, adminID uint, limit
 		Find(&todos).Error
 }
 
-// GetUpdateMenus get todos order by update_at
+// GetUpdateTodos get todos order by update_at
 func (r TodoQuery) GetUpdateTodos(limit int) (todos []model.Todo, err error) {
 	return todos, r.db.GormDB.Preload("Admin").Order("updated_at desc").Limit(limit).Find(&todos).Error
 }

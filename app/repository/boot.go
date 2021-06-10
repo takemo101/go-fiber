@@ -9,5 +9,7 @@ var Module = fx.Options(
 	fx.Provide(NewTodoRepository),
 	fx.Provide(NewTagRepository),
 	fx.Provide(NewCategoryRepository),
-	fx.Provide(NewMenuRepository),
+	fx.Provide(NewRequestRepository),
+	fx.Provide(NewSuggestRepository),
+	fx.Provide(NewDiscussionRepository),
 )

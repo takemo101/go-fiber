@@ -24,7 +24,7 @@ type AdminRoute struct {
 	todoController      controller.TodoController
 	tagController       controller.TagController
 	categoryController  controller.CategoryController
-	menuController      controller.MenuController
+	requestController   controller.RequestController
 	accountController   controller.AccountController
 	authController      controller.SessionAuthController
 }
@@ -118,16 +118,16 @@ func (r AdminRoute) Setup() {
 				category.Delete("/:id/delete", r.categoryController.Delete)
 			}
 
-			// menu route
-			menu := system.Group("/menu")
+			// request route
+			request := system.Group("/request")
 			{
-				menu.Get("/", r.menuController.Index)
-				menu.Get("/create/user/:id", r.menuController.Create)
-				menu.Post("/store/user/:id", r.menuController.Store)
-				menu.Get("/:id/detail", r.menuController.Detail)
-				menu.Get("/:id/edit", r.menuController.Edit)
-				menu.Put("/:id/update", r.menuController.Update)
-				menu.Delete("/:id/delete", r.menuController.Delete)
+				request.Get("/", r.requestController.Index)
+				request.Get("/create/user/:id", r.requestController.Create)
+				request.Post("/store/user/:id", r.requestController.Store)
+				request.Get("/:id/detail", r.requestController.Detail)
+				request.Get("/:id/edit", r.requestController.Edit)
+				request.Put("/:id/update", r.requestController.Update)
+				request.Delete("/:id/delete", r.requestController.Delete)
 			}
 
 			// account route
@@ -158,7 +158,7 @@ func NewAdminRoute(
 	todoController controller.TodoController,
 	tagController controller.TagController,
 	categoryController controller.CategoryController,
-	menuController controller.MenuController,
+	requestController controller.RequestController,
 	accountController controller.AccountController,
 	authController controller.SessionAuthController,
 ) AdminRoute {
@@ -176,7 +176,7 @@ func NewAdminRoute(
 		todoController:      todoController,
 		tagController:       tagController,
 		categoryController:  categoryController,
-		menuController:      menuController,
+		requestController:   requestController,
 		accountController:   accountController,
 		authController:      authController,
 	}
@@ -184,7 +184,7 @@ func NewAdminRoute(
 
 // ViewRenderCreateHandler middleware handler
 func (r AdminRoute) ViewRenderCreateHandler(c *fiber.Ctx, vr *helper.ViewRender) {
-	// load menu list
+	// load request list
 	adminlte, err := r.app.Config.Load("admin-lte")
 	if err == nil {
 		for k, v := range map[string]string{

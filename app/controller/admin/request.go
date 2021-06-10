@@ -15,26 +15,26 @@ import (
 	"github.com/takemo101/go-fiber/pkg"
 )
 
-// MenuController is menu
-type MenuController struct {
+// RequestController is request
+type RequestController struct {
 	logger             pkg.Logger
-	service            service.MenuService
+	service            service.RequestService
 	userRepository     repository.UserRepository
 	categoryRepository repository.CategoryRepository
 	tagRepository      repository.TagRepository
 	value              support.RequestValue
 }
 
-// NewMenuController is create menu controller
-func NewMenuController(
+// NewRequestController is create request controller
+func NewRequestController(
 	logger pkg.Logger,
-	service service.MenuService,
+	service service.RequestService,
 	userRepository repository.UserRepository,
 	categoryRepository repository.CategoryRepository,
 	tagRepository repository.TagRepository,
 	value support.RequestValue,
-) MenuController {
-	return MenuController{
+) RequestController {
+	return RequestController{
 		logger:             logger,
 		service:            service,
 		userRepository:     userRepository,
@@ -44,16 +44,16 @@ func NewMenuController(
 	}
 }
 
-// Index render menu list
-func (ctl MenuController) Index(c *fiber.Ctx) error {
-	var form form.MenuSearch
+// Index render request list
+func (ctl RequestController) Index(c *fiber.Ctx) error {
+	var form form.RequestSearch
 	response := ctl.value.GetResponseHelper(c)
 
 	if err := c.QueryParser(&form); err != nil {
 		return response.Error(err)
 	}
 
-	menus, err := ctl.service.Search(object.NewMenuSearchInput(
+	requests, err := ctl.service.Search(object.NewRequestSearchInput(
 		form.Keyword,
 		form.Page,
 	), 20)
@@ -61,32 +61,32 @@ func (ctl MenuController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	return response.View("menu/index", helper.DataMap{
-		"menus": menus,
+	return response.View("request/index", helper.DataMap{
+		"requests": requests,
 	})
 }
 
-// Detail render menu detail
-func (ctl MenuController) Detail(c *fiber.Ctx) error {
+// Detail render request detail
+func (ctl RequestController) Detail(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return response.Error(convErr)
 	}
 
-	menu, findErr := ctl.service.Find(uint(id))
+	request, findErr := ctl.service.Find(uint(id))
 	if findErr != nil {
 		return response.Error(findErr)
 	}
 
-	return response.View("menu/detail", helper.DataMap{
+	return response.View("request/detail", helper.DataMap{
 		"content_footer": true,
-		"menu":           menu,
+		"request":        request,
 	})
 }
 
-// Create render menu create form
-func (ctl MenuController) Create(c *fiber.Ctx) error {
+// Create render request create form
+func (ctl RequestController) Create(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 
 	userID, convErr := strconv.Atoi(c.Params("id"))
@@ -109,18 +109,17 @@ func (ctl MenuController) Create(c *fiber.Ctx) error {
 		return response.Error(categoryErr)
 	}
 
-	return response.View("menu/create", helper.DataMap{
+	return response.View("request/create", helper.DataMap{
 		"content_footer": true,
-		"processes":      model.ToMenuProcessArray(),
-		"statuses":       model.ToMenuStatusArray(),
+		"statuses":       model.ToRequestStatusArray(),
 		"tags":           model.TagsToArray(tags),
 		"categories":     model.CategoriesToArray(categories),
 		"user":           user,
 	})
 }
 
-// Store menu store process
-func (ctl MenuController) Store(c *fiber.Ctx) error {
+// Store request store process
+func (ctl RequestController) Store(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 
 	userID, convErr := strconv.Atoi(c.Params("id"))
@@ -133,7 +132,7 @@ func (ctl MenuController) Store(c *fiber.Ctx) error {
 		return response.Error(findErr)
 	}
 
-	var form form.Menu
+	var form form.Request
 
 	if err := c.BodyParser(&form); err != nil {
 		return response.Error(err)
@@ -148,10 +147,9 @@ func (ctl MenuController) Store(c *fiber.Ctx) error {
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Store(object.NewMenuInput(
+	if _, err := ctl.service.Store(object.NewRequestInput(
 		form.Title,
 		form.Content,
-		form.Process,
 		form.Status,
 		form.TagIDs,
 		form.CategoryID,
@@ -160,18 +158,18 @@ func (ctl MenuController) Store(c *fiber.Ctx) error {
 	}
 
 	SetToastr(c, ToastrStore, ToastrStore.Message(), Messages{})
-	return response.Redirect(c, "system/menu")
+	return response.Redirect(c, "system/request")
 }
 
-// Edit render menu edit form
-func (ctl MenuController) Edit(c *fiber.Ctx) error {
+// Edit render request edit form
+func (ctl RequestController) Edit(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return response.Error(convErr)
 	}
 
-	menu, findErr := ctl.service.Find(uint(id))
+	request, findErr := ctl.service.Find(uint(id))
 	if findErr != nil {
 		return response.Error(findErr)
 	}
@@ -186,25 +184,24 @@ func (ctl MenuController) Edit(c *fiber.Ctx) error {
 		return response.Error(categoryErr)
 	}
 
-	return response.View("menu/edit", helper.DataMap{
+	return response.View("request/edit", helper.DataMap{
 		"content_footer": true,
-		"processes":      model.ToMenuProcessArray(),
-		"statuses":       model.ToMenuStatusArray(),
+		"statuses":       model.ToRequestStatusArray(),
 		"tags":           model.TagsToArray(tags),
 		"categories":     model.CategoriesToArray(categories),
-		"menu":           menu,
+		"request":        request,
 	})
 }
 
-// Update menu update process
-func (ctl MenuController) Update(c *fiber.Ctx) error {
+// Update request update process
+func (ctl RequestController) Update(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
 		return response.Error(convErr)
 	}
 
-	var form form.Menu
+	var form form.Request
 
 	if err := c.BodyParser(&form); err != nil {
 		return response.Error(err)
@@ -218,10 +215,9 @@ func (ctl MenuController) Update(c *fiber.Ctx) error {
 		return response.Back(c)
 	}
 
-	if _, err := ctl.service.Update(uID, object.NewMenuInput(
+	if _, err := ctl.service.Update(uID, object.NewRequestInput(
 		form.Title,
 		form.Content,
-		form.Process,
 		form.Status,
 		form.TagIDs,
 		form.CategoryID,
@@ -233,8 +229,8 @@ func (ctl MenuController) Update(c *fiber.Ctx) error {
 	return response.Back(c)
 }
 
-// Delete menu delete process
-func (ctl MenuController) Delete(c *fiber.Ctx) error {
+// Delete request delete process
+func (ctl RequestController) Delete(c *fiber.Ctx) error {
 	response := ctl.value.GetResponseHelper(c)
 	id, convErr := strconv.Atoi(c.Params("id"))
 	if convErr != nil {
@@ -246,5 +242,5 @@ func (ctl MenuController) Delete(c *fiber.Ctx) error {
 	}
 
 	SetToastr(c, ToastrDelete, ToastrDelete.Message(), Messages{})
-	return response.Redirect(c, "system/menu")
+	return response.Redirect(c, "system/request")
 }

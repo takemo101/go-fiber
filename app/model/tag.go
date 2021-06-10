@@ -2,11 +2,11 @@ package model
 
 import "gorm.io/gorm"
 
-// Tag is menu tag
+// Tag is request tag
 type Tag struct {
 	gorm.Model
 	Name string `gorm:"type:varchar(191);uniqueIndex;not null"`
-	Sort uint   `gorm:"uniqueIndex;default:1"`
+	Sort uint   `gorm:"index;default:1"`
 }
 
 func TagsToArray(tags []Tag) []KeyName {

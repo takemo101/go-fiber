@@ -6,18 +6,17 @@ import (
 	"github.com/takemo101/go-fiber/app/repository"
 )
 
-// Menu create form
-type Menu struct {
+// Request create form
+type Request struct {
 	Title      string   `json:"title" form:"title"`
 	Content    string   `json:"content" form:"content"`
-	Process    string   `json:"process" form:"process"`
 	Status     string   `json:"status" form:"status"`
 	TagIDs     []string `json:"tag_ids" form:"tag_ids"`
 	CategoryID string   `json:"category_id" form:"category_id"`
 }
 
 // Validate create or edit form validation
-func (form Menu) Validate(
+func (form Request) Validate(
 	categoryRepository repository.CategoryRepository,
 	tagRepository repository.TagRepository,
 ) error {
@@ -35,24 +34,14 @@ func (form Menu) Validate(
 			validation.Required.Error("内容を入力してください"),
 		),
 		validation.Field(
-			&form.Process,
-			validation.Required.Error("進捗状況を選択してください"),
-			validation.NotIn(
-				model.MenuProcessNone,
-				model.MenuProcessMatch,
-				model.MenuProcessCancel,
-				model.MenuProcessComplete,
-			).Error("進捗状況に正しい値を設定してください"),
-		),
-		validation.Field(
 			&form.Status,
 			validation.Required.Error("投稿状況を選択してください"),
 			validation.NotIn(
-				model.MenuStatusDraft,
-				model.MenuStatusApply,
-				model.MenuStatusRemand,
-				model.MenuStatusRelease,
-				model.MenuStatusPrivate,
+				model.RequestStatusDraft,
+				model.RequestStatusApply,
+				model.RequestStatusRemand,
+				model.RequestStatusRelease,
+				model.RequestStatusPrivate,
 			).Error("投稿状況に正しい値を設定してください"),
 		),
 		validation.Field(
@@ -72,8 +61,8 @@ func (form Menu) Validate(
 	return validation.ValidateStruct(&form, fields...)
 }
 
-// MenuSearch search form
-type MenuSearch struct {
+// RequestSearch search form
+type RequestSearch struct {
 	Keyword string `json:"keyword" form:"keyword"`
 	Page    string `json:"page" form:"page"`
 }

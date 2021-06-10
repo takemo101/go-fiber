@@ -42,10 +42,10 @@
             "name": "FUNCTION"
         },
         {
-            "key": ":menu",
-            "name": "案件",
+            "key": ":request",
+            "name": "募集",
             "icon": "fas fa-paper-plane",
-            "path": "system/menu"
+            "path": "system/request"
         },
         {
             "key": ":todo",

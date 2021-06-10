@@ -47,7 +47,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">案件：更新</h5>
+            <h5 class="card-title">募集：更新</h5>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
@@ -64,16 +64,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for menu in menus %}
+                {% for request in menus %}
                     <tr>
                         <td>
-                            {{ menu.Title|truncatechars:30 }}
+                            {{ request.Title|truncatechars:30 }}
                         </td>
                         <td>
-                            {{ menu.Status.Name() }}
+                            {{ request.Status.Name() }}
                         </td>
                         <td>
-                            {{ menu.Process.Name() }}
+                            {{ request.Process.Name() }}
                         </td>
                     </tr>
                 {% endfor %}

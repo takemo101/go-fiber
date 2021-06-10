@@ -1,20 +1,20 @@
 {% extends 'layout/default.html' %}
-{% block title %}案件｜{% endblock %}
+{% block title %}募集｜{% endblock %}
 {% block content_side %}
-    {% include 'include/sidebar.html' with active_key=':menu.index' %}
+    {% include 'include/sidebar.html' with active_key=':request.index' %}
 {% endblock %}
 {% block content_header %}
-    {% include 'include/header.html' with title='案件' function='FUNCTION' first_label='案件' first_link=url('system/menu') second_label='編集:ID '|add:menu.ID %}
+    {% include 'include/header.html' with title='募集' function='FUNCTION' first_label='募集' first_link=url('system/request') second_label='編集:ID '|add:request.ID %}
 {% endblock %}
 {% block content %}
-<form method="post" action="{{ url('system/menu/%d/update', menu.ID) }}" id="store">
+<form method="post" action="{{ url('system/request/%d/update', request.ID) }}" id="store">
     {% include 'form/csrf.html' %}
     <div class="row">
 
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">案件情報</h3>
+                    <h3 class="card-title">募集情報</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
@@ -27,17 +27,16 @@
                      <div class="form-group">
                         <label>利用者名</label>
                         <p>
-                            <a href="{{ url('system/user/%d/edit', menu.User.ID) }}">
-                                {{ menu.User.Name }}
+                            <a href="{{ url('system/user/%d/edit', request.User.ID) }}">
+                                {{ request.User.Name }}
                             </a>
                         </p>
                     </div>
                     {% include 'form/method.html' with method='put' %}
-                    {% include 'form/input.html' with name='title' value=menu.Title type='text' id="title" label='タイトル' input=inputs.title error=errors.title required=true %}
-                    {% include 'form/textarea.html' with name='content' value=menu.Content id="content" label='内容' rows="6" placeholder="案件内容" input=inputs.content error=errors.content required=true %}
-                    {% include 'form/select.html' with name='process' value=menu.Process id="process" label='進捗状況' empty='--' list=processes input=inputs.process error=errors.process required=true %}
-                    {% include 'form/select.html' with name='status' value=menu.Status id="status" label='投稿状況' empty='--' list=statuses input=inputs.status error=errors.status required=true %}
-                    {% include 'form/select.html' with name='category_id' value=menu.GetCategoryStringID() id="category_id" label='カテゴリー' empty='--' list=categories input=inputs.category_id error=errors.category_id required=true %}
+                    {% include 'form/input.html' with name='title' value=request.Title type='text' id="title" label='タイトル' input=inputs.title error=errors.title required=true %}
+                    {% include 'form/textarea.html' with name='content' value=request.Content id="content" label='内容' rows="6" placeholder="募集内容" input=inputs.content error=errors.content required=true %}
+                    {% include 'form/select.html' with name='status' value=request.Status id="status" label='投稿状況' empty='--' list=statuses input=inputs.status error=errors.status required=true %}
+                    {% include 'form/select.html' with name='category_id' value=request.GetCategoryStringID() id="category_id" label='カテゴリー' empty='--' list=categories input=inputs.category_id error=errors.category_id required=true %}
                 </div>
             </div>
 
@@ -55,7 +54,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    {% include 'form/check-group.html' with name='tag_ids' value=menu.GetTagStringIDs() id="tag_ids" list=tags input=inputs.tag_ids error=errors.tag_ids required=true %}
+                    {% include 'form/check-group.html' with name='tag_ids' value=request.GetTagStringIDs() id="tag_ids" list=tags input=inputs.tag_ids error=errors.tag_ids required=true %}
                 </div>
             </div>
 
@@ -72,13 +71,13 @@
                     <div class="row border-bottom pb-3">
                         <div class="col-12 col-sm-3 font-weight-bolder">追加日時</div>
                         <div class="col-12 col-sm-9">
-                            {{ menu.CreatedAt|date:'2006.01.02 15:04:05' }}
+                            {{ request.CreatedAt|date:'2006.01.02 15:04:05' }}
                         </div>
                     </div>
                     <div class="row border-bottom py-3">
                         <div class="col-12 col-sm-3 font-weight-bolder">更新日時</div>
                         <div class="col-12 col-sm-9">
-                            {{ menu.UpdatedAt|date:'2006.01.02 15:04:05' }}
+                            {{ request.UpdatedAt|date:'2006.01.02 15:04:05' }}
                         </div>
                     </div>
                 </div>
@@ -88,7 +87,7 @@
 </form>
 {% endblock %}
 {% block content_footer_left %}
-<form action="{{ url('system/menu/%d/delete', menu.ID) }}" method="post" id="delete">
+<form action="{{ url('system/request/%d/delete', request.ID) }}" method="post" id="delete">
     {% include 'form/csrf.html' %}
     {% include 'form/method.html' with method='delete' %}
     <button class="btn btn-primary px-5  btn-warning" type="submit" data-class="js-dialog" data-form="#delete" data-type="delete">
