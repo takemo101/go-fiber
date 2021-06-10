@@ -49,19 +49,14 @@ func (s DiscussionService) SendMessage(
 		return discussion, statusErr
 	}
 
-	requesterID := suggest.Request.UserID
-
-	var receiverID uint
-	var discussionType model.DiscussionType
-
-	if senderID == suggest.SuggesterID {
-		receiverID = requesterID
-		discussionType = model.DiscussionTypeSugessterMessage
-	} else if senderID == requesterID {
-		receiverID = suggest.SuggesterID
-		discussionType = model.DiscussionTypeRequesterMessage
-	} else {
-		return discussion, errors.New("unauthorized sender user id")
+	// create need data and check
+	receiverID, discussionType, _, dataErr := s.CreateDiscussionData(
+		senderID,
+		suggest.SuggesterID,
+		suggest.Request.UserID,
+	)
+	if dataErr != nil {
+		return discussion, dataErr
 	}
 
 	return s.Repository.Save(model.Discussion{
@@ -92,22 +87,15 @@ func (s DiscussionService) SendDeclineMessage(
 	if declineErr := s.CheckSuggestDeclineStatus(suggest.Status); declineErr != nil {
 		return discussion, declineErr
 	}
-	requesterID := suggest.Request.UserID
 
-	var receiverID uint
-	var discussionType model.DiscussionType
-	var suggestStatus model.SuggestStatus
-
-	if suggest.SuggesterID == senderID {
-		receiverID = requesterID
-		discussionType = model.DiscussionTypeSugessterMessage
-		suggestStatus = model.SuggestStatusSuggesterDecline
-	} else if senderID == requesterID {
-		receiverID = suggest.SuggesterID
-		discussionType = model.DiscussionTypeRequesterMessage
-		suggestStatus = model.SuggestStatusRequesterDecline
-	} else {
-		return discussion, errors.New("unauthorized sender user id")
+	// create need data and check
+	receiverID, discussionType, suggestStatus, dataErr := s.CreateDiscussionData(
+		senderID,
+		suggest.SuggesterID,
+		suggest.Request.UserID,
+	)
+	if dataErr != nil {
+		return discussion, dataErr
 	}
 
 	suggest.Status = suggestStatus
@@ -147,4 +135,29 @@ func (s DiscussionService) CheckSuggestDeclineStatus(status model.SuggestStatus)
 		return errors.New("suggest has already declined")
 	}
 	return nil
+}
+
+func (s DiscussionService) CreateDiscussionData(
+	senderID uint,
+	suggesterID uint,
+	requesterID uint,
+) (
+	receiverID uint,
+	discussionType model.DiscussionType,
+	suggestStatus model.SuggestStatus,
+	err error,
+) {
+	if senderID == suggesterID {
+		receiverID = requesterID
+		discussionType = model.DiscussionTypeSugessterMessage
+		suggestStatus = model.SuggestStatusSuggesterDecline
+	} else if senderID == requesterID {
+		receiverID = suggesterID
+		discussionType = model.DiscussionTypeRequesterMessage
+		suggestStatus = model.SuggestStatusRequesterDecline
+	} else {
+		err = errors.New("unauthorized sender user id")
+	}
+
+	return receiverID, discussionType, suggestStatus, err
 }
