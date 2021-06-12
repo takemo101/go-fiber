@@ -10,13 +10,12 @@ import (
 
 // TestCommand is struct
 type TestCommand struct {
-	logger            pkg.Logger
-	root              RootCommand
-	categoryService   service.CategoryService
-	tagService        service.TagService
-	requestService    service.RequestService
-	suggestService    service.SuggestService
-	discussionService service.DiscussionService
+	logger          pkg.Logger
+	root            RootCommand
+	categoryService service.CategoryService
+	tagService      service.TagService
+	requestService  service.RequestService
+	suggestService  service.SuggestService
 }
 
 // Setup is setup command
@@ -72,22 +71,23 @@ func (c TestCommand) Setup() {
 					return
 				}
 			*/
+			/*
+					suggest, suggestErr := c.suggestService.Find(5)
+					if suggestErr != nil {
+						fmt.Println(suggestErr.Error())
+						return
+					}
 
-			suggest, suggestErr := c.suggestService.Find(5)
-			if suggestErr != nil {
-				fmt.Println(suggestErr.Error())
-				return
-			}
-
-			_, discussionErr := c.discussionService.SendDeclineMessage(
-				suggest.ID,
-				1,
-				"facu",
-			)
-			if discussionErr != nil {
-				fmt.Println(discussionErr.Error())
-				return
-			}
+					_, discussionErr := c.discussionService.SendDeclineMessage(
+						suggest.ID,
+						1,
+						"facu",
+					)
+				if discussionErr != nil {
+					fmt.Println(discussionErr.Error())
+					return
+				}
+			*/
 			/*
 				_, suggest2Err := c.suggestService.ReplyDecline(suggest.ID, 2, true)
 				if suggest2Err != nil {
@@ -109,15 +109,13 @@ func NewTestCommand(
 	tagService service.TagService,
 	requestService service.RequestService,
 	suggestService service.SuggestService,
-	discussionService service.DiscussionService,
 ) TestCommand {
 	return TestCommand{
-		root:              root,
-		logger:            logger,
-		categoryService:   categoryService,
-		tagService:        tagService,
-		requestService:    requestService,
-		suggestService:    suggestService,
-		discussionService: discussionService,
+		root:            root,
+		logger:          logger,
+		categoryService: categoryService,
+		tagService:      tagService,
+		requestService:  requestService,
+		suggestService:  suggestService,
 	}
 }

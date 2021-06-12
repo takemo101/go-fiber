@@ -101,5 +101,5 @@ func (form Admin) AccountValidate(id uint, repository repository.AdminRepository
 // AdminSearch search form
 type AdminSearch struct {
 	Keyword string `json:"keyword" form:"keyword"`
-	Page    string `json:"page" form:"page"`
+	Page    int    `json:"page" form:"page"`
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/takemo101/go-fiber/app/helper"
 	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/query"
@@ -12,6 +13,7 @@ import (
 type RequestService struct {
 	Repository repository.RequestRepository
 	Query      query.RequestQuery
+	file       helper.FileHelper
 	logger     pkg.Logger
 }
 
@@ -19,11 +21,13 @@ type RequestService struct {
 func NewRequestService(
 	repository repository.RequestRepository,
 	query query.RequestQuery,
+	file helper.FileHelper,
 	logger pkg.Logger,
 ) RequestService {
 	return RequestService{
 		Repository: repository,
 		Query:      query,
+		file:       file,
 		logger:     logger,
 	}
 }
@@ -39,6 +43,7 @@ func (s RequestService) Store(object object.RequestInput, userID uint) (model.Re
 	request := model.Request{
 		Title:      object.GetTitle(),
 		Content:    object.GetContent(),
+		Thumbnail:  object.GetThumbnail(),
 		Status:     object.GetStatus(),
 		CategoryID: object.GetCategoryID(),
 		UserID:     userID,
@@ -57,6 +62,10 @@ func (s RequestService) Update(id uint, object object.RequestInput) (model.Reque
 	request.Content = object.GetContent()
 	request.Status = object.GetStatus()
 	request.CategoryID = object.GetCategoryID()
+	if object.HasThumbnail() {
+		s.file.RemovePublic(request.Thumbnail)
+		request.Thumbnail = object.GetThumbnail()
+	}
 
 	return s.Repository.UpdateWithTagIDs(request, object.GetTagIDs())
 }

@@ -158,6 +158,7 @@ var Migrations = []*gormigrate.Migration{
 			type Suggest struct {
 				gorm.Model
 				Status      string  `gorm:"type:varchar(20);index;not null;default:discussion"`
+				IsClose     bool    `gorm:"index;default:false"`
 				RequestID   uint    `gorm:"index;not null"`
 				Request     Request `gorm:"constraint:OnDelete:CASCADE;"`
 				SuggesterID uint    `gorm:"index"`
@@ -199,6 +200,42 @@ var Migrations = []*gormigrate.Migration{
 		Rollback: func(tx *gorm.DB) error {
 			type Discussion struct{}
 			return tx.Migrator().DropTable(&Discussion{})
+		},
+	},
+	// add column request
+	{
+		ID: "202106050010",
+		Migrate: func(tx *gorm.DB) error {
+			type Request struct {
+				IsClose   bool `gorm:"index;default:false"`
+				Thumbnail string
+			}
+			return tx.AutoMigrate(&Request{})
+		},
+		Rollback: func(tx *gorm.DB) error {
+			for _, column := range []string{
+				"thumbnail",
+				"is_close",
+			} {
+				migrator := tx.Migrator()
+				if err := migrator.DropColumn("requests", column); err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+	},
+	// add column user
+	{
+		ID: "202106050011",
+		Migrate: func(tx *gorm.DB) error {
+			type User struct {
+				CarryOutCounter string `gorm:"index;default:0"`
+			}
+			return tx.AutoMigrate(&User{})
+		},
+		Rollback: func(tx *gorm.DB) error {
+			return tx.Migrator().DropColumn("users", "carryout_counter")
 		},
 	},
 }

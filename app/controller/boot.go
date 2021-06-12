@@ -16,6 +16,8 @@ var Module = fx.Options(
 	fx.Provide(admin.NewTagController),
 	fx.Provide(admin.NewCategoryController),
 	fx.Provide(admin.NewRequestController),
+	fx.Provide(admin.NewSuggestController),
+	fx.Provide(admin.NewDiscussionController),
 	fx.Provide(admin.NewAccountController),
 	fx.Provide(admin.NewSessionAuthController),
 

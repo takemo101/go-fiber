@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"os"
 	"path"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/configor"
@@ -64,6 +66,13 @@ type Server struct {
 // Log config
 type Log struct {
 	Server string
+}
+
+// File config
+type File struct {
+	Storage string
+	Public  string
+	Current string
 }
 
 // SMTP config
@@ -136,6 +145,7 @@ type Config struct {
 	DB
 	Server
 	Log
+	File
 	SMTP
 	Static
 	Template
@@ -168,6 +178,10 @@ func NewConfig() Config {
 		Conf.App.Env = Local
 	}
 
+	if current, currentErr := os.Getwd(); currentErr == nil {
+		Conf.File.Current = current
+	}
+
 	Conf.ConfigMapData = make(map[string]interface{})
 	return Conf
 }
@@ -188,7 +202,46 @@ func (c *Config) Load(key string) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	c.ConfigMapData[key] = v
 
 	return v.(map[string]interface{}), nil
+}
+
+// LoadToValue load config and to value
+func (c *Config) LoadToValue(key string, keys string, def interface{}) interface{} {
+	data, err := c.Load(key)
+	if err == nil {
+		arr := strings.Split(keys, ".")
+		length := len(arr) - 1
+		for i, k := range arr {
+			if v, ok := data[k]; ok {
+				if length == i {
+					return v
+				} else {
+					data = data[k].(map[string]interface{})
+				}
+			}
+		}
+	}
+
+	return def
+}
+
+func (c *Config) LoadToValueInt(key string, keys string, def interface{}) int {
+	value := c.LoadToValue(key, keys, def).(float64)
+	return int(value)
+}
+
+func (c *Config) LoadToValueUint(key string, keys string, def interface{}) uint {
+	value := c.LoadToValue(key, keys, def).(float64)
+	return uint(value)
+}
+
+func (c *Config) LoadToValueString(key string, keys string, def interface{}) string {
+	return c.LoadToValue(key, keys, def).(string)
+}
+
+func (c *Config) LoadToValueMap(key string, keys string, def interface{}) map[string]interface{} {
+	return c.LoadToValue(key, keys, def).(map[string]interface{})
 }

@@ -52,10 +52,12 @@ func (m RequestValueInit) CreateHandler() fiber.Handler {
 			m.adminRepository,
 		))
 		// set ViewRender
-		render := helper.NewViewRender(m.logger)
+		render := helper.NewViewRender()
 		m.value.SetViewRender(c, render)
 		// set ResponseHelper
 		m.value.SetResponseHelper(c, helper.NewResponseHelper(
+			m.logger,
+			m.config,
 			m.path,
 			render,
 		))

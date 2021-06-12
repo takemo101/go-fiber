@@ -48,8 +48,10 @@
                         <tr>
                             <td>{{ admin.ID }}</td>
                             <td>
-                                {{ admin.CreatedAt|date:'2006.01.02 15:04' }}<br/>
-                                {{ admin.UpdatedAt|date:'2006.01.02 15:04' }}
+                                <small>
+                                    {{ admin.CreatedAt|date:'2006.01.02 15:04' }}<br/>
+                                    {{ admin.UpdatedAt|date:'2006.01.02 15:04' }}
+                                </small>
                             </td>
                             <td>
                                 {{ admin.Name }} <span class="badge badge-primary">{{ admin.Role.Name() }}</span><br/>

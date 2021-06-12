@@ -37,6 +37,10 @@ db:
 log:
   server: "./server.log"
 
+file:
+  storage: "storage"
+  public: "public"
+
 smtp:
   host: "mailhog"
   port: 1025

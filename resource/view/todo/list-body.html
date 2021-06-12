@@ -50,8 +50,10 @@
             <tr x-data="changeStatusXData('{{url('system/todo/%d/change', todo.ID) }}', '{{ todo.Status }}')">
                 <td>{{ todo.ID }}</td>
                 <td>
-                    {{ todo.CreatedAt|date:'2006.01.02 15:04' }}<br/>
-                    {{ todo.UpdatedAt|date:'2006.01.02 15:04' }}
+                    <small>
+                        {{ todo.CreatedAt|date:'2006.01.02 15:04' }}<br/>
+                        {{ todo.UpdatedAt|date:'2006.01.02 15:04' }}
+                    </small>
                 </td>
                 <td>
                     <strong>{{ todo.Admin.Name|default:"--" }}</strong><br/>

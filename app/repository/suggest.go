@@ -51,7 +51,12 @@ func (r SuggestRepository) Update(suggest model.Suggest) (model.Suggest, error) 
 
 // GetOne gets ont suggest
 func (r SuggestRepository) GetOne(id uint) (suggest model.Suggest, err error) {
-	return suggest, r.db.GormDB.Where("id = ?", id).Preload("Request").First(&suggest).Error
+	return suggest, r.db.GormDB.Where("id = ?", id).Preload("Suggester").Preload("Request.User").First(&suggest).Error
+}
+
+// GetOneWithDiscussions gets ont suggest
+func (r SuggestRepository) GetOneWithDiscussions(id uint) (suggest model.Suggest, err error) {
+	return suggest, r.db.GormDB.Where("id = ?", id).Preload("Suggester").Preload("Request.User").Preload("Discussions").First(&suggest).Error
 }
 
 // Delete deletes the row of data

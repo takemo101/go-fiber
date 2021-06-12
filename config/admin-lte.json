@@ -43,9 +43,15 @@
         },
         {
             "key": ":request",
-            "name": "募集",
+            "name": "依頼",
             "icon": "fas fa-paper-plane",
             "path": "system/request"
+        },
+        {
+            "key": ":discussion",
+            "name": "やりとり",
+            "icon": "fas fa-comments",
+            "path": "system/discussion"
         },
         {
             "key": ":todo",

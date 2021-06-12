@@ -13,6 +13,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.12.0
 	github.com/gofiber/jwt/v2 v2.2.2
 	github.com/gofiber/template v1.6.8
+	github.com/google/uuid v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.12
 	github.com/jinzhu/configor v1.2.1
 	github.com/klauspost/compress v1.13.0 // indirect

@@ -2,21 +2,24 @@ package form
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/gofiber/fiber/v2"
 	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/repository"
 )
 
 // Request create form
 type Request struct {
-	Title      string   `json:"title" form:"title"`
-	Content    string   `json:"content" form:"content"`
-	Status     string   `json:"status" form:"status"`
-	TagIDs     []string `json:"tag_ids" form:"tag_ids"`
-	CategoryID string   `json:"category_id" form:"category_id"`
+	Title      string `json:"title" form:"title"`
+	Content    string `json:"content" form:"content"`
+	Thumbnail  string `json:"thumbnail" form:"thumbnail"`
+	Status     string `json:"status" form:"status"`
+	TagIDs     []uint `json:"tag_ids" form:"tag_ids"`
+	CategoryID uint   `json:"category_id" form:"category_id"`
 }
 
 // Validate create or edit form validation
 func (form Request) Validate(
+	c *fiber.Ctx,
 	categoryRepository repository.CategoryRepository,
 	tagRepository repository.TagRepository,
 ) error {
@@ -34,6 +37,10 @@ func (form Request) Validate(
 			validation.Required.Error("内容を入力してください"),
 		),
 		validation.Field(
+			&form.Thumbnail,
+			ImageRule(c, "thumbnail", "画像ファイルを選択してください"),
+		),
+		validation.Field(
 			&form.Status,
 			validation.Required.Error("投稿状況を選択してください"),
 			validation.NotIn(
@@ -41,7 +48,7 @@ func (form Request) Validate(
 				model.RequestStatusApply,
 				model.RequestStatusRemand,
 				model.RequestStatusRelease,
-				model.RequestStatusPrivate,
+				model.RequestStatusCancel,
 			).Error("投稿状況に正しい値を設定してください"),
 		),
 		validation.Field(
@@ -64,5 +71,5 @@ func (form Request) Validate(
 // RequestSearch search form
 type RequestSearch struct {
 	Keyword string `json:"keyword" form:"keyword"`
-	Page    string `json:"page" form:"page"`
+	Page    int    `json:"page" form:"page"`
 }

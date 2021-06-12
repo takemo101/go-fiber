@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/repository"
@@ -37,8 +36,8 @@ func (s SuggestService) FindAll() ([]model.Suggest, error) {
 	return s.Repository.GetAll()
 }
 
-// SendSuggestMessage create suggest
-func (s SuggestService) SendSuggestMessage(
+// SendStartMessage create suggest start
+func (s SuggestService) SendStartMessage(
 	requestID uint,
 	senderID uint,
 	message string,
@@ -49,10 +48,17 @@ func (s SuggestService) SendSuggestMessage(
 		return suggest, requestErr
 	}
 
-	receiverID := request.UserID
+	if !request.Status.IsRelease() {
+		return suggest, errors.New("request has not been release")
+	}
 
+	if request.IsClose {
+		return suggest, errors.New("request closed")
+	}
+
+	receiverID := request.UserID
 	if receiverID == senderID {
-		return suggest, errors.New("requester can't suggest")
+		return suggest, errors.New("requester can't start message")
 	}
 
 	exists, existsErr := s.Repository.ExistsByRequestIDAndSuggesterID(requestID, senderID)
@@ -65,12 +71,12 @@ func (s SuggestService) SendSuggestMessage(
 
 	return s.Repository.SaveWithDiscussion(
 		model.Suggest{
-			Status:      model.SuggestStatusDiscussion,
+			Status:      model.SuggestStatusStart,
 			RequestID:   requestID,
 			SuggesterID: senderID,
 		},
 		model.Discussion{
-			Type:       model.DiscussionTypeSuggest,
+			Type:       model.DiscussionTypeStart,
 			Message:    message,
 			IsRead:     false,
 			SenderID:   senderID,
@@ -79,35 +85,120 @@ func (s SuggestService) SendSuggestMessage(
 	)
 }
 
-// ReplyDecline reply decline discussion
-func (s SuggestService) ReplyDecline(id uint, replyerID uint, accept bool) (model.Suggest, error) {
-	suggest, err := s.Find(id)
-	if err != nil {
-		return suggest, err
+// SendMatchMessage create suggest match
+func (s SuggestService) SendMatchMessage(
+	suggestID uint,
+	senderID uint,
+	message string,
+) (suggest model.Suggest, err error) {
+
+	suggest, suggestErr := s.Repository.GetOne(suggestID)
+	if suggestErr != nil {
+		return suggest, suggestErr
 	}
 
-	if suggest.Status == model.SuggestStatusEnd {
-		return suggest, errors.New("suggest has already ended")
-	} else if suggest.Status == model.SuggestStatusRequesterDecline {
-		if replyerID != suggest.SuggesterID {
-			return suggest, errors.New("not a suggester can't decline reply")
-		}
-	} else if suggest.Status == model.SuggestStatusSuggesterDecline {
-		fmt.Println(suggest.Request.UserID)
-		if replyerID != suggest.Request.UserID {
-			return suggest, errors.New("not a requrester can't decline reply")
-		}
-	} else {
-		return suggest, errors.New("not ready to decline reply")
+	if !suggest.Status.IsStart() {
+		return suggest, errors.New("not in start state")
 	}
 
-	if accept {
-		suggest.Status = model.SuggestStatusEnd
-	} else {
-		suggest.Status = model.SuggestStatusDiscussion
+	if suggest.IsCloseAll() {
+		return suggest, errors.New("suggest closed")
 	}
 
-	return s.Repository.Update(suggest)
+	receiverID := suggest.SuggesterID
+	if receiverID == senderID {
+		return suggest, errors.New("suggester can't match message")
+	}
+
+	suggest.Status = model.SuggestStatusDiscussion
+	_, discussionErr := s.DiscussionRepository.SaveWithUpdateSuggest(
+		model.Discussion{
+			Type:       model.DiscussionTypeMatch,
+			Message:    message,
+			IsRead:     false,
+			SenderID:   senderID,
+			ReceiverID: receiverID,
+		},
+		suggest,
+	)
+	return suggest, discussionErr
+}
+
+// SendMessage create discussion
+func (s SuggestService) SendMessage(
+	suggestID uint,
+	senderID uint,
+	message string,
+) (suggest model.Suggest, err error) {
+
+	suggest, suggenstErr := s.Repository.GetOne(suggestID)
+	if suggenstErr != nil {
+		return suggest, suggenstErr
+	}
+
+	if suggest.IsCloseAll() {
+		return suggest, errors.New("suggest closed")
+	}
+
+	// create need data and check
+	receiverID, discussionType, paramErr := s.createDiscussionParameter(
+		senderID,
+		suggest.SuggesterID,
+		suggest.Request.UserID,
+	)
+	if paramErr != nil {
+		return suggest, paramErr
+	}
+
+	_, discussionErr := s.DiscussionRepository.Save(model.Discussion{
+		Type:       discussionType,
+		Message:    message,
+		IsRead:     true,
+		SenderID:   senderID,
+		ReceiverID: receiverID,
+		SuggestID:  suggestID,
+	})
+
+	return suggest, discussionErr
+}
+
+// SendCarryOutMessage create suggest match
+func (s SuggestService) SendCarryOutMessage(
+	suggestID uint,
+	senderID uint,
+	message string,
+) (suggest model.Suggest, err error) {
+
+	suggest, suggestErr := s.Repository.GetOne(suggestID)
+	if suggestErr != nil {
+		return suggest, suggestErr
+	}
+
+	if !suggest.Status.IsDiscussion() {
+		return suggest, errors.New("not in discussion state")
+	}
+
+	if suggest.IsCloseAll() {
+		return suggest, errors.New("suggest closed")
+	}
+
+	receiverID := suggest.SuggesterID
+	if receiverID == senderID {
+		return suggest, errors.New("suggester can't carryout message")
+	}
+
+	suggest.Status = model.SuggestStatusCarryOut
+	_, discussionErr := s.DiscussionRepository.SaveWithUpdateSuggest(
+		model.Discussion{
+			Type:       model.DiscussionTypeRequester,
+			Message:    message,
+			IsRead:     false,
+			SenderID:   senderID,
+			ReceiverID: receiverID,
+		},
+		suggest,
+	)
+	return suggest, discussionErr
 }
 
 // Find get suggest
@@ -115,7 +206,33 @@ func (s SuggestService) Find(id uint) (suggest model.Suggest, err error) {
 	return s.Repository.GetOne(id)
 }
 
+// Find get suggest with discussions
+func (s SuggestService) FindWithDiscussions(id uint) (suggest model.Suggest, err error) {
+	return s.Repository.GetOneWithDiscussions(id)
+}
+
 // Delete remove suggest
 func (s SuggestService) Delete(id uint) error {
 	return s.Repository.Delete(id)
+}
+
+func (s SuggestService) createDiscussionParameter(
+	senderID uint,
+	suggesterID uint,
+	requesterID uint,
+) (
+	receiverID uint,
+	discussionType model.DiscussionType,
+	err error,
+) {
+	if senderID == suggesterID {
+		discussionType = model.DiscussionTypeSugesster
+	} else if senderID == requesterID {
+		receiverID = suggesterID
+		discussionType = model.DiscussionTypeRequester
+	} else {
+		err = errors.New("unauthorized sender user id")
+	}
+
+	return receiverID, discussionType, err
 }

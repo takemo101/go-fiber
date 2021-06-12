@@ -8,4 +8,6 @@ var Module = fx.Options(
 	fx.Provide(NewUserQuery),
 	fx.Provide(NewTodoQuery),
 	fx.Provide(NewRequestQuery),
+	fx.Provide(NewSuggestQuery),
+	fx.Provide(NewDiscussionQuery),
 )

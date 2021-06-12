@@ -10,11 +10,12 @@ import (
 
 // DashboardController is home dashboard
 type DashboardController struct {
-	logger       pkg.Logger
-	config       pkg.Config
-	value        support.RequestValue
-	todoQuery    query.TodoQuery
-	requestQuery query.RequestQuery
+	logger          pkg.Logger
+	config          pkg.Config
+	value           support.RequestValue
+	todoQuery       query.TodoQuery
+	requestQuery    query.RequestQuery
+	discussionQuery query.DiscussionQuery
 }
 
 // NewDashboardController is create dashboard
@@ -24,13 +25,15 @@ func NewDashboardController(
 	value support.RequestValue,
 	todoQuery query.TodoQuery,
 	requestQuery query.RequestQuery,
+	discussionQuery query.DiscussionQuery,
 ) DashboardController {
 	return DashboardController{
-		logger:       logger,
-		config:       config,
-		value:        value,
-		todoQuery:    todoQuery,
-		requestQuery: requestQuery,
+		logger:          logger,
+		config:          config,
+		value:           value,
+		todoQuery:       todoQuery,
+		requestQuery:    requestQuery,
+		discussionQuery: discussionQuery,
 	}
 }
 
@@ -47,9 +50,15 @@ func (ctl DashboardController) Dashboard(c *fiber.Ctx) error {
 		return response.Error(requestErr)
 	}
 
+	discussions, discussionErr := ctl.discussionQuery.GetUpdateDiscussions(10)
+	if discussionErr != nil {
+		return response.Error(discussionErr)
+	}
+
 	return response.View("home", helper.DataMap{
-		"todos":    todos,
-		"requests": requests,
-		"config":   ctl.config,
+		"todos":       todos,
+		"requests":    requests,
+		"discussions": discussions,
+		"config":      ctl.config,
 	})
 }

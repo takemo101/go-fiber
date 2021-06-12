@@ -1,7 +1,6 @@
 package object
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/takemo101/go-fiber/app/model"
@@ -34,12 +33,12 @@ func (o TodoInput) GetStatus() model.TodoStatus {
 // TodoSearchInput search form to service
 type TodoSearchInput struct {
 	keyword string
-	page    string
+	page    int
 }
 
 func NewTodoSearchInput(
 	keyword string,
-	page string,
+	page int,
 ) TodoSearchInput {
 	return TodoSearchInput{
 		keyword: keyword,
@@ -52,8 +51,8 @@ func (o TodoSearchInput) GetKeyword() string {
 }
 
 func (o TodoSearchInput) GetPage() int {
-	if page, err := strconv.Atoi(o.page); err == nil {
-		return page
+	if o.page > 0 {
+		return o.page
 	}
 	return 0
 }

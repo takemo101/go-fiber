@@ -103,7 +103,7 @@ func (r RequestRepository) GetOneWithSuggests(id uint) (request model.Request, e
 		Preload("Tags").
 		Preload("Category").
 		Preload("User").
-		Preload("Suggests").
+		Preload("Suggests.Suggester").
 		Where("id = ?", id).
 		First(&request).
 		Error

@@ -2,7 +2,7 @@ package helper
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/imdario/mergo"
+	"github.com/gofiber/fiber/v2/utils"
 	"github.com/takemo101/go-fiber/pkg"
 )
 
@@ -22,18 +22,44 @@ type JsonError struct {
 	Message string `json:"message"`
 }
 
+// JsonResult json result type
+type JsonResult struct {
+	Status  JsonStatus `json:"status"`
+	Message string     `json:"message"`
+	Data    fiber.Map  `json:"data"`
+}
+
+// JsonErrorResult json error result type
+type JsonErrorResult struct {
+	Status JsonStatus `json:"status"`
+	Error  JsonError  `json:"error"`
+}
+
+// JsonErrorMessagesResult json error messages result type
+type JsonErrorMessagesResult struct {
+	Status   JsonStatus        `json:"status"`
+	Error    JsonError         `json:"error"`
+	Messages map[string]string `json:"messages"`
+}
+
 // ResponseHelper response helper
 type ResponseHelper struct {
+	logger pkg.Logger
+	config pkg.Config
 	path   pkg.Path
 	render *ViewRender
 }
 
 // NewResponseHelper response utility
 func NewResponseHelper(
+	logger pkg.Logger,
+	config pkg.Config,
 	path pkg.Path,
 	render *ViewRender,
 ) *ResponseHelper {
 	return &ResponseHelper{
+		logger: logger,
+		config: config,
 		path:   path,
 		render: render,
 	}
@@ -51,41 +77,37 @@ func (helper *ResponseHelper) Redirect(c *fiber.Ctx, path string) error {
 }
 
 // Json response json
-func (helper *ResponseHelper) Json(c *fiber.Ctx, data fiber.Map) error {
+func (helper *ResponseHelper) Json(c *fiber.Ctx, data interface{}) error {
 	return c.JSON(data)
 }
 
 // JsonSuccess response json success
 func (helper *ResponseHelper) JsonSuccess(c *fiber.Ctx, message string) error {
-	return helper.Json(c, fiber.Map{
-		"status":  Success,
-		"message": message,
+	return helper.Json(c, JsonResult{
+		Status:  Success,
+		Message: message,
 	})
 }
 
 // JsonSuccessWith response json success with data
 func (helper *ResponseHelper) JsonSuccessWith(c *fiber.Ctx, message string, data fiber.Map) error {
-	mainData := fiber.Map{
-		"status":  Success,
-		"message": message,
-	}
-	mergo.Merge(
-		&mainData,
-		fiber.Map{
-			"data": data,
-		},
-	)
-	return helper.Json(c, mainData)
+	return helper.Json(c, JsonResult{
+		Status:  Success,
+		Message: message,
+		Data:    data,
+	})
 }
 
 // JsonErrorSimple response json error
 func (helper *ResponseHelper) JsonErrorSimple(c *fiber.Ctx, err error, code int) error {
+	helper.logger.Error(err)
+
 	c.Status(code)
-	return helper.Json(c, fiber.Map{
-		"status": Error,
-		"error": JsonError{
+	return helper.Json(c, JsonErrorResult{
+		Status: Error,
+		Error: JsonError{
 			Code:    code,
-			Message: err.Error(),
+			Message: helper.CreateErrorMessage(err, code),
 		},
 	})
 }
@@ -95,37 +117,17 @@ func (helper *ResponseHelper) JsonError(c *fiber.Ctx, err error) error {
 	return helper.JsonErrorSimple(c, err, fiber.StatusInternalServerError)
 }
 
-// JsonErrorWith response json error with data
-func (helper *ResponseHelper) JsonErrorWith(c *fiber.Ctx, err error, data fiber.Map) error {
-	code := fiber.StatusInternalServerError
-	mainData := fiber.Map{
-		"status": Error,
-		"error": JsonError{
-			Code:    code,
-			Message: err.Error(),
-		},
-	}
-	mergo.Merge(
-		&mainData,
-		fiber.Map{
-			"data": data,
-		},
-	)
-	c.Status(code)
-	return helper.Json(c, mainData)
-}
-
 // JsonErrorMessages response json error with error_messages
 func (helper *ResponseHelper) JsonErrorMessages(c *fiber.Ctx, err error, messages map[string]string) error {
 	code := fiber.StatusUnprocessableEntity
 	c.Status(code)
-	return helper.Json(c, fiber.Map{
-		"status": Fail,
-		"error": JsonError{
+	return helper.Json(c, JsonErrorMessagesResult{
+		Status: Fail,
+		Error: JsonError{
 			Code:    code,
 			Message: err.Error(),
 		},
-		"messages": messages,
+		Messages: messages,
 	})
 }
 
@@ -146,5 +148,20 @@ func (helper *ResponseHelper) View(name string, data DataMap) error {
 
 // Error render template error
 func (helper *ResponseHelper) Error(err error) error {
-	return helper.render.Error(err)
+	return helper.ErrorWithCode(err, fiber.StatusBadRequest)
+}
+
+// Error render template error with Code
+func (helper *ResponseHelper) ErrorWithCode(err error, code int) error {
+	helper.logger.Error(err)
+	return helper.render.Error(helper.CreateErrorMessage(err, code), code)
+}
+
+// CreateErrorMessage create error response messsage
+func (helper *ResponseHelper) CreateErrorMessage(err error, code int) string {
+	// create error message
+	if helper.config.App.Debug {
+		return err.Error()
+	}
+	return utils.StatusMessage(code)
 }

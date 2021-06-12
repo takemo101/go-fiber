@@ -30,5 +30,5 @@ func (form Todo) Validate() error {
 // TodoSearch search form
 type TodoSearch struct {
 	Keyword string `json:"keyword" form:"keyword"`
-	Page    string `json:"page" form:"page"`
+	Page    int    `json:"page" form:"page"`
 }

@@ -47,7 +47,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">募集：更新</h5>
+            <h5 class="card-title">依頼：更新</h5>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
@@ -60,20 +60,71 @@
                     <tr>
                         <th>タイトル</th>
                         <th>投稿状況</th>
-                        <th>進捗状況</th>
+                        <th>更新日時</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% for request in menus %}
+                {% for request in requests %}
                     <tr>
                         <td>
-                            {{ request.Title|truncatechars:30 }}
+                            <a href="{{ url('system/request/%d/detail', request.ID) }}">
+                                {{ request.Title|truncatechars:30 }}
+                            </a>
                         </td>
                         <td>
                             {{ request.Status.Name() }}
                         </td>
                         <td>
-                            {{ request.Process.Name() }}
+                            <small>
+                                {{ request.UpdatedAt|date:'2006.01.02 15:04' }}
+                            </small>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">やりとり：更新</h5>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>依頼</th>
+                        <th>メッセージ</th>
+                        <th>種別</th>
+                        <th>送信日時</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for discussion in discussions %}
+                    <tr>
+                        <td>
+                            <a href="{{ url('system/suggest/%d/detail', discussion.Suggest.ID) }}">
+                                {{ discussion.Suggest.Request.Title|truncatechars:30 }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url('system/suggest/%d/detail', discussion.Suggest.ID) }}">
+                                {{ discussion.Message|truncatechars:30 }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ discussion.Type.Name() }}
+                        </td>
+                        <td>
+                            <small>
+                                {{ discussion.UpdatedAt|date:'2006.01.02 15:04' }}
+                            </small>
                         </td>
                     </tr>
                 {% endfor %}

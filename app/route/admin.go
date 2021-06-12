@@ -11,22 +11,24 @@ import (
 
 // AdminRoute is struct
 type AdminRoute struct {
-	logger              pkg.Logger
-	app                 pkg.Application
-	path                pkg.Path
-	csrf                middleware.Csrf
-	value               support.RequestValue
-	auth                middleware.SessionAdminAuth
-	render              middleware.ViewRender
-	dashboardController controller.DashboardController
-	adminController     controller.AdminController
-	userController      controller.UserController
-	todoController      controller.TodoController
-	tagController       controller.TagController
-	categoryController  controller.CategoryController
-	requestController   controller.RequestController
-	accountController   controller.AccountController
-	authController      controller.SessionAuthController
+	logger               pkg.Logger
+	app                  pkg.Application
+	path                 pkg.Path
+	csrf                 middleware.Csrf
+	value                support.RequestValue
+	auth                 middleware.SessionAdminAuth
+	render               middleware.ViewRender
+	dashboardController  controller.DashboardController
+	adminController      controller.AdminController
+	userController       controller.UserController
+	todoController       controller.TodoController
+	tagController        controller.TagController
+	categoryController   controller.CategoryController
+	requestController    controller.RequestController
+	suggestController    controller.SuggestController
+	discussionController controller.DiscussionController
+	accountController    controller.AccountController
+	authController       controller.SessionAuthController
 }
 
 // Setup is setup route
@@ -130,6 +132,20 @@ func (r AdminRoute) Setup() {
 				request.Delete("/:id/delete", r.requestController.Delete)
 			}
 
+			// suggest route
+			suggest := system.Group("/suggest")
+			{
+				suggest.Get("/:id/detail", r.suggestController.Detail)
+				suggest.Delete("/:id/delete", r.suggestController.Delete)
+			}
+
+			// discussion route
+			discussion := system.Group("/discussion")
+			{
+				discussion.Get("/", r.discussionController.Index)
+				discussion.Delete("/:id/delete", r.discussionController.Delete)
+			}
+
 			// account route
 			account := system.Group("/account")
 			{
@@ -159,26 +175,30 @@ func NewAdminRoute(
 	tagController controller.TagController,
 	categoryController controller.CategoryController,
 	requestController controller.RequestController,
+	suggestController controller.SuggestController,
+	discussionController controller.DiscussionController,
 	accountController controller.AccountController,
 	authController controller.SessionAuthController,
 ) AdminRoute {
 	return AdminRoute{
-		logger:              logger,
-		app:                 app,
-		path:                path,
-		csrf:                csrf,
-		value:               value,
-		auth:                auth,
-		render:              render,
-		dashboardController: dashboardController,
-		adminController:     adminController,
-		userController:      userController,
-		todoController:      todoController,
-		tagController:       tagController,
-		categoryController:  categoryController,
-		requestController:   requestController,
-		accountController:   accountController,
-		authController:      authController,
+		logger:               logger,
+		app:                  app,
+		path:                 path,
+		csrf:                 csrf,
+		value:                value,
+		auth:                 auth,
+		render:               render,
+		dashboardController:  dashboardController,
+		adminController:      adminController,
+		userController:       userController,
+		todoController:       todoController,
+		tagController:        tagController,
+		categoryController:   categoryController,
+		requestController:    requestController,
+		suggestController:    suggestController,
+		discussionController: discussionController,
+		accountController:    accountController,
+		authController:       authController,
 	}
 }
 

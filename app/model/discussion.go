@@ -8,10 +8,11 @@ import (
 type DiscussionType string
 
 const (
-	DiscussionTypeSuggest          DiscussionType = "suggest"
-	DiscussionTypeSugessterMessage DiscussionType = "sugesster_message"
-	DiscussionTypeRequesterMessage DiscussionType = "requester_message"
-	DiscussionTypeDecline          DiscussionType = "decline"
+	DiscussionTypeStart     DiscussionType = "start"
+	DiscussionTypeMatch     DiscussionType = "match"
+	DiscussionTypeSugesster DiscussionType = "sugesster"
+	DiscussionTypeRequester DiscussionType = "requester"
+	DiscussionTypeCarryOut  DiscussionType = "carryout"
 )
 
 func (r DiscussionType) String() string {
@@ -20,35 +21,45 @@ func (r DiscussionType) String() string {
 
 func (r DiscussionType) Name() string {
 	switch r {
-	case DiscussionTypeSuggest:
-		return "提案"
-	case DiscussionTypeSugessterMessage:
-		return "提案者メッセージ"
-	case DiscussionTypeRequesterMessage:
-		return "募集者メッセージ"
+	case DiscussionTypeMatch:
+		return "相談開始"
+	case DiscussionTypeSugesster:
+		return "提案者から"
+	case DiscussionTypeRequester:
+		return "依頼者から"
+	case DiscussionTypeCarryOut:
+		return "依頼達成報告"
 	}
-	return "終了リクエスト"
+	return "提案"
 }
 
 func ToDiscussionTypeArray() []KeyName {
 	return []KeyName{
 		{
-			Key:  string(DiscussionTypeSuggest),
-			Name: DiscussionTypeSuggest.Name(),
+			Key:  string(DiscussionTypeStart),
+			Name: DiscussionTypeStart.Name(),
 		},
 		{
-			Key:  string(DiscussionTypeSugessterMessage),
-			Name: DiscussionTypeSugessterMessage.Name(),
+			Key:  string(DiscussionTypeStart),
+			Name: DiscussionTypeStart.Name(),
 		},
 		{
-			Key:  string(DiscussionTypeRequesterMessage),
-			Name: DiscussionTypeRequesterMessage.Name(),
+			Key:  string(DiscussionTypeSugesster),
+			Name: DiscussionTypeSugesster.Name(),
 		},
 		{
-			Key:  string(DiscussionTypeDecline),
-			Name: DiscussionTypeDecline.Name(),
+			Key:  string(DiscussionTypeRequester),
+			Name: DiscussionTypeRequester.Name(),
 		},
 	}
+}
+
+func (r DiscussionType) IsSuggester() bool {
+	return r == DiscussionTypeStart || r == DiscussionTypeSugesster
+}
+
+func (r DiscussionType) IsRequester() bool {
+	return !r.IsSuggester()
 }
 
 // Discussion is suggest discussion

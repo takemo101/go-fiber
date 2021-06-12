@@ -21,3 +21,9 @@ func (form Discussion) Validate(requestID uint) error {
 
 	return validation.ValidateStruct(&form, fields...)
 }
+
+// DiscussionSearch search form
+type DiscussionSearch struct {
+	Keyword string `json:"keyword" form:"keyword"`
+	Page    int    `json:"page" form:"page"`
+}

@@ -75,5 +75,5 @@ func (form User) Validate(create bool, id uint, repository repository.UserReposi
 // UserSearch search form
 type UserSearch struct {
 	Keyword string `json:"keyword" form:"keyword"`
-	Page    string `json:"page" form:"page"`
+	Page    int    `json:"page" form:"page"`
 }

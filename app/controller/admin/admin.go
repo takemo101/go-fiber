@@ -103,7 +103,7 @@ func (ctl AdminController) Edit(c *fiber.Ctx) error {
 
 	admin, findErr := ctl.service.Find(uint(id))
 	if findErr != nil {
-		return response.Error(findErr)
+		return response.ErrorWithCode(findErr, fiber.StatusNotFound)
 	}
 
 	return response.View("admin/edit", helper.DataMap{

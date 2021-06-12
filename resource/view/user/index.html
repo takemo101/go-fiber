@@ -48,8 +48,10 @@
                         <tr>
                             <td>{{ user.ID }}</td>
                             <td>
-                                {{ user.CreatedAt|date:'2006.01.02 15:04' }}<br/>
-                                {{ user.UpdatedAt|date:'2006.01.02 15:04' }}
+                                <small>
+                                    {{ user.CreatedAt|date:'2006.01.02 15:04' }}<br/>
+                                    {{ user.UpdatedAt|date:'2006.01.02 15:04' }}
+                                </small>
                             </td>
                             <td>
                                 {{ user.Name }}<br/>

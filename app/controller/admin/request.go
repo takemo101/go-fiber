@@ -23,6 +23,8 @@ type RequestController struct {
 	categoryRepository repository.CategoryRepository
 	tagRepository      repository.TagRepository
 	value              support.RequestValue
+	upload             helper.UploadHelper
+	config             pkg.Config
 }
 
 // NewRequestController is create request controller
@@ -33,6 +35,8 @@ func NewRequestController(
 	categoryRepository repository.CategoryRepository,
 	tagRepository repository.TagRepository,
 	value support.RequestValue,
+	upload helper.UploadHelper,
+	config pkg.Config,
 ) RequestController {
 	return RequestController{
 		logger:             logger,
@@ -41,6 +45,8 @@ func NewRequestController(
 		categoryRepository: categoryRepository,
 		tagRepository:      tagRepository,
 		value:              value,
+		upload:             upload,
+		config:             config,
 	}
 }
 
@@ -74,7 +80,7 @@ func (ctl RequestController) Detail(c *fiber.Ctx) error {
 		return response.Error(convErr)
 	}
 
-	request, findErr := ctl.service.Find(uint(id))
+	request, findErr := ctl.service.FindWithSuggests(uint(id))
 	if findErr != nil {
 		return response.Error(findErr)
 	}
@@ -139,6 +145,7 @@ func (ctl RequestController) Store(c *fiber.Ctx) error {
 	}
 
 	if err := form.Validate(
+		c,
 		ctl.categoryRepository,
 		ctl.tagRepository,
 	); err != nil {
@@ -147,9 +154,15 @@ func (ctl RequestController) Store(c *fiber.Ctx) error {
 		return response.Back(c)
 	}
 
+	thumbnail, upErr := ctl.upload.UploadToPublic(c, "thumbnail", "request")
+	if upErr != nil {
+		return upErr
+	}
+
 	if _, err := ctl.service.Store(object.NewRequestInput(
 		form.Title,
 		form.Content,
+		thumbnail,
 		form.Status,
 		form.TagIDs,
 		form.CategoryID,
@@ -171,7 +184,7 @@ func (ctl RequestController) Edit(c *fiber.Ctx) error {
 
 	request, findErr := ctl.service.Find(uint(id))
 	if findErr != nil {
-		return response.Error(findErr)
+		return response.ErrorWithCode(findErr, fiber.StatusNotFound)
 	}
 
 	tags, tagErr := ctl.tagRepository.GetAll()
@@ -209,15 +222,25 @@ func (ctl RequestController) Update(c *fiber.Ctx) error {
 
 	uID := uint(id)
 
-	if err := form.Validate(ctl.categoryRepository, ctl.tagRepository); err != nil {
+	if err := form.Validate(
+		c,
+		ctl.categoryRepository,
+		ctl.tagRepository,
+	); err != nil {
 		middleware.SetErrorResource(c, helper.ErrorsToMap(err), helper.StructToFormMap(&form))
 		SetToastr(c, ToastrError, ToastrError.Message(), Messages{})
 		return response.Back(c)
 	}
 
+	thumbnail, upErr := ctl.upload.UploadToPublic(c, "thumbnail", "request")
+	if upErr != nil {
+		return upErr
+	}
+
 	if _, err := ctl.service.Update(uID, object.NewRequestInput(
 		form.Title,
 		form.Content,
+		thumbnail,
 		form.Status,
 		form.TagIDs,
 		form.CategoryID,

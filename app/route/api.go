@@ -42,9 +42,7 @@ func (r ApiRoute) Setup() {
 		})
 		systemApi.Get("/error", func(c *fiber.Ctx) error {
 			response := r.value.GetResponseHelper(c)
-			return response.JsonErrorWith(c, errors.New("error"), fiber.Map{
-				"data": "json data",
-			})
+			return response.JsonError(c, errors.New("error"))
 		})
 	}
 

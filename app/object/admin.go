@@ -1,7 +1,6 @@
 package object
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/takemo101/go-fiber/app/model"
@@ -56,12 +55,12 @@ func (o AdminInput) GetRole() model.Role {
 // AdminSearchInput search form to service
 type AdminSearchInput struct {
 	keyword string
-	page    string
+	page    int
 }
 
 func NewAdminSearchInput(
 	keyword string,
-	page string,
+	page int,
 ) AdminSearchInput {
 	return AdminSearchInput{
 		keyword: keyword,
@@ -74,8 +73,8 @@ func (o AdminSearchInput) GetKeyword() string {
 }
 
 func (o AdminSearchInput) GetPage() int {
-	if page, err := strconv.Atoi(o.page); err == nil {
-		return page
+	if o.page > 0 {
+		return o.page
 	}
 	return 0
 }

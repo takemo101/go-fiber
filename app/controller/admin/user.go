@@ -99,7 +99,7 @@ func (ctl UserController) Edit(c *fiber.Ctx) error {
 
 	user, findErr := ctl.service.Find(uint(id))
 	if findErr != nil {
-		return response.Error(findErr)
+		return response.ErrorWithCode(findErr, fiber.StatusNotFound)
 	}
 
 	return response.View("user/edit", helper.DataMap{

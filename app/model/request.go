@@ -15,7 +15,7 @@ const (
 	RequestStatusApply   RequestStatus = "apply"
 	RequestStatusRemand  RequestStatus = "remand"
 	RequestStatusRelease RequestStatus = "release"
-	RequestStatusPrivate RequestStatus = "private"
+	RequestStatusCancel  RequestStatus = "cancel"
 )
 
 func (r RequestStatus) String() string {
@@ -33,7 +33,11 @@ func (r RequestStatus) Name() string {
 	case RequestStatusRelease:
 		return "公開中"
 	}
-	return "公開終了"
+	return "取り下げ"
+}
+
+func (r RequestStatus) IsRelease() bool {
+	return r == RequestStatusRelease
 }
 
 func ToRequestStatusArray() []KeyName {
@@ -55,8 +59,8 @@ func ToRequestStatusArray() []KeyName {
 			Name: RequestStatusRelease.Name(),
 		},
 		{
-			Key:  string(RequestStatusPrivate),
-			Name: RequestStatusPrivate.Name(),
+			Key:  string(RequestStatusCancel),
+			Name: RequestStatusCancel.Name(),
 		},
 	}
 }
@@ -64,8 +68,10 @@ func ToRequestStatusArray() []KeyName {
 // Request is request request
 type Request struct {
 	gorm.Model
-	Title      string        `gorm:"type:varchar(191);not null"`
-	Content    string        `gorm:"type:longtext;not null"`
+	IsClose    bool   `gorm:"index;default:false"`
+	Title      string `gorm:"type:varchar(191);not null"`
+	Content    string `gorm:"type:longtext;not null"`
+	Thumbnail  string
 	Status     RequestStatus `gorm:"type:varchar(20);index;not null;default:draft"`
 	Tags       []Tag         `gorm:"many2many:request_tags;"`
 	CategoryID uint          `gorm:"index"`

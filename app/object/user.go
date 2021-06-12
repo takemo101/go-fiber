@@ -1,7 +1,6 @@
 package object
 
 import (
-	"strconv"
 	"strings"
 )
 
@@ -43,12 +42,12 @@ func (o UserInput) GetPass() []byte {
 // UserSearchInput search form to service
 type UserSearchInput struct {
 	keyword string
-	page    string
+	page    int
 }
 
 func NewUserSearchInput(
 	keyword string,
-	page string,
+	page int,
 ) UserSearchInput {
 	return UserSearchInput{
 		keyword: keyword,
@@ -61,8 +60,8 @@ func (o UserSearchInput) GetKeyword() string {
 }
 
 func (o UserSearchInput) GetPage() int {
-	if page, err := strconv.Atoi(o.page); err == nil {
-		return page
+	if o.page > 0 {
+		return o.page
 	}
 	return 0
 }

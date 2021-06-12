@@ -1,32 +1,33 @@
 package object
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/takemo101/go-fiber/app/model"
-	"github.com/thoas/go-funk"
 )
 
 // RequestInput input form to service
 type RequestInput struct {
 	title      string
 	content    string
+	thumbnail  string
 	status     string
-	tagIDs     []string
-	categoryID string
+	tagIDs     []uint
+	categoryID uint
 }
 
 func NewRequestInput(
 	title string,
 	content string,
+	thumbnail string,
 	status string,
-	tagIDs []string,
-	categoryID string,
+	tagIDs []uint,
+	categoryID uint,
 ) RequestInput {
 	return RequestInput{
 		title:      title,
 		content:    content,
+		thumbnail:  thumbnail,
 		status:     status,
 		tagIDs:     tagIDs,
 		categoryID: categoryID,
@@ -41,36 +42,36 @@ func (o RequestInput) GetContent() string {
 	return o.content
 }
 
+func (o RequestInput) GetThumbnail() string {
+	return o.thumbnail
+}
+
+func (o RequestInput) HasThumbnail() bool {
+	thumbnail := o.GetThumbnail()
+	return thumbnail != ""
+}
+
 func (o RequestInput) GetStatus() model.RequestStatus {
 	return model.RequestStatus(o.status)
 }
 
 func (o RequestInput) GetTagIDs() []uint {
-	uintIDs := funk.Map(o.tagIDs, func(id string) uint {
-		if iID, err := strconv.Atoi(id); err == nil {
-			return uint(iID)
-		}
-		return 0
-	})
-	return funk.UniqUInt(uintIDs.([]uint))
+	return o.tagIDs
 }
 
 func (o RequestInput) GetCategoryID() uint {
-	if id, err := strconv.Atoi(o.categoryID); err == nil {
-		return uint(id)
-	}
-	return 0
+	return o.categoryID
 }
 
 // RequestSearchInput search form to service
 type RequestSearchInput struct {
 	keyword string
-	page    string
+	page    int
 }
 
 func NewRequestSearchInput(
 	keyword string,
-	page string,
+	page int,
 ) RequestSearchInput {
 	return RequestSearchInput{
 		keyword: keyword,
@@ -83,8 +84,8 @@ func (o RequestSearchInput) GetKeyword() string {
 }
 
 func (o RequestSearchInput) GetPage() int {
-	if page, err := strconv.Atoi(o.page); err == nil {
-		return page
+	if o.page > 0 {
+		return o.page
 	}
 	return 0
 }
