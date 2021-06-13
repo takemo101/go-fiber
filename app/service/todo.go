@@ -29,12 +29,12 @@ func NewTodoService(
 }
 
 // Search search todos
-func (s TodoService) Search(object object.TodoSearchInput, limit int) ([]model.Todo, error) {
+func (s TodoService) Search(object object.TodoSearchInput, limit int) ([]model.Todo, query.Paginator, error) {
 	return s.Query.Search(object, limit)
 }
 
 // SearchYour search todos
-func (s TodoService) SearchYour(object object.TodoSearchInput, adminID uint, limit int) ([]model.Todo, error) {
+func (s TodoService) SearchYour(object object.TodoSearchInput, adminID uint, limit int) ([]model.Todo, query.Paginator, error) {
 	return s.Query.SearchYour(object, adminID, limit)
 }
 

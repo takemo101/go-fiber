@@ -21,6 +21,8 @@ func (r DiscussionType) String() string {
 
 func (r DiscussionType) Name() string {
 	switch r {
+	case DiscussionTypeStart:
+		return "提案"
 	case DiscussionTypeMatch:
 		return "相談開始"
 	case DiscussionTypeSugesster:
@@ -30,7 +32,7 @@ func (r DiscussionType) Name() string {
 	case DiscussionTypeCarryOut:
 		return "依頼達成報告"
 	}
-	return "提案"
+	return ""
 }
 
 func ToDiscussionTypeArray() []KeyName {

@@ -23,8 +23,10 @@ func (r SuggestStatus) Name() string {
 		return "提案中"
 	case SuggestStatusDiscussion:
 		return "相談中"
+	case SuggestStatusCarryOut:
+		return "依頼達成"
 	}
-	return "達成"
+	return ""
 }
 
 func ToSuggestStatusArray() []KeyName {

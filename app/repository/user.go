@@ -7,15 +7,13 @@ import (
 
 // UserRepository database structure
 type UserRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewUserRepository creates a new user repository
-func NewUserRepository(db pkg.Database, logger pkg.Logger) UserRepository {
+func NewUserRepository(db pkg.Database) UserRepository {
 	return UserRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

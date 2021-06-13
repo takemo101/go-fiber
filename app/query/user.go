@@ -19,6 +19,13 @@ func NewUserQuery(db pkg.Database) UserQuery {
 }
 
 // Search get users limit
-func (r UserQuery) Search(object object.UserSearchInput, limit int) (users []model.User, err error) {
-	return users, r.db.GormDB.Order("id desc").Limit(limit).Find(&users).Error
+func (r UserQuery) Search(object object.UserSearchInput, limit int) (users []model.User, paginator Paginator, err error) {
+	err = Paging(&PagingParameter{
+		DB:      r.db.GormDB,
+		Page:    object.GetPage(),
+		Limit:   limit,
+		OrderBy: []string{"id desc"},
+	}, &users, &paginator)
+
+	return users, paginator, err
 }

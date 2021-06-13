@@ -6,31 +6,27 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/query"
 	"github.com/takemo101/go-fiber/app/repository"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // AdminService service logic
 type AdminService struct {
 	Repository repository.AdminRepository
 	Query      query.AdminQuery
-	logger     pkg.Logger
 }
 
 // NewAdminService new service
 func NewAdminService(
 	repository repository.AdminRepository,
 	query query.AdminQuery,
-	logger pkg.Logger,
 ) AdminService {
 	return AdminService{
 		Repository: repository,
 		Query:      query,
-		logger:     logger,
 	}
 }
 
 // Search search admins
-func (s AdminService) Search(object object.AdminSearchInput, limit int) ([]model.Admin, error) {
+func (s AdminService) Search(object object.AdminSearchInput, limit int) ([]model.Admin, query.Paginator, error) {
 	return s.Query.Search(object, limit)
 }
 

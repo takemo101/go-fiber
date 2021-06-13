@@ -12,7 +12,6 @@ import (
 
 // SuggestController is suggest
 type SuggestController struct {
-	logger  pkg.Logger
 	service service.SuggestService
 	value   support.RequestValue
 	upload  helper.UploadHelper
@@ -21,14 +20,12 @@ type SuggestController struct {
 
 // NewSuggestController is create suggest controller
 func NewSuggestController(
-	logger pkg.Logger,
 	service service.SuggestService,
 	value support.RequestValue,
 	upload helper.UploadHelper,
 	config pkg.Config,
 ) SuggestController {
 	return SuggestController{
-		logger:  logger,
 		service: service,
 		value:   value,
 		upload:  upload,

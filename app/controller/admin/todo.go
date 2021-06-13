@@ -11,24 +11,20 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // TodoController is todo
 type TodoController struct {
-	logger  pkg.Logger
 	service service.TodoService
 	value   support.RequestValue
 }
 
 // NewTodoController is create todo controller
 func NewTodoController(
-	logger pkg.Logger,
 	service service.TodoService,
 	value support.RequestValue,
 ) TodoController {
 	return TodoController{
-		logger:  logger,
 		service: service,
 		value:   value,
 	}
@@ -43,7 +39,7 @@ func (ctl TodoController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	todos, err := ctl.service.Search(object.NewTodoSearchInput(
+	todos, paginator, err := ctl.service.Search(object.NewTodoSearchInput(
 		form.Keyword,
 		form.Page,
 	), 20)
@@ -51,12 +47,15 @@ func (ctl TodoController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
+	paginator.SetURL(c.OriginalURL())
+
 	response.JS(helper.DataMap{
 		"statuses": model.ToTodoStatusArray(),
 	})
 	return response.View("todo/index", helper.DataMap{
-		"todos":    todos,
-		"statuses": model.ToTodoStatusArray(),
+		"todos":     todos,
+		"paginator": paginator,
+		"statuses":  model.ToTodoStatusArray(),
 	})
 }
 
@@ -70,20 +69,23 @@ func (ctl TodoController) Your(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	todos, err := ctl.service.SearchYour(object.NewTodoSearchInput(
+	todos, paginator, err := ctl.service.SearchYour(object.NewTodoSearchInput(
 		form.Keyword,
 		form.Page,
-	), auth.ID(), 20)
+	), auth.ID(), 1)
 	if err != nil {
 		return response.Error(err)
 	}
+
+	paginator.SetURL(c.OriginalURL())
 
 	response.JS(helper.DataMap{
 		"statuses": model.ToTodoStatusArray(),
 	})
 	return response.View("todo/your", helper.DataMap{
-		"todos":    todos,
-		"statuses": model.ToTodoStatusArray(),
+		"todos":     todos,
+		"paginator": paginator,
+		"statuses":  model.ToTodoStatusArray(),
 	})
 }
 

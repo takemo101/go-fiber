@@ -32,8 +32,10 @@ func (r RequestStatus) Name() string {
 		return "差し戻し"
 	case RequestStatusRelease:
 		return "公開中"
+	case RequestStatusCancel:
+		return "取り下げ"
 	}
-	return "取り下げ"
+	return ""
 }
 
 func (r RequestStatus) IsRelease() bool {

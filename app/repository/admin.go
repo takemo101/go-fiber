@@ -7,15 +7,13 @@ import (
 
 // AdminRepository database structure
 type AdminRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewAdminRepository creates a new admin repository
-func NewAdminRepository(db pkg.Database, logger pkg.Logger) AdminRepository {
+func NewAdminRepository(db pkg.Database) AdminRepository {
 	return AdminRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

@@ -8,15 +8,13 @@ import (
 
 // CategoryRepository database structure
 type CategoryRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewCategoryRepository creates a new category repository
-func NewCategoryRepository(db pkg.Database, logger pkg.Logger) CategoryRepository {
+func NewCategoryRepository(db pkg.Database) CategoryRepository {
 	return CategoryRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

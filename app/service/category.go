@@ -4,23 +4,19 @@ import (
 	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/repository"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // CategoryService service logic
 type CategoryService struct {
 	Repository repository.CategoryRepository
-	logger     pkg.Logger
 }
 
 // NewCategoryService new service
 func NewCategoryService(
 	repository repository.CategoryRepository,
-	logger pkg.Logger,
 ) CategoryService {
 	return CategoryService{
 		Repository: repository,
-		logger:     logger,
 	}
 }
 

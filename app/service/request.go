@@ -6,7 +6,6 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/query"
 	"github.com/takemo101/go-fiber/app/repository"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // RequestService service logic
@@ -14,7 +13,6 @@ type RequestService struct {
 	Repository repository.RequestRepository
 	Query      query.RequestQuery
 	file       helper.FileHelper
-	logger     pkg.Logger
 }
 
 // NewRequestService new service
@@ -22,18 +20,16 @@ func NewRequestService(
 	repository repository.RequestRepository,
 	query query.RequestQuery,
 	file helper.FileHelper,
-	logger pkg.Logger,
 ) RequestService {
 	return RequestService{
 		Repository: repository,
 		Query:      query,
 		file:       file,
-		logger:     logger,
 	}
 }
 
 // Search search requests
-func (s RequestService) Search(object object.RequestSearchInput, limit int) ([]model.Request, error) {
+func (s RequestService) Search(object object.RequestSearchInput, limit int) ([]model.Request, query.Paginator, error) {
 	return s.Query.Search(object, limit)
 }
 

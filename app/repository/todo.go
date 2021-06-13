@@ -7,15 +7,13 @@ import (
 
 // TodoRepository database structure
 type TodoRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewTodoRepository creates a new todo repository
-func NewTodoRepository(db pkg.Database, logger pkg.Logger) TodoRepository {
+func NewTodoRepository(db pkg.Database) TodoRepository {
 	return TodoRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

@@ -148,7 +148,7 @@ func (helper *ResponseHelper) View(name string, data DataMap) error {
 
 // Error render template error
 func (helper *ResponseHelper) Error(err error) error {
-	return helper.ErrorWithCode(err, fiber.StatusBadRequest)
+	return helper.ErrorWithCode(err, fiber.StatusInternalServerError)
 }
 
 // Error render template error with Code

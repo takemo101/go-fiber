@@ -8,15 +8,13 @@ import (
 
 // TagRepository database structure
 type TagRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewTagRepository creates a new tag repository
-func NewTagRepository(db pkg.Database, logger pkg.Logger) TagRepository {
+func NewTagRepository(db pkg.Database) TagRepository {
 	return TagRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

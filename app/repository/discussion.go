@@ -8,15 +8,13 @@ import (
 
 // DiscussionRepository database structure
 type DiscussionRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewDiscussionRepository creates a new discussion repository
-func NewDiscussionRepository(db pkg.Database, logger pkg.Logger) DiscussionRepository {
+func NewDiscussionRepository(db pkg.Database) DiscussionRepository {
 	return DiscussionRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

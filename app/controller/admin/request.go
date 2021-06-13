@@ -17,7 +17,6 @@ import (
 
 // RequestController is request
 type RequestController struct {
-	logger             pkg.Logger
 	service            service.RequestService
 	userRepository     repository.UserRepository
 	categoryRepository repository.CategoryRepository
@@ -29,7 +28,6 @@ type RequestController struct {
 
 // NewRequestController is create request controller
 func NewRequestController(
-	logger pkg.Logger,
 	service service.RequestService,
 	userRepository repository.UserRepository,
 	categoryRepository repository.CategoryRepository,
@@ -39,7 +37,6 @@ func NewRequestController(
 	config pkg.Config,
 ) RequestController {
 	return RequestController{
-		logger:             logger,
 		service:            service,
 		userRepository:     userRepository,
 		categoryRepository: categoryRepository,
@@ -59,7 +56,7 @@ func (ctl RequestController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	requests, err := ctl.service.Search(object.NewRequestSearchInput(
+	requests, paginator, err := ctl.service.Search(object.NewRequestSearchInput(
 		form.Keyword,
 		form.Page,
 	), 20)
@@ -67,8 +64,11 @@ func (ctl RequestController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
+	paginator.SetURL(c.OriginalURL())
+
 	return response.View("request/index", helper.DataMap{
-		"requests": requests,
+		"requests":  requests,
+		"paginator": paginator,
 	})
 }
 

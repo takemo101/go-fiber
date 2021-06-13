@@ -11,24 +11,20 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // AdminController is admin
 type AdminController struct {
-	logger  pkg.Logger
 	value   support.RequestValue
 	service service.AdminService
 }
 
 // NewAdminController is create admin controller
 func NewAdminController(
-	logger pkg.Logger,
 	value support.RequestValue,
 	service service.AdminService,
 ) AdminController {
 	return AdminController{
-		logger:  logger,
 		value:   value,
 		service: service,
 	}
@@ -43,15 +39,19 @@ func (ctl AdminController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	admins, err := ctl.service.Search(object.NewAdminSearchInput(
+	admins, paginator, err := ctl.service.Search(object.NewAdminSearchInput(
 		form.Keyword,
 		form.Page,
 	), 20)
 	if err != nil {
 		return response.Error(err)
 	}
+
+	paginator.SetURL(c.OriginalURL())
+
 	return response.View("admin/index", helper.DataMap{
-		"admins": admins,
+		"admins":    admins,
+		"paginator": paginator,
 	})
 }
 

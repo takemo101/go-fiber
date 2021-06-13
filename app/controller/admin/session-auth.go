@@ -7,24 +7,20 @@ import (
 	"github.com/takemo101/go-fiber/app/middleware"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // SessionAuthController is session auth
 type SessionAuthController struct {
-	logger  pkg.Logger
 	value   support.RequestValue
 	service service.AdminService
 }
 
 // NewSessionAuthController is create auth controller
 func NewSessionAuthController(
-	logger pkg.Logger,
 	value support.RequestValue,
 	service service.AdminService,
 ) SessionAuthController {
 	return SessionAuthController{
-		logger:  logger,
 		value:   value,
 		service: service,
 	}

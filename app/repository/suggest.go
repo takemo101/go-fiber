@@ -8,15 +8,13 @@ import (
 
 // SuggestRepository database structure
 type SuggestRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewSuggestRepository creates a new suggest repository
-func NewSuggestRepository(db pkg.Database, logger pkg.Logger) SuggestRepository {
+func NewSuggestRepository(db pkg.Database) SuggestRepository {
 	return SuggestRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

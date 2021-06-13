@@ -26,8 +26,10 @@ func (r TodoStatus) Name() string {
 		return "作業中"
 	case TodoStatusCheck:
 		return "確認中"
+	case TodoStatusComplete:
+		return "完了"
 	}
-	return "完了"
+	return ""
 }
 
 func ToTodoStatusArray() []KeyName {

@@ -10,7 +10,6 @@ import (
 
 // DashboardController is home dashboard
 type DashboardController struct {
-	logger          pkg.Logger
 	config          pkg.Config
 	value           support.RequestValue
 	todoQuery       query.TodoQuery
@@ -20,7 +19,6 @@ type DashboardController struct {
 
 // NewDashboardController is create dashboard
 func NewDashboardController(
-	logger pkg.Logger,
 	config pkg.Config,
 	value support.RequestValue,
 	todoQuery query.TodoQuery,
@@ -28,7 +26,6 @@ func NewDashboardController(
 	discussionQuery query.DiscussionQuery,
 ) DashboardController {
 	return DashboardController{
-		logger:          logger,
 		config:          config,
 		value:           value,
 		todoQuery:       todoQuery,

@@ -19,14 +19,21 @@ func NewRequestQuery(db pkg.Database) RequestQuery {
 }
 
 // Search get requests
-func (r RequestQuery) Search(object object.RequestSearchInput, limit int) (requests []model.Request, err error) {
-	return requests, r.db.GormDB.
+func (r RequestQuery) Search(object object.RequestSearchInput, limit int) (requests []model.Request, paginator Paginator, err error) {
+	db := r.db.GormDB.
 		Preload("Tags").
 		Preload("Category").
-		Preload("User").
-		Order("id desc").
-		Limit(limit).
-		Find(&requests).Error
+		Preload("User")
+
+	err = Paging(&PagingParameter{
+		DB:      db,
+		Page:    object.GetPage(),
+		Limit:   limit,
+		OrderBy: []string{"id desc"},
+	}, &requests, &paginator)
+
+	return requests, paginator, err
+
 }
 
 // GetUpdateRequests get requests order by update_at

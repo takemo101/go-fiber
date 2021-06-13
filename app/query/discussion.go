@@ -19,13 +19,19 @@ func NewDiscussionQuery(db pkg.Database) DiscussionQuery {
 }
 
 // Search get discussions
-func (r DiscussionQuery) Search(object object.DiscussionSearchInput, limit int) (discussions []model.Discussion, err error) {
-	return discussions, r.db.GormDB.
+func (r DiscussionQuery) Search(object object.DiscussionSearchInput, limit int) (discussions []model.Discussion, paginator Paginator, err error) {
+	db := r.db.GormDB.
 		Preload("Suggest.Request").
-		Preload("Sender").
-		Order("id desc").
-		Limit(limit).
-		Find(&discussions).Error
+		Preload("Sender")
+
+	err = Paging(&PagingParameter{
+		DB:      db,
+		Page:    object.GetPage(),
+		Limit:   limit,
+		OrderBy: []string{"id desc"},
+	}, &discussions, &paginator)
+
+	return discussions, paginator, err
 }
 
 // GetUpdateDiscussions get discussions order by update_at

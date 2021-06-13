@@ -30,7 +30,7 @@ func NewUserService(
 }
 
 // Search search users
-func (s UserService) Search(object object.UserSearchInput, limit int) ([]model.User, error) {
+func (s UserService) Search(object object.UserSearchInput, limit int) ([]model.User, query.Paginator, error) {
 	return s.Query.Search(object, limit)
 }
 

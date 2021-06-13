@@ -8,15 +8,13 @@ import (
 
 // RequestRepository database structure
 type RequestRepository struct {
-	db     pkg.Database
-	logger pkg.Logger
+	db pkg.Database
 }
 
 // NewRequestRepository creates a new request repository
-func NewRequestRepository(db pkg.Database, logger pkg.Logger) RequestRepository {
+func NewRequestRepository(db pkg.Database) RequestRepository {
 	return RequestRepository{
-		db:     db,
-		logger: logger,
+		db: db,
 	}
 }
 

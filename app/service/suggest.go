@@ -5,7 +5,6 @@ import (
 
 	"github.com/takemo101/go-fiber/app/model"
 	"github.com/takemo101/go-fiber/app/repository"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // SuggestService service logic
@@ -13,7 +12,6 @@ type SuggestService struct {
 	Repository           repository.SuggestRepository
 	RequestRepository    repository.RequestRepository
 	DiscussionRepository repository.DiscussionRepository
-	logger               pkg.Logger
 }
 
 // NewSuggestService new service
@@ -21,13 +19,11 @@ func NewSuggestService(
 	repository repository.SuggestRepository,
 	requestRepository repository.RequestRepository,
 	discussionRepository repository.DiscussionRepository,
-	logger pkg.Logger,
 ) SuggestService {
 	return SuggestService{
 		Repository:           repository,
 		RequestRepository:    requestRepository,
 		DiscussionRepository: discussionRepository,
-		logger:               logger,
 	}
 }
 

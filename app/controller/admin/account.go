@@ -8,24 +8,20 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // AccountController is account
 type AccountController struct {
-	logger  pkg.Logger
 	service service.AdminService
 	value   support.RequestValue
 }
 
 // NewAccountController is create admin account controller
 func NewAccountController(
-	logger pkg.Logger,
 	service service.AdminService,
 	value support.RequestValue,
 ) AccountController {
 	return AccountController{
-		logger:  logger,
 		service: service,
 		value:   value,
 	}

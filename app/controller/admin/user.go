@@ -10,24 +10,20 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // UserController is user
 type UserController struct {
-	logger  pkg.Logger
 	value   support.RequestValue
 	service service.UserService
 }
 
 // NewUserController is create user controller
 func NewUserController(
-	logger pkg.Logger,
 	value support.RequestValue,
 	service service.UserService,
 ) UserController {
 	return UserController{
-		logger:  logger,
 		value:   value,
 		service: service,
 	}
@@ -42,15 +38,19 @@ func (ctl UserController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	users, err := ctl.service.Search(object.NewUserSearchInput(
+	users, paginator, err := ctl.service.Search(object.NewUserSearchInput(
 		form.Keyword,
 		form.Page,
 	), 20)
 	if err != nil {
 		return response.Error(err)
 	}
+
+	paginator.SetURL(c.OriginalURL())
+
 	return response.View("user/index", helper.DataMap{
-		"users": users,
+		"users":     users,
+		"paginator": paginator,
 	})
 }
 

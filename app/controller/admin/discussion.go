@@ -9,24 +9,20 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // DiscussionController is discussion
 type DiscussionController struct {
-	logger  pkg.Logger
 	service service.DiscussionService
 	value   support.RequestValue
 }
 
 // NewDiscussionController is create discussion controller
 func NewDiscussionController(
-	logger pkg.Logger,
 	service service.DiscussionService,
 	value support.RequestValue,
 ) DiscussionController {
 	return DiscussionController{
-		logger:  logger,
 		service: service,
 		value:   value,
 	}
@@ -41,7 +37,7 @@ func (ctl DiscussionController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
-	discussions, err := ctl.service.Search(object.NewDiscussionSearchInput(
+	discussions, paginator, err := ctl.service.Search(object.NewDiscussionSearchInput(
 		form.Keyword,
 		form.Page,
 	), 20)
@@ -49,8 +45,11 @@ func (ctl DiscussionController) Index(c *fiber.Ctx) error {
 		return response.Error(err)
 	}
 
+	paginator.SetURL(c.OriginalURL())
+
 	return response.View("discussion/index", helper.DataMap{
 		"discussions": discussions,
+		"paginator":   paginator,
 	})
 }
 

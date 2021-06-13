@@ -10,24 +10,20 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // CategoryController is category
 type CategoryController struct {
-	logger  pkg.Logger
 	service service.CategoryService
 	value   support.RequestValue
 }
 
 // NewCategoryController is create category controller
 func NewCategoryController(
-	logger pkg.Logger,
 	service service.CategoryService,
 	value support.RequestValue,
 ) CategoryController {
 	return CategoryController{
-		logger:  logger,
 		service: service,
 		value:   value,
 	}

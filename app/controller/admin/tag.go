@@ -10,24 +10,20 @@ import (
 	"github.com/takemo101/go-fiber/app/object"
 	"github.com/takemo101/go-fiber/app/service"
 	"github.com/takemo101/go-fiber/app/support"
-	"github.com/takemo101/go-fiber/pkg"
 )
 
 // TagController is tag
 type TagController struct {
-	logger  pkg.Logger
 	service service.TagService
 	value   support.RequestValue
 }
 
 // NewTagController is create tag controller
 func NewTagController(
-	logger pkg.Logger,
 	service service.TagService,
 	value support.RequestValue,
 ) TagController {
 	return TagController{
-		logger:  logger,
 		service: service,
 		value:   value,
 	}
