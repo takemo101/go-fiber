@@ -13,7 +13,6 @@ type CLIBooter interface {
 
 // boot is initialize cli
 func boot(
-	lifecycle fx.Lifecycle,
 	logger pkg.Logger,
 	database pkg.Database,
 	root cmd.RootCommand,

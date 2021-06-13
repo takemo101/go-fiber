@@ -3,6 +3,7 @@ module github.com/takemo101/go-fiber
 go 1.15
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/domodwyer/mailyak/v3 v3.3.3
@@ -19,6 +20,7 @@ require (
 	github.com/klauspost/compress v1.13.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
 	github.com/spf13/cobra v1.1.3
+	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/thoas/go-funk v0.8.0
 	go.uber.org/fx v1.13.1
 	go.uber.org/zap v1.16.0

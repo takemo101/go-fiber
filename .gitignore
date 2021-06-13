@@ -15,6 +15,7 @@
 # vendor/
 
 config.yml
+config.testing.yml
 *.sqlite
 server.log
 /node_modules/*

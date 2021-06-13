@@ -1,5 +1,6 @@
 setup: ## セットアップ
 	cp config.example.yml config.yml
+	cp config.testing.example.yml config.testing.yml
 	npm run prod
 
 build: ## コンテナビルド
@@ -13,3 +14,7 @@ start-swagger: ## Swaggerコンテナ起動
 
 stop: ## コンテナ停止
 	docker-compose stop
+
+testing: ## テスト
+	rm -f fiber.testing.sqlite
+	go test -v ./test

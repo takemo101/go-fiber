@@ -19,6 +19,9 @@ const (
 	Local       = "local"
 )
 
+// config file path
+var ConfigPath string = "config.yml"
+
 // App config
 type App struct {
 	Name    string
@@ -167,7 +170,7 @@ var Conf = Config{}
 // NewConfig create configure
 func NewConfig() Config {
 	// config.yml
-	err := configor.Load(&Conf, "config.yml")
+	err := configor.Load(&Conf, ConfigPath)
 	if err != nil {
 		log.Fatalf("fail to load config.yml : %v", err)
 	}
@@ -178,7 +181,8 @@ func NewConfig() Config {
 		Conf.App.Env = Local
 	}
 
-	if current, currentErr := os.Getwd(); currentErr == nil {
+	if Conf.File.Current == "" {
+		current, _ := os.Getwd()
 		Conf.File.Current = current
 	}
 

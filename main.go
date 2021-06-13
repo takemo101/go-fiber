@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/takemo101/go-fiber/app"
 	"github.com/takemo101/go-fiber/boot"
+	"github.com/takemo101/go-fiber/pkg"
 	"go.uber.org/fx"
 )
 
@@ -13,15 +14,11 @@ func NewAppBooter(
 	return app
 }
 
-// @title GoFiber
-// @version 1.0
-// @description GoFiber Api Doc
-// @termsOfService http://swagger.io/terms/
-// @contact.name takemo
-// @contact.email takemo101@gmail.com
-// @host localhost:8000
-// @BasePath /api
 func main() {
+
+	// set config yml path
+	pkg.ConfigPath = "config.yml"
+
 	// boot gin application
 	boot.Run(
 		app.Module,
