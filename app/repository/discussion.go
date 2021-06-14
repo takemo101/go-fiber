@@ -18,7 +18,7 @@ func NewDiscussionRepository(db pkg.Database) DiscussionRepository {
 	}
 }
 
-// GetAll gets all discussions
+// GetAll get all discussions
 func (r DiscussionRepository) GetAll() (discussions []model.Discussion, err error) {
 	return discussions, r.db.GormDB.Order("sort asc").Find(&discussions).Error
 }
@@ -46,7 +46,7 @@ func (r DiscussionRepository) Update(discussion model.Discussion) (model.Discuss
 	return discussion, r.db.GormDB.Save(&discussion).Error
 }
 
-// GetOne gets ont discussion
+// GetOne get one discussion
 func (r DiscussionRepository) GetOne(id uint) (discussion model.Discussion, err error) {
 	return discussion, r.db.GormDB.Where("id = ?", id).First(&discussion).Error
 }

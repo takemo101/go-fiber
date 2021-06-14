@@ -18,7 +18,7 @@ func NewTagRepository(db pkg.Database) TagRepository {
 	}
 }
 
-// GetAll gets all tags
+// GetAll get all tags
 func (r TagRepository) GetAll() (tags []model.Tag, err error) {
 	return tags, r.db.GormDB.Order("sort asc").Find(&tags).Error
 }
@@ -39,7 +39,7 @@ func (r TagRepository) Update(tag model.Tag) (model.Tag, error) {
 	return tag, r.db.GormDB.Save(&tag).Error
 }
 
-// GetOne gets ont tag
+// GetOne get one tag
 func (r TagRepository) GetOne(id uint) (tag model.Tag, err error) {
 	return tag, r.db.GormDB.Where("id = ?", id).First(&tag).Error
 }
@@ -55,9 +55,13 @@ func (r TagRepository) Delete(id uint) error {
 }
 
 // MaxSort max sort value
-func (r TagRepository) MaxSort() (max uint) {
+func (r TagRepository) MaxSort() uint {
+	var max interface{}
 	r.db.GormDB.Model(&model.Tag{}).Select("max(sort)").Scan(&max)
-	return max
+	if max == nil {
+		return 0
+	}
+	return max.(uint)
 }
 
 // ExistsByName is exists by email

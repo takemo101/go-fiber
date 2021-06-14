@@ -1,6 +1,7 @@
 package test
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,70 +15,71 @@ import (
 
 func Test_AdminService_OK(t *testing.T) {
 	boot.Testing(
+		t,
 		func(
 			db pkg.Database,
 			service service.AdminService,
 		) {
 			db.GormDB.AutoMigrate(database.Models...)
 
-			name := "test"
-			email := "test@example.com"
-			role := string(model.RoleAdmin)
+			t.Run("admin store", func(t *testing.T) {
+				name := "test"
+				email := "test@example.com"
+				role := string(model.RoleAdmin)
 
-			admin, _ := service.Store(
-				object.NewAdminInput(
-					name,
-					email,
-					"test",
-					role,
-				),
-			)
+				for i := 0; i < 10; i++ {
+					service.Store(
+						object.NewAdminInput(
+							name+strconv.Itoa(i),
+							email+strconv.Itoa(i),
+							"test",
+							role,
+						),
+					)
+				}
 
-			assert.Equal(t, name, admin.Name)
-		},
-		func(
-			db pkg.Database,
-			service service.AdminService,
-		) {
-			name := "testing"
-			email := "test@example.com"
-			role := string(model.RoleSystem)
+				admin, err := service.Find(1)
 
-			admin, _ := service.Update(
-				1,
-				object.NewAdminInput(
-					name,
-					email,
-					"test",
-					role,
-				),
-			)
+				assert.Equal(t, nil, err)
+				assert.Equal(t, uint(1), admin.ID)
+			})
+			t.Run("admin update", func(t *testing.T) {
+				name := "testing"
+				email := "test@example.com"
+				role := string(model.RoleSystem)
 
-			assert.Equal(t, name, admin.Name)
-		},
-		func(
-			db pkg.Database,
-			service service.AdminService,
-		) {
-			admins, paginator, _ := service.Search(
-				object.NewAdminSearchInput(
-					"",
-					0,
-				),
-				20,
-			)
+				service.Update(
+					1,
+					object.NewAdminInput(
+						name,
+						email,
+						"test",
+						role,
+					),
+				)
 
-			assert.Equal(t, 1, len(admins))
-			assert.Equal(t, 1, paginator.TotalCount)
-		},
-		func(
-			db pkg.Database,
-			service service.AdminService,
-		) {
+				findAdmin, _ := service.Find(1)
 
-			err := service.Delete(1)
+				assert.Equal(t, name, findAdmin.Name)
+			})
+			t.Run("admin index", func(t *testing.T) {
+				admins, paginator, _ := service.Search(
+					object.NewAdminSearchInput(
+						"",
+						0,
+					),
+					20,
+				)
 
-			assert.Equal(t, nil, err)
+				assert.Equal(t, 10, len(admins))
+				assert.Equal(t, 10, paginator.TotalCount)
+			})
+			t.Run("admin delete", func(t *testing.T) {
+				deleteErr := service.Delete(1)
+				_, findErr := service.Find(1)
+				assert.Equal(t, nil, deleteErr)
+				assert.NotEqual(t, nil, findErr)
+			})
 		},
 	)
 }

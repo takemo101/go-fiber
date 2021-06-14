@@ -18,7 +18,7 @@ func NewSuggestRepository(db pkg.Database) SuggestRepository {
 	}
 }
 
-// GetAll gets all suggests
+// GetAll get all suggests
 func (r SuggestRepository) GetAll() (suggests []model.Suggest, err error) {
 	return suggests, r.db.GormDB.Order("sort asc").Find(&suggests).Error
 }
@@ -47,12 +47,12 @@ func (r SuggestRepository) Update(suggest model.Suggest) (model.Suggest, error) 
 	return suggest, r.db.GormDB.Save(&suggest).Error
 }
 
-// GetOne gets ont suggest
+// GetOne get one suggest
 func (r SuggestRepository) GetOne(id uint) (suggest model.Suggest, err error) {
 	return suggest, r.db.GormDB.Where("id = ?", id).Preload("Suggester").Preload("Request.User").First(&suggest).Error
 }
 
-// GetOneWithDiscussions gets ont suggest
+// GetOneWithDiscussions get one suggest
 func (r SuggestRepository) GetOneWithDiscussions(id uint) (suggest model.Suggest, err error) {
 	return suggest, r.db.GormDB.Where("id = ?", id).Preload("Suggester").Preload("Request.User").Preload("Discussions").First(&suggest).Error
 }

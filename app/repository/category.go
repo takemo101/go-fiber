@@ -39,7 +39,7 @@ func (r CategoryRepository) Update(category model.Category) (model.Category, err
 	return category, r.db.GormDB.Save(&category).Error
 }
 
-// GetOne gets ont category
+// GetOne get one category
 func (r CategoryRepository) GetOne(id uint) (category model.Category, err error) {
 	return category, r.db.GormDB.Where("id = ?", id).First(&category).Error
 }
@@ -55,9 +55,13 @@ func (r CategoryRepository) Delete(id uint) error {
 }
 
 // MaxSort max sort value
-func (r CategoryRepository) MaxSort() (max uint) {
+func (r CategoryRepository) MaxSort() uint {
+	var max interface{}
 	r.db.GormDB.Model(&model.Category{}).Select("max(sort)").Scan(&max)
-	return max
+	if max == nil {
+		return 0
+	}
+	return max.(uint)
 }
 
 // ExistsByName is exists by email

@@ -17,7 +17,7 @@ func NewAdminRepository(db pkg.Database) AdminRepository {
 	}
 }
 
-// GetAll gets all admins
+// GetAll get all admins
 func (r AdminRepository) GetAll() (admins []model.Admin, err error) {
 	return admins, r.db.GormDB.Find(&admins).Error
 }
@@ -32,7 +32,12 @@ func (r AdminRepository) Update(admin model.Admin) (model.Admin, error) {
 	return admin, r.db.GormDB.Save(&admin).Error
 }
 
-// GetOne gets ont admin
+// GetFirst get first admin
+func (r AdminRepository) GetFirst() (admin model.Admin, err error) {
+	return admin, r.db.GormDB.First(&admin).Error
+}
+
+// GetOne get one admin
 func (r AdminRepository) GetOne(id uint) (admin model.Admin, err error) {
 	return admin, r.db.GormDB.Where("id = ?", id).First(&admin).Error
 }

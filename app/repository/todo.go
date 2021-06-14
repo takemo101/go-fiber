@@ -17,7 +17,7 @@ func NewTodoRepository(db pkg.Database) TodoRepository {
 	}
 }
 
-// GetAll gets all todos
+// GetAll get all todos
 func (r TodoRepository) GetAll() (todos []model.Todo, err error) {
 	return todos, r.db.GormDB.Preload("Admin").Find(&todos).Error
 }
@@ -32,7 +32,7 @@ func (r TodoRepository) Update(todo model.Todo) (model.Todo, error) {
 	return todo, r.db.GormDB.Save(&todo).Error
 }
 
-// GetOne gets ont todo
+// GetOne get one todo
 func (r TodoRepository) GetOne(id uint) (todo model.Todo, err error) {
 	return todo, r.db.GormDB.Where("id = ?", id).First(&todo).Error
 }

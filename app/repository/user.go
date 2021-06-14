@@ -17,7 +17,7 @@ func NewUserRepository(db pkg.Database) UserRepository {
 	}
 }
 
-// GetAll gets all users
+// GetAll get all users
 func (r UserRepository) GetAll() (users []model.User, err error) {
 	return users, r.db.GormDB.Find(&users).Error
 }
@@ -32,7 +32,12 @@ func (r UserRepository) Update(user model.User) (model.User, error) {
 	return user, r.db.GormDB.Save(&user).Error
 }
 
-// GetOne gets ont user
+// GetFirst get first user
+func (r UserRepository) GetFirst() (user model.User, err error) {
+	return user, r.db.GormDB.First(&user).Error
+}
+
+// GetOne get one user
 func (r UserRepository) GetOne(id uint) (user model.User, err error) {
 	return user, r.db.GormDB.Where("id = ?", id).First(&user).Error
 }
